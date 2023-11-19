@@ -1,0 +1,11 @@
+# git ignore the following folders:
+/build
+/devel
+# /logs
+# src/CMakeLists.txt
+/.catkin_workspace
+/.catkin_tools
+.vscode
+*.egg-info
+__pycache__
+
