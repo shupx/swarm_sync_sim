@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.sdf": "xml",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
+    }
+}

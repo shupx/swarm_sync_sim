@@ -19,9 +19,32 @@
 #include "ros/ros.h"
 #include <std_msgs/Time.h>
 
-ros::Publisher time_pub;
-ros::Subscriber time_sub;
+class TimeClient{
+    private:
+        int client_id_;
+        bool has_new_request_;
+        ros::Time request_time_;     
+    public:
+        TimeClient(const int &id);
+};
 
-void cb_time(const std_msgs::Time::ConstPtr& msg);
+
+class TimeServer{
+    private:
+        ros::NodeHandle nh_;
+        ros::NodeHandle nh_private_;
+
+        ros::Publisher time_pub_;
+        ros::Subscriber time_sub_;
+
+        int next_client_id_;
+
+        void cb_time(const std_msgs::Time::ConstPtr& msg);
+    public:
+        TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+
+};
+
+
 
 #endif

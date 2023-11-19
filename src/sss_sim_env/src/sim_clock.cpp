@@ -23,15 +23,23 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_private("~");
     ros::NodeHandle nh;
 
-    time_pub = nh.advertise<std_msgs::Time>("sim_time", 10);
-
-    time_sub = nh.subscribe("sim_time_sub", 1, cb_time, ros::TransportHints().tcpNoDelay());
+    //create an object named time_server in heap rather than stack
+    TimeServer* time_server = new TimeServer(nh, nh_private); 
 
     ros::spin();
     return 0;
 }
 
-void cb_time(const std_msgs::Time::ConstPtr& msg)
+TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : nh_(nh),nh_private_(nh_private)
+{
+    time_pub_ = nh_.advertise<std_msgs::Time>("sim_time", 10);
+    time_sub_ = nh_.subscribe("sim_time_sub", 1, &TimeServer::cb_time, this, ros::TransportHints().tcpNoDelay());
+
+    next_client_id_ = 0;
+}
+
+void TimeServer::cb_time(const std_msgs::Time::ConstPtr& msg)
 {
     ros::Time time = msg->data;
     // ros::Time a = 
@@ -39,4 +47,10 @@ void cb_time(const std_msgs::Time::ConstPtr& msg)
         std::cout << "big" << std::endl;
     }
     std::cout << (time - ros::Duration(1.2)).toNSec() << std::endl;
+}
+
+TimeClient::TimeClient(const int &id){
+    client_id_ = id;
+    has_new_request_ = false;
+    request_time_ = ros::Time(0.0); //0 seconds
 }
