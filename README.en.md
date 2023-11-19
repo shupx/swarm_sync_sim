@@ -1,10 +1,10 @@
-# 4573模板仓库
+## swarm_sync_sim
 
-#### Description
-4573 code repository template. Introduce the functions of this project.
+### Introduction
+A synchronized numerical simulation platform for multi-robot swarm system based on ROS. It offers a lightweight, scalable and fast (due to synchronization) simulation method to verify your motion planning and control algorithms for various kinds of robots in seconds before real experiments. Quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models are supported.
 
 
-#### Installation
+### Installation
 
 Environments, dependencies, build steps
 
@@ -12,7 +12,7 @@ Environments, dependencies, build steps
 2.  xxxx
 3.  xxxx
 
-#### Usage
+### Usage
 
 Follow the following steps to run this project:
 
@@ -20,18 +20,18 @@ Follow the following steps to run this project:
 2.  xxxx
 3.  xxxx
 
-#### Advanced
+### Advanced
 
 1.  xxxx
 2.  xxxx
 3.  xxxx
 
 
-#### Contributions
+### Contributions
 
 This project is developed by xxx in 2023.5.12
 
-#### Picture
+### Picture
 
 Attach pictures here (upload images to pictures/ folder first):
 
