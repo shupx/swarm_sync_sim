@@ -16,7 +16,6 @@
 
 #include "ros/ros.h"
 #include "TimeServer.hpp"
-#include "TimeClient.hpp"
 
 
 int main(int argc, char **argv)

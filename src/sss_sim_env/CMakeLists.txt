@@ -36,8 +36,8 @@ catkin_package(
 )
 
 add_executable(sim_clock src/sim_clock.cpp
-                         src/TimeServer.cpp
-                         src/TimeClient.cpp)
+                         src/TimeServer.cpp 
+                        )
 
 target_link_libraries(sim_clock
    ${catkin_LIBRARIES}
