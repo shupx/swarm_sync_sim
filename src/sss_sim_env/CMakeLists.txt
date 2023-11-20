@@ -11,18 +11,33 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  message_generation
 )
 
-catkin_package(
-   INCLUDE_DIRS include
-)
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(sim_clock src/sim_clock.cpp)
+add_service_files(
+  FILES
+  ClientRegister.srv
+  ClientUnregister.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+catkin_package(
+   INCLUDE_DIRS include
+)
+
+add_executable(sim_clock src/sim_clock.cpp
+                         src/TimeServer.cpp
+                         src/TimeClient.cpp)
 
 target_link_libraries(sim_clock
    ${catkin_LIBRARIES}
