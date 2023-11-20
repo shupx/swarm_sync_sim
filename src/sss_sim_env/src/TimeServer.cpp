@@ -111,12 +111,11 @@ void TimeServer::update_time(int client_id)
 }
 
 
-TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private): client_id_(id),nh_(nh),nh_private_(nh_private)
+TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private): client_id_(id), time_server(obj), nh_(nh), nh_private_(nh_private)
 {
     has_new_request = false;
     request_time = ros::Time(0.0); //0 seconds
     update_time_request_sub_ = nh_.subscribe("/sss_time_client"+std::to_string(client_id_)+"/update_time_request", 1000, &TimeClient::cb_update_time_request, this, ros::TransportHints().tcpNoDelay());
-    time_server = obj;
 }
 
 

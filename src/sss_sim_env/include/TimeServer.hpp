@@ -46,7 +46,6 @@ class TimeServer
                 bool has_new_request;
                 ros::Time request_time;    
                 TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
-                // TimeClient(const int &id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
         };
 
         std::vector<std::unique_ptr<TimeClient>> clients_vector_;
