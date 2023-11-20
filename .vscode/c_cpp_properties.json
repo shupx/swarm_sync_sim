@@ -4,7 +4,8 @@
             "includePath": [
                 "/opt/ros/noetic/include/**",
                 "/usr/include/**",
-                "~/spx_ws/swarm_sync_sim/src/sss_sim_env/include/"
+                "./src/sss_sim_env/include/",
+                "./devel/include/"
             ],
             "name":"ROS",
             "intelliSenseMode": "linux-gcc-x64",
