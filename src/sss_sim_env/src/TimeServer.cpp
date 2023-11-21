@@ -74,7 +74,8 @@ bool TimeServer::timeclient_unregister(sss_sim_env::ClientUnregister::Request& r
 
 
 void TimeServer::update_time(int client_id)
-{    
+{   
+    ros::Time begin=ros::Time::now();  
     ROS_INFO("[TimeServer] update_time called by time_client%s",std::to_string(next_client_id_).c_str());
     bool all_client_has_new_request = true;
     ros::Time min_time_request = ros::Time(0.0);
@@ -108,6 +109,9 @@ void TimeServer::update_time(int client_id)
         }        
     }
     std::cout << sim_time << std::endl;
+    ros::Duration duration=ros::Time::now() - begin;  
+    ROS_INFO("update time: %ss %sns", std::to_string(duration.sec).c_str(), std::to_string(duration.nsec).c_str());
+
 }
 
 
