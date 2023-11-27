@@ -6,11 +6,12 @@ A synchronized numerical simulation platform for multi-robot swarm system based 
 
 ### Installation
 
-Environments, dependencies, build steps
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```bash
+git clone https://gitee.com/bhswift/swarm_sync_sim.git
+cd swarm_sync_sim/
+catkin_make
+echo "source $PWD/devel/setup.bash" >> ~/.bashrc
+```
 
 ### Usage
 
