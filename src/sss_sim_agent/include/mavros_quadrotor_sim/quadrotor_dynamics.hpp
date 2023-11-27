@@ -4,7 +4,7 @@
  * @brief Ordinary Differential Equations of quadrotor dynamics 
  * solved by odeint.
  * 
- * Note: This program relies on 
+ * Note: This program relies on <boost/numeric/odeint.hpp>
  * 
  * @version 1.0
  * @date 2023-11-27
@@ -20,11 +20,12 @@
 
 #include <boost/numeric/odeint.hpp>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 
 namespace MavrosQuadSimulator
 {
 
-class Quadrotor
+class Dynamics
 {
   public:
     // For internal use, but needs to be public for odeint
@@ -40,33 +41,38 @@ class Quadrotor
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     };
 
-    Quadrotor();
+    Dynamics();
 
-    // Runs the actual dynamics simulation with a time step of dt
-    void step(double dt);
+    void setState(const Dynamics::State &state);
+    void setPos(const double& pos_x, const double& pos_y, const double& pos_z);
+    void setInput(const Eigen::Vector3d& omega, const double& thrust);
+    void setSimStep(const double& dt);
+    void setMass(const double& m);
+    void setGravityAcc(const double& g);
 
-    
-    void setState(const Quadrotor::State &state);
-    void setOmegaThrust(const Eigen::Vector3d& omega, const double& thrust);
-
-    Quadrotor::State getState();
-    Eigen::Vector3d getAcc();
+    Dynamics::State getState();
+    double getSimStep();
     double getMass();
     double getGravityAcc();
+    Eigen::Vector3d getAcc();
+
+    void differentialEquation(const StateVector& x, StateVector& dxdt, double t);
+
+    // Run the actual dynamics during [start_time, end_time] with a time step of sim_step_
+    void step(const double& start_time, const double& end_time);
 
   private:
+    double sim_step_;
     double mass_;
     double g_;
     double thrust_;
-    Eigen::Vector3d acc_;
     Eigen::Vector3d omega_;
+    Eigen::Vector3d acc_;
 
-    double sim_step_;
-    Quadrotor::State state_;
+    Dynamics::State state_;
     StateVector state_vec_;
-    void updateStateVector();
-
-
+    void vectorizeState(StateVector& vec, const Dynamics::State& state);
+    void devectorizeState(Dynamics::State& state, const StateVector& vec);
 
 };
 
