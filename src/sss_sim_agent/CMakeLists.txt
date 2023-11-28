@@ -30,6 +30,14 @@ catkin_package(
 
 add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
+# add_library(mathlib
+#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/test/test.cpp
+#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/LowPassFilter2p.hpp
+#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/MedianFilter.hpp
+#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/NotchFilter.hpp
+#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/second_order_reference_model.hpp
+# )
+
 # add_executable(mavros_quadrotor_sim 
 #                   src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)
 
