@@ -26,7 +26,7 @@ Dynamics::Dynamics()
 {   /* Initialize */
     sim_step_ = 0.001; // seconds
     mass_ = 1.0; // kg
-    g_ = 9.81; // m/s^2
+    g_ = 9.80665f; // m/s^2 geo.h CONSTANTS_ONE_G
 
     /* Initialize state */
     state_.pos = Eigen::Vector3d::Zero();

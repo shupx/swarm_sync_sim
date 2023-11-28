@@ -21,6 +21,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 include_directories(
   include
+  include/mavros_quadrotor_sim/px4_lib
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -30,13 +31,14 @@ catkin_package(
 
 add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
-# add_library(mathlib
-#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/test/test.cpp
-#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/LowPassFilter2p.hpp
-#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/MedianFilter.hpp
-#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/NotchFilter.hpp
-#               src/mavros_quadrotor_sim/px4_controller/mathlib/math/filter/second_order_reference_model.hpp
-# )
+add_library(PositionControl
+              src/mavros_quadrotor_sim/px4_controller/PositionControl/ControlMath.cpp
+              src/mavros_quadrotor_sim/px4_controller/PositionControl/PositionControl.cpp
+              )
+
+add_library(AttitudeControl
+              src/mavros_quadrotor_sim/px4_controller/AttitudeControl/AttitudeControl.cpp
+              )
 
 # add_executable(mavros_quadrotor_sim 
 #                   src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)
