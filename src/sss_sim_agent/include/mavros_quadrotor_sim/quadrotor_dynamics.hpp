@@ -21,6 +21,8 @@
 #include <boost/numeric/odeint.hpp>
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <mathlib/mathlib.h>
+
 
 namespace MavrosQuadSimulator
 {
