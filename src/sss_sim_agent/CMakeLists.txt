@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  mavros
+  mavros_msgs
 )
 
 #uncomment the following 4 lines to use the Eigen library
@@ -22,6 +24,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 include_directories(
   include
   include/mavros_quadrotor_sim/px4_lib
+  include/mavros_quadrotor_sim/mavros_sim
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -39,6 +42,11 @@ add_library(PositionControl
 add_library(AttitudeControl
               src/mavros_quadrotor_sim/px4_controller/AttitudeControl/AttitudeControl.cpp
               )
+
+# add_library(mavros_lib
+#               src/mavros_quadrotor_sim/mavros_sim/mavros_lib/ftf_frame_conversions.cpp
+#               src/mavros_quadrotor_sim/mavros_sim/mavros_lib/ftf_quaternion_utils.cpp
+#             )
 
 # add_executable(mavros_quadrotor_sim 
 #                   src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)

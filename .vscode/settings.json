@@ -66,7 +66,8 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "geometry": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/spx/nlink_parser_ws/devel/lib/python3/dist-packages",
