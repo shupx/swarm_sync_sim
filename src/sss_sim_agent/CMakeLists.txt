@@ -2,17 +2,18 @@ cmake_minimum_required(VERSION 3.0.2)
 project(sss_sim_agent)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++14) # for px4_lib
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  mavros
+  roscpp  # already installed with ros-noetic-desktop
+  rospy  # already installed with ros-noetic-desktop
+  std_msgs  # already installed with ros-noetic-desktop
+  mavros 
   mavros_msgs
+  eigen_conversions # already installed with ros-noetic-desktop
 )
 
 #uncomment the following 4 lines to use the Eigen library
@@ -24,7 +25,6 @@ add_definitions(${EIGEN_DEFINITIONS})
 include_directories(
   include
   include/mavros_quadrotor_sim/px4_lib
-  include/mavros_quadrotor_sim/mavros_sim
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -35,26 +35,59 @@ catkin_package(
 add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
 add_library(PositionControl
-              src/mavros_quadrotor_sim/px4_controller/PositionControl/ControlMath.cpp
-              src/mavros_quadrotor_sim/px4_controller/PositionControl/PositionControl.cpp
+              src/mavros_quadrotor_sim/px4_sitl/PositionControl/ControlMath.cpp
+              src/mavros_quadrotor_sim/px4_sitl/PositionControl/PositionControl.cpp
               )
 
 add_library(AttitudeControl
-              src/mavros_quadrotor_sim/px4_controller/AttitudeControl/AttitudeControl.cpp
+              src/mavros_quadrotor_sim/px4_sitl/AttitudeControl/AttitudeControl.cpp
               )
 
-# add_library(mavros_lib
-#               src/mavros_quadrotor_sim/mavros_sim/mavros_lib/ftf_frame_conversions.cpp
-#               src/mavros_quadrotor_sim/mavros_sim/mavros_lib/ftf_quaternion_utils.cpp
+
+
+# add_library(mavros_sim_plugins
+#               src/mavros_quadrotor_sim/mavros_sim/plugins/setpoint_raw.cpp
 #             )
 
-# add_executable(mavros_quadrotor_sim 
-#                   src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)
+add_library(mavros_sim
+            src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp
+            # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_frame_conversions.cpp
+            # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_quaternion_utils.cpp
+          )
+
+# add MavrosSim.hpp header path for which use this lib
+target_include_directories(mavros_sim PUBLIC
+            src/mavros_quadrotor_sim/mavros_sim)
+
+target_link_libraries(mavros_sim
+  # ${catkin_LIBRARIES} for libeigen_conversions.so from eigen_conversions ROS package
+  # ${catkin_LIBRARIES} for libmavros.so from eigen_conversions ROS package
+  ${catkin_LIBRARIES}
+)
+
+# # add frame_tf.h header path for this lib
+# target_include_directories(mavros_sim PRIVATE
+#             src/mavros_quadrotor_sim/mavros_sim/lib)
+
+
+
+# add_library(mavros_quadrotor_sim
+#             src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp
+#           )
 
 # target_link_libraries(mavros_quadrotor_sim
 #    ${catkin_LIBRARIES}
-#    quadrotor_dynamics
+#    mavros_sim
 # )
+
+add_executable(mavros_quadrotor_sim 
+                  src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)
+
+target_link_libraries(mavros_quadrotor_sim
+   ${catkin_LIBRARIES}
+   mavros_sim
+   quadrotor_dynamics
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

@@ -67,7 +67,12 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "geometry": "cpp"
+        "geometry": "cpp",
+        "eigen": "cpp",
+        "*.ipp": "cpp",
+        "csignal": "cpp",
+        "any": "cpp",
+        "regex": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/spx/nlink_parser_ws/devel/lib/python3/dist-packages",

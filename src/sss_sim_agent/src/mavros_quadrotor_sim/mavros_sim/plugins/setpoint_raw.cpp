@@ -19,19 +19,20 @@
 // header files added by Peixuan Shu
 #include <ros/ros.h>
 #include <Eigen/Geometry>
-#include <eigen_conversions/eigen_msg.h>
-#include <mavros/frame_tf.h>
+#include <eigen_conversions/eigen_msg.h> // for tf::
+#include <tf_conversions/tf_eigen.h>
+#include "setpoint_mixin.h" // modified in mavros_sim namespace
+// #include "lib/frame_tf.h" // for ftf:: // modified in mavros_sim namespace
 
 #include <mavros_msgs/AttitudeTarget.h>
 #include <mavros_msgs/PositionTarget.h>
 #include <mavros_msgs/GlobalPositionTarget.h>
 
-#include <uORB/topics/vehicle_attitude_setpoint.h>
-#include <uORB/topics/vehicle_local_position_setpoint.h>
 
+using namespace mavros; // for mavros::ftf, added by Peixuan Shu
 
-namespace mavros_sim
-{
+namespace mavros_sim {  // namespace modified from mavros to mavros_sim by Peixuan Shu
+namespace std_plugins {
 
 /**
  * @brief Setpoint RAW plugin
@@ -40,13 +41,18 @@ namespace mavros_sim
  * User can decide what set of filed needed for operation via IGNORE bits.
  */
 
-class SetpointRawPlugin
+class SetpointRawPlugin : 
+	private plugin::SetPositionTargetLocalNEDMixin<SetpointRawPlugin>,
+	private plugin::SetPositionTargetGlobalIntMixin<SetpointRawPlugin>,
+	private plugin::SetAttitudeTargetMixin<SetpointRawPlugin> 
 {
     public:
-        SetpointRawPlugin()
-            : sp_nh("mavros/setpoint_raw"), sp_nh_private("~setpoint_raw") // nodehandle modified by Peixuan Shu
+        SetpointRawPlugin(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+            : sp_nh(nh), sp_nh_private(nh_private, "setpoint_raw") // nodehandle modified by Peixuan Shu
         {
             bool tf_listen;
+
+            std::cout << "SetpointRawPlugin" << std::endl;
 
             local_sub = sp_nh.subscribe("local", 10, &SetpointRawPlugin::local_cb, this);
             global_sub = sp_nh.subscribe("global", 10, &SetpointRawPlugin::global_cb, this);
@@ -57,47 +63,16 @@ class SetpointRawPlugin
 
             // Set Thrust scaling in px4_config.yaml, setpoint_raw block.
             if (!sp_nh_private.getParam("thrust_scaling", thrust_scaling))  //sp_nh_private modified by Peixuan Shu
-            {
+            {   std::cout << thrust_scaling << std::endl;
                 ROS_WARN_THROTTLE_NAMED(5, "setpoint_raw", "thrust_scaling parameter is unset. Attitude (and angular rate/thrust) setpoints will be ignored.");
                 thrust_scaling = -1.0;
             }
         }
 
-        // void handle_position_target_local_ned(vehicle_local_position_setpoint_s &tgt_uorb) // tgt type modified from mavlink::common::msg::POSITION_TARGET_LOCAL_NED to PX4 uorb message by Peixuan Shu
-        // {
-        //     //transform PX4 uorb message to mavlink message
-            
-        //     // Transform desired position,velocities,and accels from ENU to NED frame
-        //     auto position = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt_uorb.x, tgt_uorb.y, tgt_uorb.z));
-        //     auto velocity = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt_uorb.vx, tgt_uorb.vy, tgt_uorb.vz));
-        //     auto af = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt_uorb.acceleration[0], tgt_uorb.acceleration[1], tgt_uorb.acceleration[2]));
-        //     float yaw = ftf::quaternion_get_yaw(
-        //                 ftf::transform_orientation_aircraft_baselink(
-        //                     ftf::transform_orientation_ned_enu(
-        //                         ftf::quaternion_from_rpy(0.0, 0.0, tgt_uorb.yaw))));
-        //     Eigen::Vector3d ang_vel_ned(0.0, 0.0, tgt_uorb.yawspeed);
-        //     auto ang_vel_enu = ftf::transform_frame_ned_enu(ang_vel_ned);
-        //     float yaw_rate = ang_vel_enu.z();
+        /* -*- message handlers (publish mavlink messages to ROS topics) -*- */
 
-        //     auto target = boost::make_shared<mavros_msgs::PositionTarget>();
-
-        //     target->header.stamp = tgt_uorb.timestamp;
-        //     target->coordinate_frame = tgt.coordinate_frame;
-        //     target->type_mask = tgt.type_mask;
-        //     tf::pointEigenToMsg(position, target->position);
-        //     tf::vectorEigenToMsg(velocity, target->velocity);
-        //     tf::vectorEigenToMsg(af, target->acceleration_or_force);
-        //     target->yaw = yaw;
-        //     target->yaw_rate = yaw_rate;
-
-        //     target_local_pub.publish(target);
-        // }
-
-        /* -*- message handlers (publish px4 uorb messages to ROS topics) -*- */
-        void handle_position_target_local_ned(const mavlink::mavlink_message_t *msg, mavlink::common::msg::POSITION_TARGET_LOCAL_NED &tgt)
+	    void handle_position_target_local_ned(mavlink::common::msg::POSITION_TARGET_LOCAL_NED &tgt) //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
         {
-            //transform PX4 uorb message to mavlink message
-
             // Transform desired position,velocities,and accels from ENU to NED frame
             auto position = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.x, tgt.y, tgt.z));
             auto velocity = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.vx, tgt.vy, tgt.vz));
@@ -112,7 +87,8 @@ class SetpointRawPlugin
 
             auto target = boost::make_shared<mavros_msgs::PositionTarget>();
 
-            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
             target->coordinate_frame = tgt.coordinate_frame;
             target->type_mask = tgt.type_mask;
             tf::pointEigenToMsg(position, target->position);
@@ -124,7 +100,7 @@ class SetpointRawPlugin
             target_local_pub.publish(target);
         }
 
-        void handle_position_target_global_int(const mavlink::mavlink_message_t *msg, mavlink::common::msg::POSITION_TARGET_GLOBAL_INT &tgt)
+        void handle_position_target_global_int(mavlink::common::msg::POSITION_TARGET_GLOBAL_INT &tgt)  //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
         {
             // Transform desired velocities from ENU to NED frame
             auto velocity = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.vx, tgt.vy, tgt.vz));
@@ -139,7 +115,8 @@ class SetpointRawPlugin
 
             auto target = boost::make_shared<mavros_msgs::GlobalPositionTarget>();
 
-            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
             target->coordinate_frame = tgt.coordinate_frame;
             target->type_mask = tgt.type_mask;
             target->latitude = tgt.lat_int / 1e7;
@@ -153,7 +130,7 @@ class SetpointRawPlugin
             target_global_pub.publish(target);
         }
 
-        void handle_attitude_target(const mavlink::mavlink_message_t *msg, mavlink::common::msg::ATTITUDE_TARGET &tgt)
+        void handle_attitude_target(mavlink::common::msg::ATTITUDE_TARGET &tgt)  //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
         {
             // Transform orientation from baselink -> ENU
             // to aircraft -> NED
@@ -165,7 +142,8 @@ class SetpointRawPlugin
 
             auto target = boost::make_shared<mavros_msgs::AttitudeTarget>();
 
-            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
+            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
             target->type_mask = tgt.type_mask;
             tf::quaternionEigenToMsg(orientation, target->orientation);
             tf::vectorEigenToMsg(body_rate, target->body_rate);
@@ -173,6 +151,24 @@ class SetpointRawPlugin
 
             target_attitude_pub.publish(target);
         }
+
+        /* -*- get the updated mavlink messages (added by Peixuan Shu) -*- */
+
+        mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED get_SET_POSITION_TARGET_LOCAL_NED()
+        {
+            return sp_SET_POSITION_TARGET_LOCAL_NED;
+        }
+
+        mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT get_SET_POSITION_TARGET_GLOBAL_INT()
+        {
+            return sp_SET_POSITION_TARGET_GLOBAL_INT;
+        }
+
+        mavlink::common::msg::SET_ATTITUDE_TARGET get_SET_ATTITUDE_TARGET()
+        {
+            return sp_SET_ATTITUDE_TARGET;
+        }
+
     
     private:
         ros::NodeHandle sp_nh;
@@ -215,6 +211,7 @@ class SetpointRawPlugin
             auto ang_vel_ned = ftf::transform_frame_ned_enu(ang_vel_enu);
             yaw_rate = ang_vel_ned.z();
 
+            // update sp_SET_POSITION_TARGET_LOCAL_NED
             set_position_target_local_ned(
                         req->header.stamp.toNSec() / 1000000,
                         req->coordinate_frame,
@@ -244,6 +241,7 @@ class SetpointRawPlugin
             auto ang_vel_ned = ftf::transform_frame_ned_enu(ang_vel_enu);
             yaw_rate = ang_vel_ned.z();
 
+            // update sp_SET_POSITION_TARGET_GLOBAL_INT
             set_position_target_global_int(
                         req->header.stamp.toNSec() / 1000000,
                         req->coordinate_frame,
@@ -290,6 +288,7 @@ class SetpointRawPlugin
             body_rate = ftf::transform_frame_baselink_aircraft(
                 ftf::to_eigen(req->body_rate));
 
+            // update sp_SET_ATTITUDE_TARGET
             set_attitude_target(
                         req->header.stamp.toNSec() / 1000000,
                         req->type_mask,
@@ -303,5 +302,5 @@ class SetpointRawPlugin
 
 };
 
-
+}
 }

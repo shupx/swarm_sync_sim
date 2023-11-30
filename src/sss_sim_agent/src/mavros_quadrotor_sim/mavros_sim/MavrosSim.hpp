@@ -1,5 +1,5 @@
 /**
- * @file mavros_sim.cpp
+ * @file MavrosSim.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Simulated mavros that receives ROS topics and transfer to the
  * quadrotor dynamics and broadcast quadrotor states to ROS topics.
@@ -14,5 +14,27 @@
  * All rights reserved.
  * 
  */
+ 
+
+#include <ros/ros.h>
+#include "plugins/setpoint_raw.cpp"
 
 
+
+namespace mavros_sim
+{
+
+class MavrosSim
+{
+    public:
+        MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+
+
+    private:
+        
+    
+
+
+};
+
+}
