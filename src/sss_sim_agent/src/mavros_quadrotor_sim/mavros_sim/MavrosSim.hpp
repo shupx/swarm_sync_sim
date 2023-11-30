@@ -29,11 +29,8 @@ class MavrosSim
     public:
         MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
-
     private:
         
-    
-
 
 };
 

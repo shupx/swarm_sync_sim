@@ -11,9 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp  # already installed with ros-noetic-desktop
   rospy  # already installed with ros-noetic-desktop
   std_msgs  # already installed with ros-noetic-desktop
-  mavros 
+  mavros # for mavros_sim mavros::ftf::
   mavros_msgs
-  eigen_conversions # already installed with ros-noetic-desktop
+  eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
 )
 
 #uncomment the following 4 lines to use the Eigen library

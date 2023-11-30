@@ -47,12 +47,10 @@ class SetpointRawPlugin :
 	private plugin::SetAttitudeTargetMixin<SetpointRawPlugin> 
 {
     public:
-        SetpointRawPlugin(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
-            : sp_nh(nh), sp_nh_private(nh_private, "setpoint_raw") // nodehandle modified by Peixuan Shu
+        SetpointRawPlugin()
+            : sp_nh("mavros/setpoint_raw"), sp_nh_private("~setpoint_raw") // nodehandle modified by Peixuan Shu
         {
             bool tf_listen;
-
-            std::cout << "SetpointRawPlugin" << std::endl;
 
             local_sub = sp_nh.subscribe("local", 10, &SetpointRawPlugin::local_cb, this);
             global_sub = sp_nh.subscribe("global", 10, &SetpointRawPlugin::global_cb, this);
@@ -63,7 +61,7 @@ class SetpointRawPlugin :
 
             // Set Thrust scaling in px4_config.yaml, setpoint_raw block.
             if (!sp_nh_private.getParam("thrust_scaling", thrust_scaling))  //sp_nh_private modified by Peixuan Shu
-            {   std::cout << thrust_scaling << std::endl;
+            {   
                 ROS_WARN_THROTTLE_NAMED(5, "setpoint_raw", "thrust_scaling parameter is unset. Attitude (and angular rate/thrust) setpoints will be ignored.");
                 thrust_scaling = -1.0;
             }
