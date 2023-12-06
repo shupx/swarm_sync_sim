@@ -35,8 +35,8 @@ catkin_package(
    INCLUDE_DIRS include
 )
 
-add_executable(sim_clock src/sim_clock.cpp
-                         src/TimeServer.cpp 
+add_executable(sim_clock src/sim_clock/sim_clock.cpp
+                         src/sim_clock/TimeServer.cpp 
                         )
 
 target_link_libraries(sim_clock
