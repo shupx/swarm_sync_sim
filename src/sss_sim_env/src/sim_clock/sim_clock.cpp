@@ -15,7 +15,7 @@
  */
 
 #include "ros/ros.h"
-#include "TimeServer.hpp"
+#include "sim_clock/TimeServer.hpp"
 
 
 int main(int argc, char **argv)

@@ -16,7 +16,7 @@
  */
 
 
-#include "TimeServer.hpp"
+#include "sim_clock/TimeServer.hpp"
 
 TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh),nh_private_(nh_private)
@@ -120,6 +120,7 @@ void TimeServer::try_update_clock()
 }
 
 
+/** Create a timeclient for each node thread that requires clock updating**/
 TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private): client_id_(id), time_server(obj), nh_(nh), nh_private_(nh_private)
 {
     has_new_request = false;

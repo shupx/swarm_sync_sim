@@ -49,17 +49,17 @@ add_library(AttitudeControl
 #               src/mavros_quadrotor_sim/mavros_sim/plugins/setpoint_raw.cpp
 #             )
 
-add_library(mavros_sim
+add_library(MavrosSim
             src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp
             # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_frame_conversions.cpp
             # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_quaternion_utils.cpp
           )
 
 # add MavrosSim.hpp header path for which use this lib
-target_include_directories(mavros_sim PUBLIC
+target_include_directories(MavrosSim PUBLIC
             src/mavros_quadrotor_sim/mavros_sim)
 
-target_link_libraries(mavros_sim
+target_link_libraries(MavrosSim
   # ${catkin_LIBRARIES} for libeigen_conversions.so from eigen_conversions ROS package
   # ${catkin_LIBRARIES} for libmavros.so from eigen_conversions ROS package
   ${catkin_LIBRARIES}
@@ -85,7 +85,7 @@ add_executable(mavros_quadrotor_sim
 
 target_link_libraries(mavros_quadrotor_sim
    ${catkin_LIBRARIES}
-   mavros_sim
+   MavrosSim
    quadrotor_dynamics
 )
 
