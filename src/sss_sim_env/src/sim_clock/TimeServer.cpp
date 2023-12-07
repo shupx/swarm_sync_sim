@@ -21,7 +21,7 @@
 TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh),nh_private_(nh_private)
 {
-    sim_time_pub_ = nh_.advertise<std_msgs::Time>("/sss_sim_time", 10);
+    sim_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/clock", 10);
     timeclient_register_service_ = nh_.advertiseService("/sss_timeclient_register",  &TimeServer::timeclient_register, this);
     timeclient_unregister_service_ = nh_.advertiseService("/sss_timeclient_unregister",  &TimeServer::timeclient_unregister, this);
 
@@ -46,6 +46,9 @@ bool TimeServer::timeclient_register(sss_sim_env::ClientRegister::Request& req,
     res.client_id = next_client_id_;
     res.success = true; 
 
+    //update time immediately
+    try_update_clock();
+
     return true;
 }
 
@@ -66,17 +69,19 @@ bool TimeServer::timeclient_unregister(sss_sim_env::ClientUnregister::Request& r
             clients_vector_.erase(clients_vector_.begin() + i);
             ROS_INFO("[TimeServer] Unregister time client %s",std::to_string(id).c_str());
             res.success = true; 
+            //update time immediately
+            try_update_clock();
             break;
         }
     }
     return true;
 }
 
-
-void TimeServer::update_time(int client_id)
+/** Check all timeclients and decide whether or not updating clock time **/
+void TimeServer::try_update_clock()
 {   
     ros::Time begin=ros::Time::now();  
-    ROS_INFO("[TimeServer] update_time called by time_client%s",std::to_string(next_client_id_).c_str());
+    ROS_INFO("[TimeServer] update_time called");
     bool all_client_has_new_request = true;
     ros::Time min_time_request = ros::Time(0.0);
     // search for minimum time request when all clients have new request
@@ -96,9 +101,9 @@ void TimeServer::update_time(int client_id)
     if (all_client_has_new_request == true){
         if (min_time_request > sim_time){
             sim_time = min_time_request;
-            std_msgs::Time msg;
-            msg.data = min_time_request;
-            sim_time_pub_.publish(msg);
+            rosgraph_msgs::Clock msg;
+            msg.clock = min_time_request;
+            sim_clock_pub_.publish(msg);
         }
         // set has_new_request = false for clients whose request_time is satisfied.
         for (int i=0; i<clients_vector_.size(); ++i)
@@ -119,18 +124,18 @@ TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::No
 {
     has_new_request = false;
     request_time = ros::Time(0.0); //0 seconds
-    update_time_request_sub_ = nh_.subscribe("/sss_time_client"+std::to_string(client_id_)+"/update_time_request", 1000, &TimeClient::cb_update_time_request, this, ros::TransportHints().tcpNoDelay());
+    update_clock_request_sub_ = nh_.subscribe("/sss_time_client"+std::to_string(client_id_)+"/update_clock_request", 1000, &TimeClient::cb_update_clock_request, this, ros::TransportHints().tcpNoDelay());
 }
 
 
-void TimeServer::TimeClient::cb_update_time_request(const std_msgs::Time::ConstPtr& msg)
+void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
 {
     // ROS_INFO("[TimeClient %s] Receive time request %ss %sns", std::to_string(client_id_).c_str(), std::to_string(request_time.sec).c_str(), std::to_string(request_time.nsec).c_str());
-    ros::Time new_request_time = msg->data;
+    ros::Time new_request_time = msg->clock;
     if (new_request_time > request_time){
-        request_time = msg->data;
+        request_time = new_request_time;
         has_new_request = true;
-        time_server->update_time(client_id_);
+        time_server->try_update_clock();
     }
     else{
         ROS_ERROR("[TimeClient %s] new time request %ss %sns can not be smaller than last request %ss %sns", std::to_string(client_id_).c_str(), std::to_string(new_request_time.sec).c_str(), std::to_string(new_request_time.nsec).c_str(), std::to_string(request_time.sec).c_str(), std::to_string(request_time.nsec).c_str());

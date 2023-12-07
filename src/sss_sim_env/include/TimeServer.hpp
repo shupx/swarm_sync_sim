@@ -18,7 +18,8 @@
 #ifndef __TIMESERVER__
 #define __TIMESERVER__
 #include <ros/ros.h>
-#include <std_msgs/Time.h>
+// #include <std_msgs/Time.h>
+#include <rosgraph_msgs/Clock.h>
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
@@ -28,7 +29,7 @@ class TimeServer
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
 
-        ros::Publisher sim_time_pub_;
+        ros::Publisher sim_clock_pub_;
         ros::ServiceServer timeclient_register_service_;
         ros::ServiceServer timeclient_unregister_service_;
 
@@ -38,9 +39,9 @@ class TimeServer
             private:
                 ros::NodeHandle nh_;
                 ros::NodeHandle nh_private_;
-                ros::Subscriber update_time_request_sub_;
+                ros::Subscriber update_clock_request_sub_;
                 TimeServer* time_server;
-                void cb_update_time_request(const std_msgs::Time::ConstPtr& msg);
+                void cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg);
             public:
                 int client_id_;
                 bool has_new_request;
@@ -57,7 +58,7 @@ class TimeServer
     
     public:
         TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
-        void update_time(int client_id);
+        void try_update_clock();
         ros::Time sim_time;
 };
 
