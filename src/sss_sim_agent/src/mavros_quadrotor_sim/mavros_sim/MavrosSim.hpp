@@ -30,6 +30,9 @@ class MavrosSim
         MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
     private:
+        ros::NodeHandle nh_;
+        ros::NodeHandle nh_private_;
+        std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin_;
         
 
 };

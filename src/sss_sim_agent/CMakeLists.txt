@@ -80,10 +80,10 @@ target_link_libraries(MavrosSim
 #    mavros_sim
 # )
 
-add_executable(mavros_quadrotor_sim 
-                  src/mavros_quadrotor_sim/mavros_quadrotor_sim.cpp)
+add_executable(mavros_quadrotor_sim_node
+                  src/mavros_quadrotor_sim/mavros_quadrotor_sim_node.cpp)
 
-target_link_libraries(mavros_quadrotor_sim
+target_link_libraries(mavros_quadrotor_sim_node
    ${catkin_LIBRARIES}
    MavrosSim
    quadrotor_dynamics

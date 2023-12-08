@@ -24,8 +24,13 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_private("~");
     ros::NodeHandle nh;
 
-    //create an object named time_server in heap rather than stack
-    TimeServer* time_server = new TimeServer(nh, nh_private); 
+    // TimeServer time_server(nh, nh_private);
+
+    // //create an object named time_server in heap rather than stack
+    // TimeServer* time_server = new TimeServer(nh, nh_private); 
+
+    //Use unique_ptr to auto-destory the object when exiting.
+    std::unique_ptr<TimeServer> time_server(new TimeServer(nh, nh_private));
 
     ros::spin();
     return 0;

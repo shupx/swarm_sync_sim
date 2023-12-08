@@ -21,6 +21,9 @@
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
+namespace sss_sim_env
+{
+
 class ClockUpdater
 {
     private:
@@ -41,9 +44,14 @@ class ClockUpdater
     public:
         ClockUpdater(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
         ~ClockUpdater();
+
+        /* Publish new time request */
         void request_clock_update(ros::Time new_time);
+
+        /* unregister from time server. Stop time request in the future */
+        bool unregister();
         
 };
 
-
+}
 #endif

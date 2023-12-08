@@ -24,12 +24,12 @@ namespace mavros_sim
 {
 
 MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : nh_(nh), nh_private_(nh_private)
 {
     /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
-    std_plugins::SetpointRawPlugin* setpoint_raw_plugin = new std_plugins::SetpointRawPlugin(); 
 
-    // Do not use unique_ptr, because it destroys when this function finishes, which leads to all ROS topics destroy as well.
-    // std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin(new std_plugins::SetpointRawPlugin(nh, nh_private));
+    // std_plugins::SetpointRawPlugin* setpoint_raw_plugin = new std_plugins::SetpointRawPlugin(); 
+    setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>();
 
 }
 
