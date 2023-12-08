@@ -31,11 +31,7 @@ generate_messages(
   std_msgs
 )
 
-# catkin_package(
-#    INCLUDE_DIRS include include/ClockUpdater
-#    LIBRARIES ClockUpdater
-# )
-
+# Output include directories and libraries for other package to use
 catkin_package(
    INCLUDE_DIRS include 
    LIBRARIES ClockUpdater
@@ -51,21 +47,26 @@ target_link_libraries(sim_clock
 
 add_library(ClockUpdater
             src/ClockUpdater/ClockUpdater.cpp
-            include/ClockUpdater/ClockUpdater.h
           )
 
 # add ClockUpdater.hpp header path for which use this lib
-# target_include_directories(ClockUpdater PUBLIC include/ClockUpdater)       
+# target_include_directories(ClockUpdater PUBLIC include/sss_sim_env)       
+
+
+
+#############
+## Install ##
+#############
 
 ## Mark executables and/or libraries for installation
-install(TARGETS ClockUpdater
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# install(TARGETS ClockUpdater
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
-## Mark cpp header files for installation      
-install(DIRECTORY include/ClockUpdater/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-)
+# ## Mark cpp header files for installation      
+# install(DIRECTORY include/sss_sim_env/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+# )
