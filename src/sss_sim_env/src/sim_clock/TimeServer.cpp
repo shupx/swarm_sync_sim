@@ -27,14 +27,6 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
     sim_time = ros::Time(0.0); //0 seconds
 
-    // rosgraph_msgs::Clock msg;
-    // msg.clock = sim_time;
-    // for (int i=0; i<1; ++i)
-    // {
-    //     sim_clock_pub_.publish(msg);
-    //     ros::WallDuration(0.5).sleep();
-    // }
-
     next_client_id_ = 0;
 
     // std::unique_ptr<TimeClient> real_time_client(new TimeClient(next_client_id_, this, nh_, nh_private_));
@@ -126,7 +118,7 @@ void TimeServer::try_update_clock()
             msg.clock = min_time_request;
             sim_clock_pub_.publish(msg);
 
-            ROS_INFO("[TimeServer] try_update_clock() publish %ss %sns to /clock", std::to_string(sim_time.sec).c_str(), std::to_string(sim_time.nsec).c_str());
+            ROS_INFO("[TimeServer] try_update_clock() publish %ss to /clock", std::to_string(sim_time.toSec()).c_str());
         }
         // set has_new_request = false for clients whose request_time is satisfied.
         for (int i=0; i<clients_vector_.size(); ++i)
@@ -154,18 +146,22 @@ TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::No
 
 void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
 {
-    ROS_INFO("[TimeClient %s] Receive time request %ss %sns", std::to_string(client_id_).c_str(), std::to_string(msg->clock.sec).c_str(), std::to_string(msg->clock.nsec).c_str());
+    ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
+
     ros::Time new_request_time = msg->clock;
-    if (new_request_time > request_time){
+    if (new_request_time > request_time)
+    {
         request_time = new_request_time;
         has_new_request = true;
         time_server->try_update_clock();
     }
-    else{
+    else if (new_request_time < request_time)
+    {
         request_time = new_request_time;
         has_new_request = true;
         time_server->try_update_clock();
-        ROS_WARN("[TimeClient %s] new time request %ss %sns can not be smaller than last request %ss %sns", std::to_string(client_id_).c_str(), std::to_string(new_request_time.sec).c_str(), std::to_string(new_request_time.nsec).c_str(), std::to_string(request_time.sec).c_str(), std::to_string(request_time.nsec).c_str());
+
+        ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
     }
 
 }

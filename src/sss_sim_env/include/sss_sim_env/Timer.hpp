@@ -17,40 +17,138 @@
 #ifndef __SSSTIMER__
 #define __SSSTIMER__
 #include <ros/ros.h>
+#include <boost/thread.hpp>
 #include "sss_sim_env/ClockUpdater.hpp"
 
 
 namespace sss_utils
 {
 
+/**
+ * \brief To Replace ros::Timer for swarm_sync_sim.
+ * If use_sim_time is true, it is a ros::Timer with request_clock_update every loop.
+ * If use_sim_time is false, it is just a normal ros::Timer.
+ */
 class Timer
 {
     private:
-        ros::NodeHandle nh_;
-        bool use_sim_time_;
+        /**
+         * \brief Implementation. Real function class. 
+         * Use Impl just for the convenience of overloading assignment constructor
+         * and copy constructor.
+         */
+        class Impl
+        {
+        public:
+            /* If use_sim_time is true, it creates a ros::Timer with request_clock_update every loop.
+            * If use_sim_time is false, it just creates a normal ros::Timer.
+            */
+            Impl(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart);
+            ~Impl();
 
-        /* callback_ + clock update in every loop */
-        void sim_timer_callback(const ros::TimerEvent &event);
+            bool hasStarted() const {return timer_.hasStarted();}
+            bool isValid() {return timer_.isValid();}
+            bool isValid() const {return timer_.hasStarted();}
+            bool hasPending() {return timer_.hasPending();}
+            void setPeriod(const ros::Duration& period, bool reset=true)
+            {timer_.setPeriod(period, reset);}
+
+            /* start timer and send the first clock request */
+            void start();
+            /* stop timer and unregister clock_updater_ */
+            void stop();
+
+            bool use_sim_time_;
+            ros::NodeHandle nh_;
+            ros::Timer timer_;
+
+            std::shared_ptr<ClockUpdater> clock_updater_;
+
+            ros::Duration period_;
+            ros::TimerCallback callback_;
+            bool oneshot_;
+            bool autostart_;
+
+            /**
+             * \brief callback_ + clock update in every loop 
+             */
+            void sim_timer_callback(const ros::TimerEvent &event);
+
+
+            bool kill_thread_;
+            boost::thread accelerate_timer_thread_;
+            /**
+             * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h for faster loop speed.
+             * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
+             * , where if use_sim_time is true, the timmer manager will block at least 
+             * for 1 ms even if the loop can be faster. This bug limits the timer loop 
+             * speed to less than 1000 Hz. With this fix, the real loop speed can be as 
+             * fast as it can be.
+             */
+            void AccelerateTimerThreadFunc();
+        };
+
+        typedef boost::shared_ptr<Impl> ImplPtr;
+        typedef boost::weak_ptr<Impl> ImplWPtr;
+        ImplPtr impl_;
 
     public:
-        Timer() {} // for Timer object initialize without params
-        ~Timer();
+        Timer() {} // Initialize timer object without params
+        ~Timer() {}
 
-        Timer(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart);
+        /* Overload copy constructor */
+        Timer(const Timer& rhs)
+        {
+            // boost::shared_ptr copy
+            impl_ = rhs.impl_;
+        }
 
-        /* Start timer if autostart is false */
-        void start();
+        /* Overload assignment constructor to copy constructor */
+        // "default" means the default copy constructor
+        Timer& operator=(const Timer& other) = default; 
 
-        ros::Timer timer_;
-        ros::Duration period_;
-        bool oneshot_;
-        bool autostart_;
 
-        std::shared_ptr<ClockUpdater> clock_updater_;
+        /* constructor */
+        Timer(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
+        {
+            impl_ = boost::make_shared<Impl>(period, callback, oneshot, autostart);
+        }
 
-        ros::TimerCallback callback_;
+        /* Mananul start timer if autostart is false.  Does nothing if the timer is already started.*/
+        void start()
+        {
+            impl_->start();
+        }
+
+        /**
+         * \brief Stop the timer.  Once this call returns, no more callbacks will be called.  
+         * Does nothing if the timer is already stopped.
+         */
+        void stop()      
+        {
+            impl_->stop();
+        }
+
+        /**
+         * \brief Returns whether or not the timer has any pending events to call.
+         */
+        bool hasPending()
+        {
+            return impl_->hasPending();
+        }
+
+        /**
+         * \brief Set the period of this timer
+         * \param reset Whether to reset the timer. If true, timer ignores elapsed time and next cb occurs at now()+period
+         */
+        void setPeriod(const ros::Duration& period, bool reset=true)
+        {
+            impl_->setPeriod(period, reset);
+        }
+        
+        bool isValid() { return impl_->isValid(); }
+        bool isValid() const { return impl_->isValid(); }
 };
-
 
 }
 #endif

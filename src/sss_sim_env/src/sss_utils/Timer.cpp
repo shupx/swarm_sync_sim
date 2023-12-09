@@ -21,27 +21,30 @@
 namespace sss_utils
 {
 
-Timer::Timer(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :period_(period), oneshot_(oneshot), autostart_(autostart)
+Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
+    :period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
-
-    callback_ = callback;
 
     /* If use_sim_time, create a clock_updater and ROS timer*/
     if (use_sim_time_)
     {
-        ROS_INFO("[sssTimer] use_sim_time is true. Init");
+        ROS_INFO("[sss_utils::Timer] use_sim_time is true. Init");
 
         clock_updater_ = std::make_shared<ClockUpdater>();
 
-        /*If use_sim_time, create a ROS timer with modified callback function */
-        timer_ = nh_.createTimer(period_, &Timer::sim_timer_callback, this, oneshot_, autostart_); 
+        /* If use_sim_time, create a ROS timer with modified callback function 
+        (add request_clock_update() each loop*/
+        timer_ = nh_.createTimer(period_, &Timer::Impl::sim_timer_callback, this, oneshot_, autostart_); 
 
         if (autostart_)
         {
             start();
         }
+
+        // launch a new thread to check /clock and update timer faster
+        kill_thread_ = false;
+        boost::thread accelerate_timer_thread_ = boost::thread(&Timer::Impl::AccelerateTimerThreadFunc,this);
     }
     else
     {
@@ -51,52 +54,90 @@ Timer::Timer(const ros::Duration &period, const ros::TimerCallback& callback, bo
 
 }
 
-Timer::~Timer()
+Timer::Impl::~Impl()
 {
+    stop();
 }
 
-void Timer::start()
+void Timer::Impl::AccelerateTimerThreadFunc()
 {
+    /**
+     * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) 
+     * to release timers_cond_ in timer_manager.h for faster loop speed.
+     * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
+     * , where if use_sim_time is true, the timmer manager will block at least 
+     * for 1 ms even if the loop can be faster. This bug limits the timer loop 
+     * speed to less than 1000 Hz. With this fix, the real loop speed can be as 
+     * fast as it can be.
+     */
     if (use_sim_time_)
     {
-        /* request clock update to start the first loop */
-        ros::Time start_time = ros::Time::now();
-        // while (ros::Time::now() < start_time + period_)
-        // {
-        //     clock_updater_->request_clock_update(start_time + period_);
-        //     ros::WallDuration(0.5).sleep();
-        // }
-        ros::WallDuration(0.5).sleep();
-        clock_updater_->request_clock_update(start_time + period_);
-
+        while (!kill_thread_)
+        {
+            static ros::Time last_time;
+            ros::Time time_now = ros::Time::now();
+            if (time_now != last_time)
+            {
+                // clock is updated. Try to update timer_manager for the next loop as well.
+                timer_.setPeriod(period_, false);
+                last_time = time_now;
+            }
+            /* This allows sim time to run up to 10x real-time even for very short timer periods.
+             * Sleep for 1 ms or (period_ / 10) s
+             * Inspired by https://github.com/ros/roscpp_core/blob/2951f0579a94955f5529d7f24bb1c8c7f0256451/rostime/src/time.cpp#L438 about ros::Duration::sleep() when use_sim_time is true
+             */
+            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/10);
+            ros::WallDuration(0,sleep_nsec).sleep();
+        }
     }
-
-    timer_.start();
 }
 
 /* callback_ + clock update in every loop */
-void Timer::sim_timer_callback(const ros::TimerEvent &event)
+void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
 {
-    ROS_INFO("sim_timer_callback");    
-
     // record the last loop real time
     static double last_time = 0.0;
 
     /* call the main callback function */
-    callback_(event);
+    callback_(event);  //empty
 
-    ROS_INFO("sim_timer_callback2");    
-
-    // /* request /clock to update for the next period*/
-    clock_updater_->request_clock_update(event.current_expected + period_);
-
-    ROS_INFO("sim_timer_callback3");    
+    /* request /clock to update for the next period*/
+    // TODO: repeat requesting in case of lose?
+    clock_updater_->request_clock_update(event.current_expected + period_);   //empty
 
     // print the real loop rate
     double time_now = ros::WallTime::now().toSec();
     double rate = 1.0 / (time_now - last_time);
     last_time = time_now;
-    ROS_INFO("cmdloop_cb rate: %s Hz", std::to_string(rate).c_str());    
+    ROS_INFO("[sss_utils::Timer] timer_callback rate: %s Hz", std::to_string(rate).c_str());    
+}
+
+void Timer::Impl::start()
+{
+    if (use_sim_time_)
+    {
+        /* request the first clock update to start the first loop */
+        ros::Time start_time = ros::Time::now();
+        while (ros::Time::now() < start_time + period_)
+        {
+            clock_updater_->request_clock_update(start_time + period_);
+            ros::WallDuration(0.5).sleep();
+        }
+    }
+
+    timer_.start();
+}
+
+void Timer::Impl::stop()
+{
+    if (use_sim_time_)
+    {
+        clock_updater_->unregister();
+        kill_thread_ = true;
+        accelerate_timer_thread_.join();
+    }
+
+    timer_.stop();
 }
 
 
