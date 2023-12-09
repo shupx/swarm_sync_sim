@@ -78,12 +78,13 @@ class Timer
             bool kill_thread_;
             boost::thread accelerate_timer_thread_;
             /**
-             * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h for faster loop speed.
+             * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) 
+             * to release timers_cond_ in timer_manager.h for faster loop speed.
              * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
              * , where if use_sim_time is true, the timmer manager will block at least 
              * for 1 ms even if the loop can be faster. This bug limits the timer loop 
-             * speed to less than 1000 Hz. With this fix, the real loop speed can be as 
-             * fast as it can be.
+             * speed to less than 1000 Hz. With this fix, the real loop speed can be 
+             * 20x faster than real speed.
              */
             void AccelerateTimerThreadFunc();
         };
