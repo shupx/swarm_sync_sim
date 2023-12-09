@@ -1,7 +1,7 @@
 /**
  * @file ClockUpdater.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Update sim clock. Utilized by other sim agent nodes.
+ * @brief Update sim clock. Utilized by other sim/real agent nodes.
  * 
  * Note: This program relies on 
  * 
@@ -21,7 +21,7 @@
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
-namespace sss_sim_env
+namespace sss_utils
 {
 
 class ClockUpdater
@@ -30,7 +30,6 @@ class ClockUpdater
         bool use_sim_time;
 
         ros::NodeHandle nh_;
-        ros::NodeHandle nh_private_;
 
         ros::ServiceClient register_client_;
         ros::ServiceClient unregister_client_;
@@ -42,7 +41,7 @@ class ClockUpdater
         void init();
     
     public:
-        ClockUpdater(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+        ClockUpdater();
         ~ClockUpdater();
 
         /* Publish new time request */

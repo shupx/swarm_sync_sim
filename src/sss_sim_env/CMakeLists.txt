@@ -34,7 +34,7 @@ generate_messages(
 # Output include directories and libraries for other package to use
 catkin_package(
    INCLUDE_DIRS include 
-   LIBRARIES ClockUpdater
+   LIBRARIES ClockUpdater sss_timer
 )
 
 add_executable(sim_clock src/sim_clock/sim_clock.cpp
@@ -46,13 +46,20 @@ target_link_libraries(sim_clock
 )
 
 add_library(ClockUpdater
-            src/ClockUpdater/ClockUpdater.cpp
+              src/sss_utils/ClockUpdater.cpp
           )
 
 # add ClockUpdater.hpp header path for which use this lib
 # target_include_directories(ClockUpdater PUBLIC include/sss_sim_env)       
 
+add_library(sss_timer
+              src/sss_utils/Timer.cpp
+          )
 
+target_link_libraries(sss_timer
+          ${catkin_LIBRARIES}
+          ClockUpdater
+       )
 
 #############
 ## Install ##

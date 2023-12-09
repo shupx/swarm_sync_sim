@@ -1,7 +1,7 @@
 /**
  * @file ClockUpdater.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Update sim clock. Utilized by other sim agent nodes.
+ * @brief Update sim clock. Utilized by other sim/real agent nodes.
  * 
  * Note: This program relies on 
  * 
@@ -17,11 +17,10 @@
 
 #include "sss_sim_env/ClockUpdater.hpp"
 
-namespace sss_sim_env
+namespace sss_utils
 {
 
-ClockUpdater::ClockUpdater(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
-    : nh_(nh),nh_private_(nh_private)
+ClockUpdater::ClockUpdater()
 {
     nh_.param<bool>("/use_sim_time", use_sim_time, false);
 
