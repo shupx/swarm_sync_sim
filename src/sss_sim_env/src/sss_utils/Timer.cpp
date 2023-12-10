@@ -22,7 +22,7 @@ namespace sss_utils
 {
 
 Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart)
+    :period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
@@ -31,7 +31,6 @@ Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callbac
     {
         ROS_INFO("[sss_utils::Timer] use_sim_time is true. Init");
 
-        clock_updater_ = std::make_shared<ClockUpdater>();
 
         /* If use_sim_time, create a ROS timer with modified callback function 
         (add request_clock_update() each loop*/
@@ -42,9 +41,6 @@ Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callbac
             start();
         }
 
-        // launch a new thread to check /clock and update timer faster
-        kill_thread_ = false;
-        boost::thread accelerate_timer_thread_ = boost::thread(&Timer::Impl::AccelerateTimerThreadFunc,this);
     }
     else
     {
@@ -114,35 +110,48 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
 
 void Timer::Impl::start()
 {
-    if (use_sim_time_)
+    if (!started_)
     {
-        /* request the first clock update to start the first loop */
+        if (use_sim_time_)
+        {
+            clock_updater_ = std::make_shared<ClockUpdater>();
 
-        // TODO: repeat request clock update if sim_clock has not received it ?
-        ros::Time start_time = ros::Time::now();
-        ros::WallDuration(0.5).sleep();
-        clock_updater_->request_clock_update(start_time + period_);
+            /* request the first clock update to start the first loop */
+            // TODO: repeat request clock update if sim_clock has not received it ?
+            ros::Time start_time = ros::Time::now();
+            ros::WallDuration(0.5).sleep();
+            clock_updater_->request_clock_update(start_time + period_);
 
-        // while (ros::Time::now() < start_time + period_)
-        // {
-        //     clock_updater_->request_clock_update(start_time + period_);
-        //     ros::WallDuration(0.5).sleep();
-        // }
+            // while (ros::Time::now() < start_time + period_)
+            // {
+            //     clock_updater_->request_clock_update(start_time + period_);
+            //     ros::WallDuration(0.5).sleep();
+            // }
+
+            /* Launch a new thread to check /clock and update timer faster */
+            kill_thread_ = false;
+            boost::thread accelerate_timer_thread_ = boost::thread(&Timer::Impl::AccelerateTimerThreadFunc,this);
+        }
+
+        timer_.start();
     }
-
-    timer_.start();
+    started_ = true;
 }
 
 void Timer::Impl::stop()
 {
-    if (use_sim_time_)
+    if (started_)
     {
-        clock_updater_->unregister();
-        kill_thread_ = true;
-        accelerate_timer_thread_.join();
-    }
+        if (use_sim_time_)
+        {
+            clock_updater_->unregister();
+            kill_thread_ = true;
+            accelerate_timer_thread_.join();
+        }
 
-    timer_.stop();
+        timer_.stop();
+    }
+    started_ = false;
 }
 
 

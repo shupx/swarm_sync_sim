@@ -1,0 +1,8 @@
+# Service for control sim clock
+
+bool proceed # true to proceed, false to pause
+
+float32 max_sim_speed # simulation speed ratio
+float32 ORIGINAL_SPEED=0 # keep original sim speed
+---
+bool success

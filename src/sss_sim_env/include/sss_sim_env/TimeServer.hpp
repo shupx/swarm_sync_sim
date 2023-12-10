@@ -22,20 +22,31 @@
 #include <rosgraph_msgs/Clock.h>
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
+#include "sss_sim_env/SimClockControl.h"
 
 class TimeServer
 {
     private:
+        bool is_sim_time_;
+        bool is_paused_;
+        bool auto_start_;
+        ros::Time init_time_;
+
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
 
         ros::Publisher sim_clock_pub_;
+        ros::ServiceServer clock_control_service_;
         ros::ServiceServer timeclient_register_service_;
         ros::ServiceServer timeclient_unregister_service_;
+        ros::WallTimer speed_regulator_timer_;
 
         int next_client_id_;
+        double speed_regulator_period_;
+        double max_speed_ratio_;
 
-        class TimeClient{
+        class TimeClient
+        {
             private:
                 ros::NodeHandle nh_;
                 ros::NodeHandle nh_private_;
@@ -51,15 +62,19 @@ class TimeServer
 
         std::vector<std::unique_ptr<TimeClient>> clients_vector_;
 
-        bool timeclient_register(sss_sim_env::ClientRegister::Request& req,
+        bool cb_clock_control(sss_sim_env::SimClockControl::Request& req,
+                                sss_sim_env::SimClockControl::Response& res);        
+        bool cb_timeclient_register(sss_sim_env::ClientRegister::Request& req,
                                 sss_sim_env::ClientRegister::Response& res);
-        bool timeclient_unregister(sss_sim_env::ClientUnregister::Request& req,
+        bool cb_timeclient_unregister(sss_sim_env::ClientUnregister::Request& req,
                                 sss_sim_env::ClientUnregister::Response& res);
+        
+        void cb_speed_regulator_timer(const ros::WallTimerEvent &event);
     
     public:
         TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
         void try_update_clock();
-        ros::Time sim_time;
+        ros::Time sim_time_;
 };
 
 

@@ -69,6 +69,8 @@ class Timer
             bool oneshot_;
             bool autostart_;
 
+            bool started_;
+
             /**
              * \brief callback_ + clock update in every loop 
              */

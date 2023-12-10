@@ -24,6 +24,7 @@ add_service_files(
   FILES
   ClientRegister.srv
   ClientUnregister.srv
+  SimClockControl.srv
 )
 
 generate_messages(
