@@ -6,6 +6,7 @@
                 "/usr/include/**",
                 "./src/sss_sim_env/include/",
                 "./src/sss_sim_agent/include/",
+                "./src/sss_sim_agent/src/mavros_quadrotor_sim/",
                 "./devel/include/"
             ],
             "name":"ROS",

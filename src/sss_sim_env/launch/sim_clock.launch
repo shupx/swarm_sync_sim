@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="use_sim_time" default="false"/>
+    <arg name="use_sim_time" default="true"/>
     
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
     
     <node pkg="sss_sim_env" type="sim_clock" name="sim_clock" output="screen">
         <param name="max_speed_ratio" value="10"/>
-        <param name="auto_start" value="true"/>
+        <param name="auto_start" value="false"/>
     </node>
 
 </launch>

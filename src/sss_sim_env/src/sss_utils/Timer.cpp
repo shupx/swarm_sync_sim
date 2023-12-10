@@ -74,7 +74,8 @@ void Timer::Impl::AccelerateTimerThreadFunc()
             ros::Time time_now = ros::Time::now();
             if (time_now != last_time)
             {
-                // clock is updated. Try to update timer_manager for the next loop as well.
+                /* Clock is updated. Try to update timer_manager for the next loop as well. 
+                call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h */
                 timer_.setPeriod(period_, false);
                 last_time = time_now;
             }

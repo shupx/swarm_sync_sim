@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_sim_time" default="true"/>
+    
+    <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+    
+    <node pkg="sss_sim_agent" type="mavros_quadrotor_sim_node" name="mavros_quadrotor_sim_node1" output="screen">
+    </node>
+
+</launch>
