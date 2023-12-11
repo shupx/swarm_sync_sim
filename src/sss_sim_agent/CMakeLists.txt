@@ -25,7 +25,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 include_directories(
   include
-  src/mavros_quadrotor_sim/px4_sitl/px4_lib # for px4_sitl build
+  src/mavros_quadrotor_sim/px4_modules/px4_lib # for px4_modules build
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -38,8 +38,8 @@ add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
 
 add_library(PositionControl
-              src/mavros_quadrotor_sim/px4_sitl/PositionControl/ControlMath.cpp
-              src/mavros_quadrotor_sim/px4_sitl/PositionControl/PositionControl.cpp
+              src/mavros_quadrotor_sim/px4_modules/PositionControl/ControlMath.cpp
+              src/mavros_quadrotor_sim/px4_modules/PositionControl/PositionControl.cpp
               )
 
 # add *.hpp header path for which use this lib
@@ -48,13 +48,23 @@ target_include_directories(PositionControl PUBLIC
 
 
 add_library(AttitudeControl
-              src/mavros_quadrotor_sim/px4_sitl/AttitudeControl/AttitudeControl.cpp
+              src/mavros_quadrotor_sim/px4_modules/AttitudeControl/AttitudeControl.cpp
               )
 
 # add *.hpp header path for which use this lib
 target_include_directories(AttitudeControl PUBLIC
             src/mavros_quadrotor_sim)
 
+add_library(px4_sitl
+              src/mavros_quadrotor_sim/px4_sitl.cpp
+            )
+
+# link libraries for this lib
+target_link_libraries(px4_sitl
+    ${catkin_LIBRARIES}
+    AttitudeControl
+    PositionControl
+)
 
 add_library(MavrosSim
             src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp
@@ -77,11 +87,11 @@ target_link_libraries(MavrosSim
 add_executable(mavros_quadrotor_sim_node
                   src/mavros_quadrotor_sim/mavros_quadrotor_sim_node.cpp)
 
+# link libraries for this lib
 target_link_libraries(mavros_quadrotor_sim_node
    ${catkin_LIBRARIES}
    quadrotor_dynamics
-   AttitudeControl
-   PositionControl
+   px4_sitl
    MavrosSim
 )
 

@@ -22,8 +22,7 @@
 #include <sss_sim_env/sss_utils.hpp>
 
 #include "mavros_sim/MavrosSim.hpp"
-#include "px4_sitl/AttitudeControl/AttitudeControl.hpp"
-#include "px4_sitl/PositionControl/PositionControl.hpp"
+#include "mavros_quadrotor_sim/px4_sitl.hpp"
 #include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
 
 

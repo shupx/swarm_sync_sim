@@ -131,10 +131,10 @@ void Dynamics::setPos(const double& pos_x, const double& pos_y, const double& po
     state_.pos << pos_x, pos_y, pos_z;
 }
 
-void Dynamics::setInput(const Eigen::Vector3d& omega, const double& thrust)
+void Dynamics::setInput(const Dynamics::Input &input)
 {
-    omega_ = omega;
-    thrust_ = thrust;
+    omega_ = input.omega;
+    thrust_ = input.thrust;
 }
 
 void Dynamics::setSimStep(const double& dt)

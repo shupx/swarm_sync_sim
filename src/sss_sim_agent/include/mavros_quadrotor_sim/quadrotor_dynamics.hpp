@@ -40,12 +40,18 @@ class Dynamics
       // Eigen::Array4d  motor_rpm;
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     };
+    
+    struct Input
+    {
+      Eigen::Vector3d omega;
+      double thrust;
+    };
 
     Dynamics();
 
     void setState(const Dynamics::State &state);
     void setPos(const double& pos_x, const double& pos_y, const double& pos_z);
-    void setInput(const Eigen::Vector3d& omega, const double& thrust);
+    void setInput(const Dynamics::Input &input);
     void setSimStep(const double& dt);
     void setMass(const double& m);
     void setGravityAcc(const double& g);
