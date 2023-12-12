@@ -21,4 +21,61 @@
 namespace MavrosQuadSimulator
 {
 
+PX4SITL::PX4SITL()
+{
+    
+}
+
+
+void PX4SITL::get_px4_param(float& output, const px4::params& param)
+{
+        px4::param_info_s param_info = px4::parameters[int(param)];
+        switch (px4::parameters_type[int(param)])
+        {
+            case PARAM_TYPE_UNKNOWN:
+            {
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type can not be unknown (0)");
+                break; 
+            }
+            case PARAM_TYPE_INT32:
+            {
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is int. But the output is float");
+                break; 
+            }
+            case PARAM_TYPE_FLOAT:
+            {
+                output = param_info.val.f;
+                break; 
+            }
+            default:
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is unknown");
+                break;
+        };
+}
+
+void PX4SITL::get_px4_param(int& output, const px4::params& param)
+{
+        px4::param_info_s param_info = px4::parameters[int(param)];
+        switch (px4::parameters_type[int(param)])
+        {
+            case PARAM_TYPE_UNKNOWN:
+            {
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type can not be unknown (0)");
+                break; 
+            }
+            case PARAM_TYPE_INT32:
+            {
+                output = param_info.val.i;
+                break; 
+            }
+            case PARAM_TYPE_FLOAT:
+            {
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is float. But the output is int");
+                break; 
+            }
+            default:
+                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is unknown");
+                break;
+        };
+}
 }

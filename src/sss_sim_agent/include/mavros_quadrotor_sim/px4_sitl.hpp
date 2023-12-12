@@ -20,6 +20,8 @@
 #define __PX4_SITL_H__
 
 #include <ros/ros.h>
+#include <iostream>
+#include <stdexcept>
 
 // #include "px4_modules/px4_lib/px4_platform_common/defines.h"
 #include "px4_modules/px4_lib/parameters/px4_parameters.hpp"
@@ -38,38 +40,18 @@ namespace MavrosQuadSimulator
  */
 class PX4SITL
 {
-    public:
-        PX4SITL()
-        {
-            px4::params param = px4::params::MPC_XY_P;
-            px4::param_info_s param_info = px4::parameters[int(param)];
-            switch (px4::parameters_type[int(param)])
-            {
-                case 0:
-                    break; 
-                case 1:
-                {
-                    int32_t a = param_info.val.i;
-                    break; 
-                }
-                case 2:
-                {
-                    float a = param_info.val.f;
-                    break; 
-                }
-                default:
-                    break;
-            };
-        };
+public:
+    PX4SITL();
 
-    private:
-        std::shared_ptr<PositionControl> pos_ctrl_; 
-        std::shared_ptr<AttitudeControl> Att_ctrl_; 
+    void get_px4_param(float& output, const px4::params& param);
+    void get_px4_param(int& output, const px4::params& param);
 
-
-
-
+private:
+    std::shared_ptr<PositionControl> pos_ctrl_; 
+    std::shared_ptr<AttitudeControl> Att_ctrl_; 
 };
+
+
 
 }
 
