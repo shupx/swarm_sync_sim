@@ -29,8 +29,8 @@ PX4SITL::PX4SITL()
 
 void PX4SITL::get_px4_param(float& output, const px4::params& param)
 {
-        px4::param_info_s param_info = px4::parameters[int(param)];
-        switch (px4::parameters_type[int(param)])
+        param_info_s param_info = px4::parameters[int(param)];
+        switch (px4::parameters_type[(int) param])
         {
             case PARAM_TYPE_UNKNOWN:
             {
@@ -55,8 +55,8 @@ void PX4SITL::get_px4_param(float& output, const px4::params& param)
 
 void PX4SITL::get_px4_param(int& output, const px4::params& param)
 {
-        px4::param_info_s param_info = px4::parameters[int(param)];
-        switch (px4::parameters_type[int(param)])
+        param_info_s param_info = px4::parameters[int(param)];
+        switch (px4::parameters_type[(int) param])
         {
             case PARAM_TYPE_UNKNOWN:
             {
