@@ -37,6 +37,8 @@ namespace MavrosQuadSimulator
 
 Agent::Agent()
 {
+    px4sitl_ = std::make_shared<PX4SITL>();
+
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {

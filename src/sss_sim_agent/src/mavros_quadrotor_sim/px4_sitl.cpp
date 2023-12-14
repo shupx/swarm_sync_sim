@@ -23,7 +23,7 @@ namespace MavrosQuadSimulator
 
 PX4SITL::PX4SITL()
 {
-    
+    // std::cout << "_param_mpc_use_hte: " << _param_mpc_use_hte.get() << std::endl;
 }
 
 

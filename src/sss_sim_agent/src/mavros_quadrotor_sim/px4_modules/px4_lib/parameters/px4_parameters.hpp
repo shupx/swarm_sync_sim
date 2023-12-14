@@ -1,5 +1,6 @@
 /**
  * Copied from px4_sitl_default build.
+ * Modified by Peixuan Shu
  * Peixuan Shu
  */
 
@@ -1609,7 +1610,8 @@ enum class params : uint16_t {
 
 };
 
-static constexpr param_info_s parameters[] = {
+// static constexpr param_info_s parameters[] = {
+static param_info_s parameters[] = { // modified by Peixuan Shu
 
 	{
 		"ASPD_BETA_GATE",

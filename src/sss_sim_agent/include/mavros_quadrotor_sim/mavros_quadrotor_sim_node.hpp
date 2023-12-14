@@ -40,6 +40,7 @@ class Agent
         bool is_sim_time_;
         ros::NodeHandle nh_;
 
+        std::shared_ptr<PX4SITL> px4sitl_;
         std::shared_ptr<Dynamics> dynamics_;
 
         double mainloop_period_;

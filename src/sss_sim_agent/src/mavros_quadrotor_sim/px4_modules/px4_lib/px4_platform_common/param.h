@@ -114,7 +114,6 @@ param_type_t param_type(param_t param)
 
 /**
  * Copy the value of a parameter. 
- * Get the param from px4::parameters defined in <parameters/px4_parameters.hpp>
  *
  * @param param		A handle returned by param_find or passed by param_foreach.
  * @param val		Where to return the value, assumed to point to suitable storage for the parameter type.
@@ -122,7 +121,13 @@ param_type_t param_type(param_t param)
  */
 int		param_get(param_t param, void *val)
 {
-	//Redefined from <parameters/param.cpp>
+	// Redefined from <parameters/param.cpp>
+	// Get the param from px4::parameters defined in <parameters/px4_parameters.hpp>
+	if (!handle_in_range(param)) {
+		// PX4_ERR("get: param %" PRId16 " invalid", param);
+		return PX4_ERROR;
+	}
+
 	int result = PX4_ERROR;
 	if (val) {
 		// if parameter is unchanged (static default value) copy immediately and avoid locking
@@ -198,7 +203,7 @@ inline static param_t param_handle(px4::params p)
 // that tree.
 #define DEFINE_PARAMETERS(...) \
 	APPLY_ALL(_DEFINE_SINGLE_PARAMETER, __VA_ARGS__) \
-	// _DEFINE_PARAMETER_UPDATE_METHOD(__VA_ARGS__) // comment out by Peixuan Shu
+	_DEFINE_PARAMETER_UPDATE_METHOD(__VA_ARGS__)
 
 
 #define _DEFINE_PARAMETER_UPDATE_METHOD_CUSTOM_PARENT(parent_class, ...) \

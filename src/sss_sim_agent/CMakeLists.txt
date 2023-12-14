@@ -37,22 +37,23 @@ catkin_package(
 add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
 
-add_library(PositionControl
-              src/mavros_quadrotor_sim/px4_modules/PositionControl/ControlMath.cpp
-              src/mavros_quadrotor_sim/px4_modules/PositionControl/PositionControl.cpp
+add_library(mc_pos_control
+              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/ControlMath.cpp
+              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/PositionControl.cpp
+              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/MulticopterPositionControl.cpp
               )
 
 # add *.hpp header path for which use this lib
-target_include_directories(PositionControl PUBLIC
+target_include_directories(mc_pos_control PUBLIC
             src/mavros_quadrotor_sim)
 
 
-add_library(AttitudeControl
-              src/mavros_quadrotor_sim/px4_modules/AttitudeControl/AttitudeControl.cpp
+add_library(mc_att_control
+              src/mavros_quadrotor_sim/px4_modules/mc_att_control/AttitudeControl/AttitudeControl.cpp
               )
 
 # add *.hpp header path for which use this lib
-target_include_directories(AttitudeControl PUBLIC
+target_include_directories(mc_att_control PUBLIC
             src/mavros_quadrotor_sim)
 
 add_library(px4_sitl
@@ -62,8 +63,8 @@ add_library(px4_sitl
 # link libraries for this lib
 target_link_libraries(px4_sitl
     ${catkin_LIBRARIES}
-    AttitudeControl
-    PositionControl
+    mc_att_control
+    mc_pos_control
 )
 
 add_library(MavrosSim
