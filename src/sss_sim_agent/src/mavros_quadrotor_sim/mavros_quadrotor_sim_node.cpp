@@ -60,7 +60,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
     double next_time = ros::Time::now().toSec() + mainloop_period_;
     if (next_time < last_time)
     {
-        ROS_ERROR("[sim Agent] The next_time %ss should not be smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(last_time).c_str());
+        ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(last_time).c_str());
     }
 
     /* Dynamics step forward (ode integrate the numerical model) */
