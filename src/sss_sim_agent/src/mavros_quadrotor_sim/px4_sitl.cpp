@@ -4,7 +4,7 @@
  * @brief PX4 main function. Communicate with mavros and dynamics.
  * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  * 
- * Note: This program relies on mavlink, px4_modules, quadrotor_dynamics
+ * Note: This program relies on mavlink, px4_modules
  * 
  * @version 1.0
  * @date 2023-12-11
