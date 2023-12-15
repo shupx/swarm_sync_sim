@@ -34,11 +34,13 @@ namespace MavrosQuadSimulator
 class Agent
 {
     public:
-        Agent();
+        Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
     
     private:
         bool is_sim_time_;
+
         ros::NodeHandle nh_;
+        ros::NodeHandle nh_private_;
 
         std::shared_ptr<PX4SITL> px4sitl_;
         std::shared_ptr<Dynamics> dynamics_;

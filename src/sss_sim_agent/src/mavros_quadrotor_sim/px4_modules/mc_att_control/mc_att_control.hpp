@@ -33,20 +33,20 @@
 
 #pragma once
 
-#include <lib/mixer/MixerBase/Mixer.hpp> // Airmode
+// #include <lib/mixer/MixerBase/Mixer.hpp> // Airmode
 #include <matrix/matrix/math.hpp>
-#include <perf/perf_counter.h>
-#include <px4_platform_common/px4_config.h>
+// #include <perf/perf_counter.h>
+// #include <px4_platform_common/px4_config.h>
 #include <px4_platform_common/defines.h>
-#include <px4_platform_common/module.h>
+// #include <px4_platform_common/module.h>
 #include <px4_platform_common/module_params.h>
-#include <px4_platform_common/posix.h>
-#include <px4_platform_common/px4_work_queue/WorkItem.hpp>
-#include <uORB/Publication.hpp>
-#include <uORB/Subscription.hpp>
-#include <uORB/SubscriptionCallback.hpp>
+// #include <px4_platform_common/posix.h>
+// #include <px4_platform_common/px4_work_queue/WorkItem.hpp>
+// #include <uORB/Publication.hpp>
+// #include <uORB/Subscription.hpp>
+// #include <uORB/SubscriptionCallback.hpp>
 #include <uORB/topics/manual_control_setpoint.h>
-#include <uORB/topics/parameter_update.h>
+// #include <uORB/topics/parameter_update.h>
 #include <uORB/topics/autotune_attitude_control_status.h>
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
@@ -54,38 +54,43 @@
 #include <uORB/topics/vehicle_rates_setpoint.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vehicle_land_detected.h>
-#include <vtol_att_control/vtol_type.h>
-#include <lib/mathlib/math/filter/AlphaFilter.hpp>
+// #include <vtol_att_control/vtol_type.h>
+#include <mathlib/math/filter/AlphaFilter.hpp>
 
-#include <AttitudeControl.hpp>
+#include "AttitudeControl/AttitudeControl.hpp"
+
+#include <uORB/uORB_sim.hpp> // added by Peixuan Shu
+#include <drivers/drv_hrt.h> // added by Peixuan Shu
 
 using namespace time_literals;
 
-/**
- * Multicopter attitude control app start / stop handling function
- */
-extern "C" __EXPORT int mc_att_control_main(int argc, char *argv[]);
+// /**
+//  * Multicopter attitude control app start / stop handling function
+//  */
+// extern "C" __EXPORT int mc_att_control_main(int argc, char *argv[]);
 
-class MulticopterAttitudeControl : public ModuleBase<MulticopterAttitudeControl>, public ModuleParams,
-	public px4::WorkItem
+class MulticopterAttitudeControl : /*public ModuleBase<MulticopterAttitudeControl>,*/ public ModuleParams/*,
+	public px4::WorkItem*/
 {
 public:
 	MulticopterAttitudeControl(bool vtol = false);
-	~MulticopterAttitudeControl() override;
+	~MulticopterAttitudeControl();
 
-	/** @see ModuleBase */
-	static int task_spawn(int argc, char *argv[]);
+	// /** @see ModuleBase */
+	// static int task_spawn(int argc, char *argv[]);
 
-	/** @see ModuleBase */
-	static int custom_command(int argc, char *argv[]);
+	// /** @see ModuleBase */
+	// static int custom_command(int argc, char *argv[]);
 
-	/** @see ModuleBase */
-	static int print_usage(const char *reason = nullptr);
+	// /** @see ModuleBase */
+	// static int print_usage(const char *reason = nullptr);
 
-	bool init();
+	bool init(); 
+
+	void Run(); // added by Peixuan Shu	
 
 private:
-	void Run() override;
+	// void Run(); // commented out by Peixuan Shu
 
 	/**
 	 * initialize some vectors/matrices from parameters
@@ -101,24 +106,38 @@ private:
 
 	AttitudeControl _attitude_control; ///< class for attitude control calculations
 
-	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
+	// uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
 
-	uORB::Subscription _vehicle_attitude_setpoint_sub{ORB_ID(vehicle_attitude_setpoint)};
-	uORB::Subscription _v_control_mode_sub{ORB_ID(vehicle_control_mode)};		/**< vehicle control mode subscription */
-	uORB::Subscription _autotune_attitude_control_status_sub{ORB_ID(autotune_attitude_control_status)};
-	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};	/**< manual control setpoint subscription */
-	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};			/**< vehicle status subscription */
-	uORB::Subscription _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};	/**< vehicle land detected subscription */
+	// uORB::Subscription _vehicle_attitude_setpoint_sub{ORB_ID(vehicle_attitude_setpoint)};
+	// uORB::Subscription _v_control_mode_sub{ORB_ID(vehicle_control_mode)};		/**< vehicle control mode subscription */
+	// uORB::Subscription _autotune_attitude_control_status_sub{ORB_ID(autotune_attitude_control_status)};
+	// uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};	/**< manual control setpoint subscription */
+	// uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};			/**< vehicle status subscription */
+	// uORB::Subscription _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};	/**< vehicle land detected subscription */
 
-	uORB::SubscriptionCallbackWorkItem _vehicle_attitude_sub{this, ORB_ID(vehicle_attitude)};
+	// uORB::SubscriptionCallbackWorkItem _vehicle_attitude_sub{this, ORB_ID(vehicle_attitude)};
 
-	uORB::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{ORB_ID(vehicle_rates_setpoint)};			/**< rate setpoint publication */
-	uORB::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub;
+	// uORB::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{ORB_ID(vehicle_rates_setpoint)};			/**< rate setpoint publication */
+	// uORB::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub;
+
+
+	uORB_sim::Subscription<vehicle_attitude_setpoint_s> _vehicle_attitude_setpoint_sub{uORB_sim::vehicle_attitude_setpoint};
+	uORB_sim::Subscription<vehicle_control_mode_s> _v_control_mode_sub{uORB_sim::vehicle_control_mode};		/**< vehicle control mode subscription */
+	uORB_sim::Subscription<autotune_attitude_control_status_s> _autotune_attitude_control_status_sub{uORB_sim::autotune_attitude_control_status};
+	uORB_sim::Subscription<manual_control_setpoint_s> _manual_control_setpoint_sub{uORB_sim::manual_control_setpoint};	/**< manual control setpoint subscription */
+	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{uORB_sim::vehicle_status};			/**< vehicle status subscription */
+	uORB_sim::Subscription<vehicle_land_detected_s> _vehicle_land_detected_sub{uORB_sim::vehicle_land_detected};	/**< vehicle land detected subscription */
+
+	uORB_sim::Subscription<vehicle_attitude_s> _vehicle_attitude_sub{uORB_sim::vehicle_attitude};
+
+	uORB_sim::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{uORB_sim::vehicle_rates_setpoint};			/**< rate setpoint publication */
+	uORB_sim::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub{uORB_sim::vehicle_attitude_setpoint}; //for manual stick input
+
 
 	struct manual_control_setpoint_s	_manual_control_setpoint {};	/**< manual control setpoint */
 	struct vehicle_control_mode_s		_v_control_mode {};	/**< vehicle control mode */
 
-	perf_counter_t	_loop_perf;			/**< loop duration performance counter */
+	// perf_counter_t	_loop_perf;			/**< loop duration performance counter */
 
 	matrix::Vector3f _thrust_setpoint_body; ///< body frame 3D thrust vector
 

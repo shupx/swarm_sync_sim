@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_private("~");
 
     //Use unique_ptr to auto-destory the object when exiting.
-    std::unique_ptr<Agent> agent(new Agent());
+    std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
 
     ros::spin();
     return 0;
@@ -35,9 +35,10 @@ int main(int argc, char **argv)
 namespace MavrosQuadSimulator
 {
 
-Agent::Agent()
+Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : nh_(nh), nh_private_(nh_private)
 {
-    px4sitl_ = std::make_shared<PX4SITL>();
+    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_);
 
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)

@@ -45,26 +45,33 @@
 // #include <px4_platform_common/events.h>
 #include "PositionControl/ControlMath.hpp"
 
+/************* Added by Peixuan Shu **********/
 #ifndef hrt_absolute_time
 # define hrt_absolute_time() (0)
 #endif
+
+#ifndef PX4_WARN
+#include <iostream> // added by Peixuan Shu
+#define PX4_WARN(x) std::cout << #x << std::endl
+#endif
+/********************************************/
 
 using namespace matrix;
 
 MulticopterPositionControl::MulticopterPositionControl(bool vtol) :
 	// SuperBlock(nullptr, "MPC"),
-	ModuleParams(nullptr),
-	// ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
-	// _vehicle_attitude_setpoint_pub(vtol ? ORB_ID(mc_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),
-	// _vel_x_deriv(this, "VELD"),
-	// _vel_y_deriv(this, "VELD"),
-	// _vel_z_deriv(this, "VELD")
+	ModuleParams(nullptr)/*,
+	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
+	_vehicle_attitude_setpoint_pub(vtol ? ORB_ID(mc_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),
+	_vel_x_deriv(this, "VELD"),
+	_vel_y_deriv(this, "VELD"),
+	_vel_z_deriv(this, "VELD")*/
 {
 	parameters_update(true);
-	// _failsafe_land_hysteresis.set_hysteresis_time_from(false, LOITER_TIME_BEFORE_DESCEND);
+	_failsafe_land_hysteresis.set_hysteresis_time_from(false, LOITER_TIME_BEFORE_DESCEND);
 	_tilt_limit_slew_rate.setSlewRate(.2f);
 	reset_setpoint_to_nan(_setpoint);
-	// _takeoff_status_pub.advertise();
+	_takeoff_status_pub.advertise();
 }
 
 MulticopterPositionControl::~MulticopterPositionControl()
@@ -336,13 +343,14 @@ void MulticopterPositionControl::Run()
 		_vehicle_land_detected_sub.update(&_vehicle_land_detected);
 
 		if (_param_mpc_use_hte.get()) {
-			hover_thrust_estimate_s hte;
+			// hover_thrust_estimate_s hte;
 
-			if (_hover_thrust_estimate_sub.update(&hte)) {
-				if (hte.valid) {
-					_control.updateHoverThrust(hte.hover_thrust);
-				}
-			}
+			// if (_hover_thrust_estimate_sub.update(&hte)) {
+			// 	if (hte.valid) {
+			// 		_control.updateHoverThrust(hte.hover_thrust);
+			// 	}
+			// }
+			_control.updateHoverThrust(_param_mpc_thr_hover.get()); // added by Peixuan Shu
 		}
 
 		PositionControlStates states{set_vehicle_states(local_pos)};
@@ -388,7 +396,7 @@ void MulticopterPositionControl::Run()
 			if (_vehicle_control_mode.flag_control_offboard_enabled) {
 
 				bool want_takeoff = _vehicle_control_mode.flag_armed && _vehicle_land_detected.landed
-						    && hrt_elapsed_time(&_setpoint.timestamp) < 1_s;
+						    /*&& hrt_elapsed_time(&_setpoint.timestamp) < 1_s*/;
 
 				if (want_takeoff && PX4_ISFINITE(_setpoint.z)
 				    && (_setpoint.z < states.position(2))) {
@@ -544,7 +552,7 @@ void MulticopterPositionControl::Run()
 		_heading_reset_counter = local_pos.heading_reset_counter;
 	}
 
-	perf_end(_cycle_perf);
+	// perf_end(_cycle_perf);
 }
 
 void MulticopterPositionControl::failsafe(const hrt_abstime &now, vehicle_local_position_setpoint_s &setpoint,
@@ -603,6 +611,7 @@ void MulticopterPositionControl::reset_setpoint_to_nan(vehicle_local_position_se
 	setpoint.thrust[0] = setpoint.thrust[1] = setpoint.thrust[2] = NAN;
 }
 
+/*
 int MulticopterPositionControl::task_spawn(int argc, char *argv[])
 {
 	bool vtol = false;
@@ -633,6 +642,7 @@ int MulticopterPositionControl::task_spawn(int argc, char *argv[])
 
 	return PX4_ERROR;
 }
+
 
 int MulticopterPositionControl::custom_command(int argc, char *argv[])
 {
@@ -668,3 +678,4 @@ extern "C" __EXPORT int mc_pos_control_main(int argc, char *argv[])
 {
 	return MulticopterPositionControl::main(argc, argv);
 }
+ */

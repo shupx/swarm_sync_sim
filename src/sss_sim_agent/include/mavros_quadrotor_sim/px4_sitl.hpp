@@ -2,7 +2,7 @@
  * @file px4_sitl.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief PX4 main function. Communicate with mavros and dynamics.
- * Mavros <---> PX4 <---> Quadrotor Dynamics
+ * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  * 
  * Note: This program relies on mavlink, px4_modules, quadrotor_dynamics
  * 
@@ -20,16 +20,14 @@
 #define __PX4_SITL_H__
 
 #include <ros/ros.h>
+#include <iostream> // for std::cout, std::endl
+#include <memory>  // for std::shared_ptr
+
 #include <mavlink/v2.0/common/common.hpp>
-#include <iostream>
-#include <stdexcept>
 
-#include "px4_modules/px4_lib/px4_platform_common/param.h"
-
-// #include "px4_modules/AttitudeControl/AttitudeControl.hpp"
-// #include "px4_modules/PositionControl/PositionControl.hpp"
-
-#include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
+#include <parameters/px4_parameters.hpp> // store all px4 parameters
+#include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
+#include "px4_modules/mc_att_control/mc_att_control.hpp"
 
 
 
@@ -38,19 +36,38 @@ namespace MavrosQuadSimulator
 
 /**
  * \brief PX4 flight stack simulation. Communicate with mavros and dynamics.
- * Mavros <---> PX4 <---> Quadrotor Dynamics
+ * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  */
 class PX4SITL
 {
 public:
-    PX4SITL();
+    PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
-    void get_px4_param(float& output, const px4::params& param);
-    void get_px4_param(int& output, const px4::params& param);
+    /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/    
+    void load_px4_params_from_ros_params();
+
+    /* Run pos and att controller to calculate control output */
+    void RunController();
+
+    /* Get px4 params from px4::parameters */
+    template <px4::params p>
+    void get_px4_param(float& output);
+
+    /* Get px4 params from px4::parameters */
+    template <px4::params p>
+    void get_px4_param(int& output);
+
+    /* Get px4 params from px4::parameters */
+    template <px4::params p>
+    void get_px4_param(bool& output);
 
 private:
-    // std::shared_ptr<PositionControl> pos_ctrl_; 
-    // std::shared_ptr<AttitudeControl> Att_ctrl_; 
+    ros::NodeHandle nh_;
+    ros::NodeHandle nh_private_;
+
+    std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
+    std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
+
 
     void set_position_target_local_ned(const mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED& sp);
     void set_position_target_global_int(const mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT& sp);

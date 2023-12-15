@@ -1,7 +1,5 @@
 /**
  * Copied from https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/mc_pos_control/Takeoff/Takeoff.hpp
- * Modified by Peixuan Shu (delete setSpoolupTime)
- * @author Peixuan Shu
  */
 
 /****************************************************************************
@@ -45,8 +43,8 @@
 
 #pragma once
 
-// #include <lib/hysteresis/hysteresis.h>
-// #include <drivers/drv_hrt.h>
+#include <hysteresis/hysteresis.h>
+#include <drivers/drv_hrt.h>
 #include <uORB/topics/takeoff_status.h>
 
 using namespace time_literals;
@@ -66,8 +64,7 @@ public:
 	~Takeoff() = default;
 
 	// initialize parameters
-	// void setSpoolupTime(const float seconds) { _spoolup_time_hysteresis.set_hysteresis_time_from(false, seconds * 1_s); }
-	void setSpoolupTime(const float seconds) { /* Do nothing */} // Modified by Peixuan Shu
+	void setSpoolupTime(const float seconds) { _spoolup_time_hysteresis.set_hysteresis_time_from(false, seconds * 1_s); }
 	void setTakeoffRampTime(const float seconds) { _takeoff_ramp_time = seconds; }
 
 	/**
@@ -101,7 +98,7 @@ public:
 private:
 	TakeoffState _takeoff_state = TakeoffState::disarmed;
 
-	// systemlib::Hysteresis _spoolup_time_hysteresis{false}; ///< becomes true MPC_SPOOLUP_TIME seconds after the vehicle was armed  // comment out by Peixuan Shu
+	systemlib::Hysteresis _spoolup_time_hysteresis{false}; ///< becomes true MPC_SPOOLUP_TIME seconds after the vehicle was armed  // comment out by Peixuan Shu
 
 	float _takeoff_ramp_time{0.f};
 	float _takeoff_ramp_vz_init{0.f}; ///< verticval velocity resulting in zero thrust

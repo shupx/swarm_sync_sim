@@ -70,8 +70,10 @@
 #include <uORB/topics/vehicle_land_detected.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_local_position_setpoint.h>
+#include <matrix/matrix/helper_functions.hpp> // added by Peixuan Shu
 
 #include <uORB/uORB_sim.hpp> // added by Peixuan Shu
+
 
 using namespace time_literals;
 
@@ -93,8 +95,10 @@ public:
 
 	bool init();
 
+	void Run(); // added by Peixuan Shu
+
 private:
-	void Run();
+	// void Run(); // commented out by Peixuan Shu
 
 	Takeoff _takeoff; /**< state machine and ramp to bring the vehicle off the ground without jumps */
 
@@ -113,6 +117,11 @@ private:
 	// uORB::Subscription _vehicle_constraints_sub {ORB_ID(vehicle_constraints)};
 	// uORB::Subscription _vehicle_control_mode_sub {ORB_ID(vehicle_control_mode)};
 	// uORB::Subscription _vehicle_land_detected_sub {ORB_ID(vehicle_land_detected)};
+
+
+	uORB_sim::PublicationData<takeoff_status_s>  _takeoff_status_pub {uORB_sim::takeoff_status};
+	uORB_sim::Publication<vehicle_attitude_setpoint_s>	 _vehicle_attitude_setpoint_pub {uORB_sim::vehicle_attitude_setpoint};
+	uORB_sim::Publication<vehicle_local_position_setpoint_s> _local_pos_sp_pub {uORB_sim::vehicle_local_position_setpoint};	/**< vehicle local position setpoint publication */
 
 	uORB_sim::Subscription<vehicle_local_position_s> _local_pos_sub {uORB_sim::vehicle_local_position};
 	uORB_sim::Subscription<vehicle_local_position_setpoint_s> _trajectory_setpoint_sub{uORB_sim::trajectory_setpoint};
@@ -213,7 +222,7 @@ private:
 
 	static constexpr float MAX_SAFE_TILT_DEG = 89.f; // Numerical issues above this value due to tanf
 
-	// systemlib::Hysteresis _failsafe_land_hysteresis{false}; /**< becomes true if task did not update correctly for LOITER_TIME_BEFORE_DESCEND */
+	systemlib::Hysteresis _failsafe_land_hysteresis{false}; /**< becomes true if task did not update correctly for LOITER_TIME_BEFORE_DESCEND */
 	SlewRate<float> _tilt_limit_slew_rate;
 
 	uint8_t _vxy_reset_counter{0};

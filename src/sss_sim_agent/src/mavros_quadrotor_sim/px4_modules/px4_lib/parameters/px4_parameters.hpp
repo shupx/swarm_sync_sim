@@ -4,6 +4,8 @@
  * Peixuan Shu
  */
 
+#pragma once // Added by Peixuan Shu
+
 #include <math.h> // NAN
 
 #include <stdint.h>

@@ -2,7 +2,7 @@
  * @file px4_sitl.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief PX4 main function. Communicate with mavros and dynamics.
- * Mavros <---> PX4 <---> Quadrotor Dynamics
+ * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  * 
  * Note: This program relies on mavlink, px4_modules, quadrotor_dynamics
  * 
@@ -21,61 +21,89 @@
 namespace MavrosQuadSimulator
 {
 
-PX4SITL::PX4SITL()
+PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : nh_(nh), nh_private_(nh_private)
 {
-    // std::cout << "_param_mpc_use_hte: " << _param_mpc_use_hte.get() << std::endl;
+    /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
+    load_px4_params_from_ros_params();
+
+    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
+    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
+
+    mc_pos_control_->init();
+    mc_att_control_->init();
 }
 
-
-void PX4SITL::get_px4_param(float& output, const px4::params& param)
+void PX4SITL::load_px4_params_from_ros_params()
 {
-        param_info_s param_info = px4::parameters[int(param)];
-        switch (px4::parameters_type[(int) param])
+    /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
+    for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
+    {
+        switch (px4::parameters_type[i])
         {
-            case PARAM_TYPE_UNKNOWN:
-            {
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type can not be unknown (0)");
-                break; 
-            }
             case PARAM_TYPE_INT32:
             {
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is int. But the output is float");
-                break; 
+                int default_value = px4::parameters[i].val.i;
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.i);
+                if (px4::parameters[i].val.i != default_value)
+                {
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.i << std::endl;
+                }
+                break;
             }
             case PARAM_TYPE_FLOAT:
             {
-                output = param_info.val.f;
+                float default_value = px4::parameters[i].val.f;
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.f);
+                if (px4::parameters[i].val.f != default_value)
+                {
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.f << std::endl;
+                }
                 break; 
-            }
+            }   
             default:
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is unknown");
-                break;
-        };
+            {
+                throw std::invalid_argument("[PX4SITL::load_px4_param_from_ros_params] param type is unknown.");
+                break;  
+            }      
+        }
+    }
 }
 
-void PX4SITL::get_px4_param(int& output, const px4::params& param)
+void PX4SITL::RunController()
 {
-        param_info_s param_info = px4::parameters[int(param)];
-        switch (px4::parameters_type[(int) param])
-        {
-            case PARAM_TYPE_UNKNOWN:
-            {
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type can not be unknown (0)");
-                break; 
-            }
-            case PARAM_TYPE_INT32:
-            {
-                output = param_info.val.i;
-                break; 
-            }
-            case PARAM_TYPE_FLOAT:
-            {
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is float. But the output is int");
-                break; 
-            }
-            default:
-                throw std::invalid_argument("[PX4SITL::get_px4_param] param type is unknown");
-                break;
-        };
+    /* Run pos and att controller to calculate control output */
+    mc_pos_control_->Run();
+    mc_att_control_->Run();
 }
+
+
+template <px4::params p>
+void PX4SITL::get_px4_param(float& output)
+{
+	    // static type-check
+	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
+
+        output = px4::parameters[(int) p].val.f;
+}
+
+template <px4::params p>
+void PX4SITL::get_px4_param(int32_t& output)
+{
+	    // static type-check
+	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
+
+        output = px4::parameters[(int) p].val.i;
+}
+
+template <px4::params p>
+void PX4SITL::get_px4_param(bool& output)
+{
+	    // static type-check
+	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
+
+        output = px4::parameters[(int) p].val.i != 0;
+}
+
+
 }

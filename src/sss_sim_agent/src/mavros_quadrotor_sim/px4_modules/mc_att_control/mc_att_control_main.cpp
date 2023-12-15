@@ -49,21 +49,37 @@
 #include <mathlib/math/Limits.hpp>
 #include <mathlib/math/Functions.hpp>
 
+/************* Added by Peixuan Shu **********/
+#ifndef hrt_absolute_time
+# define hrt_absolute_time() (0)
+#endif
+
+#ifndef PX4_WARN
+#include <iostream> // added by Peixuan Shu
+#define PX4_WARN(x) std::cout << #x << std::endl
+#endif
+
+#ifndef PX4_ERR
+#include <iostream> // added by Peixuan Shu
+#define PX4_ERR(x) std::cout << #x << std::endl
+#endif
+/********************************************/
+
 using namespace matrix;
 
 MulticopterAttitudeControl::MulticopterAttitudeControl(bool vtol) :
 	ModuleParams(nullptr),
-	WorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
+	/*WorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
 	_vehicle_attitude_setpoint_pub(vtol ? ORB_ID(mc_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),
-	_loop_perf(perf_alloc(PC_ELAPSED, MODULE_NAME": cycle")),
+	_loop_perf(perf_alloc(PC_ELAPSED, MODULE_NAME": cycle")),*/
 	_vtol(vtol)
 {
 	if (_vtol) {
-		int32_t vt_type = -1;
+		// int32_t vt_type = -1;
 
-		if (param_get(param_find("VT_TYPE"), &vt_type) == PX4_OK) {
-			_vtol_tailsitter = (static_cast<vtol_type>(vt_type) == vtol_type::TAILSITTER);
-		}
+		// if (param_get(param_find("VT_TYPE"), &vt_type) == PX4_OK) {
+		// 	_vtol_tailsitter = (static_cast<vtol_type>(vt_type) == vtol_type::TAILSITTER);
+		// }
 	}
 
 	parameters_updated();
@@ -71,16 +87,16 @@ MulticopterAttitudeControl::MulticopterAttitudeControl(bool vtol) :
 
 MulticopterAttitudeControl::~MulticopterAttitudeControl()
 {
-	perf_free(_loop_perf);
+	// perf_free(_loop_perf);
 }
 
 bool
 MulticopterAttitudeControl::init()
 {
-	if (!_vehicle_attitude_sub.registerCallback()) {
-		PX4_ERR("callback registration failed");
-		return false;
-	}
+	// if (!_vehicle_attitude_sub.registerCallback()) {
+	// 	PX4_ERR("callback registration failed");
+	// 	return false;
+	// }
 
 	return true;
 }
@@ -128,7 +144,7 @@ MulticopterAttitudeControl::generate_attitude_setpoint(const Quatf &q, float dt,
 		_man_yaw_sp = yaw;
 
 	} else if (math::constrain(_manual_control_setpoint.z, 0.0f, 1.0f) > 0.05f
-		   || _param_mc_airmode.get() == (int32_t)Mixer::Airmode::roll_pitch_yaw) {
+		  /* || _param_mc_airmode.get() == (int32_t)Mixer::Airmode::roll_pitch_yaw */ /* Deleted by Peixuan Shu */) {
 
 		const float yaw_rate = math::radians(_param_mpc_man_y_max.get());
 		attitude_setpoint.yaw_sp_move_rate = _manual_control_setpoint.r * yaw_rate;
@@ -225,23 +241,23 @@ MulticopterAttitudeControl::generate_attitude_setpoint(const Quatf &q, float dt,
 void
 MulticopterAttitudeControl::Run()
 {
-	if (should_exit()) {
-		_vehicle_attitude_sub.unregisterCallback();
-		exit_and_cleanup();
-		return;
-	}
+	// if (should_exit()) {
+	// 	_vehicle_attitude_sub.unregisterCallback();
+	// 	exit_and_cleanup();
+	// 	return;
+	// }
 
-	perf_begin(_loop_perf);
+	// perf_begin(_loop_perf);
 
-	// Check if parameters have changed
-	if (_parameter_update_sub.updated()) {
-		// clear update
-		parameter_update_s param_update;
-		_parameter_update_sub.copy(&param_update);
+	// // Check if parameters have changed
+	// if (_parameter_update_sub.updated()) {
+	// 	// clear update
+	// 	parameter_update_s param_update;
+	// 	_parameter_update_sub.copy(&param_update);
 
-		updateParams();
-		parameters_updated();
-	}
+	// 	updateParams();
+	// 	parameters_updated();
+	// }
 
 	// run controller on attitude updates
 	vehicle_attitude_s v_att;
@@ -360,9 +376,10 @@ MulticopterAttitudeControl::Run()
 		_reset_yaw_sp = !attitude_setpoint_generated || _landed || (_vtol && _vtol_in_transition_mode);
 	}
 
-	perf_end(_loop_perf);
+	// perf_end(_loop_perf);
 }
 
+/*
 int MulticopterAttitudeControl::task_spawn(int argc, char *argv[])
 {
 	bool vtol = false;
@@ -434,3 +451,4 @@ int mc_att_control_main(int argc, char *argv[])
 {
 	return MulticopterAttitudeControl::main(argc, argv);
 }
+*/
