@@ -1,7 +1,7 @@
 /**
  * @file px4_uorb_lists.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Store the PX4 SITL global uorb messages.
+ * @brief Store the PX4 global uorb messages to simulate the real PX4 uORB messages. 
  * 
  * Note: This program relies on px4_lib/uORB/
  * 
