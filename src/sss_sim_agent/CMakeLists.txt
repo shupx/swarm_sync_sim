@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp  # already installed with ros-noetic-desktop
   rospy  # already installed with ros-noetic-desktop
   std_msgs  # already installed with ros-noetic-desktop
+  mavlink # for px4_sitl mavlink messages (already installed with ros-noetic-mavlink by mavros)
   mavros # for mavros_sim mavros::ftf::
   mavros_msgs
   eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
@@ -69,15 +70,39 @@ target_include_directories(mc_att_control PUBLIC
             src/mavros_quadrotor_sim)
 
 
+add_library(px4_mavlink
+            src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
+            )
+
+# link libraries for this lib
+# target_link_libraries(px4_mavlink 
+#                 px4_lib)
+
+# add *.hpp header path for which use this lib
+target_include_directories(px4_mavlink PUBLIC
+          src/mavros_quadrotor_sim)
+
+# Supress the warnings of packed member in mavlink c_library_v2
+# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
+target_compile_options(px4_mavlink PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
+
+
 add_library(px4_sitl
               src/mavros_quadrotor_sim/px4_sitl.cpp
             )
 
 # link libraries for this lib
 target_link_libraries(px4_sitl
+    ${catkin_LIBRARIES}
     mc_att_control
     mc_pos_control
+    px4_mavlink
 )
+
+# Supress the warnings of packed member in mavlink c_library_v2
+# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
+target_compile_options(px4_sitl PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
+
 
 add_library(MavrosSim
             src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp

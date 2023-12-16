@@ -1,7 +1,7 @@
 ## swarm_sync_sim
 
 ### Introduction
-A synchronized numerical simulation platform for multi-robot swarm system based on ROS. It offers a lightweight, scalable and fast (due to synchronization) simulation method to verify your motion planning and control algorithms for various kinds of robots in seconds before real experiments. Quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models are supported.
+A synchronized (lock-stepped) numerical simulation platform for multi-robot swarm system based on ROS. It offers a lightweight, scalable and fast (due to synchronization) simulation method to verify your motion planning and control algorithms for various kinds of robots in seconds before real experiments. Quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models are supported.
 
 
 ### Installation

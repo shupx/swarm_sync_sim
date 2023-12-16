@@ -23,12 +23,12 @@
 #include <iostream> // for std::cout, std::endl
 #include <memory>  // for std::shared_ptr
 
-#include <mavlink/v2.0/common/common.hpp>
-
+#include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink
 #include <parameters/px4_parameters.hpp> // store all px4 parameters
+
+#include "px4_modules/mavlink/mavlink_receiver.h"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
-
 
 
 namespace MavrosQuadSimulator
@@ -65,13 +65,14 @@ private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
 
+    std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
     std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
 
 
-    void set_position_target_local_ned(const mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED& sp);
-    void set_position_target_global_int(const mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT& sp);
-    void set_attitude_target(const mavlink::common::msg::SET_ATTITUDE_TARGET& sp);
+    // void set_position_target_local_ned(const mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED& sp);
+    // void set_position_target_global_int(const mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT& sp);
+    // void set_attitude_target(const mavlink::common::msg::SET_ATTITUDE_TARGET& sp);
 
 };
 

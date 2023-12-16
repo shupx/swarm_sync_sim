@@ -25,11 +25,16 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh), nh_private_(nh_private)
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
-    load_px4_params_from_ros_params();
+    load_px4_params_from_ros_params(); // Before loading px4 modules!
 
+    /* Load px4 modules */
+    mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
     mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
     mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
 
+    /* Init px4 modules */
+    mavlink_message_t msg; 
+    mavlink_receiver_->handle_message(&msg);
     mc_pos_control_->init();
     mc_att_control_->init();
 }

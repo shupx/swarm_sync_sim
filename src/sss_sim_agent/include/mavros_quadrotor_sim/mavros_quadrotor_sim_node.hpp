@@ -21,7 +21,7 @@
 #include <ros/ros.h>
 #include <sss_sim_env/sss_utils.hpp>
 
-#include "mavros_sim/MavrosSim.hpp"
+// #include "mavros_sim/MavrosSim.hpp"
 #include "mavros_quadrotor_sim/px4_sitl.hpp"
 #include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
 

@@ -145,6 +145,49 @@ int		param_get(param_t param, void *val)
 	return result;
 }
 
+/**
+ * Look up a parameter by name.
+ *
+ * @param name		The canonical name of the parameter being looked up.
+ * @return		A handle to the parameter, or PARAM_INVALID if the parameter does not exist.
+ *			This call will also set the parameter as "used" in the system, which is used
+ *			to e.g. show the parameter via the RC interface
+ */
+param_t	param_find(const char *name)
+{
+	param_t middle;
+	param_t front = 0;
+	param_t last = param_info_count;
+
+	/* perform a binary search of the known parameters */
+
+	while (front <= last) {
+		middle = front + (last - front) / 2;
+		int ret = strcmp(name, px4::parameters[middle].name);
+
+		if (ret == 0) {
+			// if (notification) {
+			// 	param_set_used(middle);
+			// }
+
+			return middle;
+
+		} else if (middle == front) {
+			/* An end point has been hit, but there has been no match */
+			break;
+
+		} else if (ret < 0) {
+			last = middle;
+
+		} else {
+			front = middle;
+		}
+	}
+
+	/* not found */
+	return PARAM_INVALID;
+}
+
 #define CHECK_PARAM_TYPE(param, type)
 // param is a C-interface. This means there is no overloading, and thus no type-safety for param_get().
 // So for C++ code we redefine param_get() to inlined overloaded versions, which gives us type-safety
@@ -162,6 +205,7 @@ static inline int param_get_cplusplus(param_t param, int32_t *val)
 #undef CHECK_PARAM_TYPE
 
 #define param_get(param, val) param_get_cplusplus(param, val)
+
 /*****************************************************************************
 ******************************************************************************
 ******************************************************************************

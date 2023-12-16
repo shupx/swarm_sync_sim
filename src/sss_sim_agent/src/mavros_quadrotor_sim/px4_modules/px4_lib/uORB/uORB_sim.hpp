@@ -19,12 +19,15 @@
 #include <px4_platform_common/defines.h>
 
 #include <uORB/topics/autotune_attitude_control_status.h>
+#include <uORB/topics/home_position.h>
 #include <uORB/topics/manual_control_setpoint.h>
+#include <uORB/topics/offboard_control_mode.h>
 #include <uORB/topics/takeoff_status.h>
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
 #include <uORB/topics/vehicle_constraints.h>
 #include <uORB/topics/vehicle_control_mode.h>
+#include <uORB/topics/vehicle_global_position.h>
 #include <uORB/topics/vehicle_land_detected.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_local_position_setpoint.h>
@@ -33,17 +36,23 @@
 
 #include <iostream>
 
-namespace uORB_sim { 
+#ifndef ORB_ID
+#define ORB_ID(x) uORB_sim::x 
+#endif
 
+namespace uORB_sim { 
 
 // TODO: initialize if no publisher exists?
 static autotune_attitude_control_status_s autotune_attitude_control_status;
+static home_position_s home_position;
 static manual_control_setpoint_s manual_control_setpoint;
 static takeoff_status_s takeoff_status;
+static offboard_control_mode_s offboard_control_mode;
 static vehicle_attitude_s vehicle_attitude;
 static vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
 static vehicle_constraints_s vehicle_constraints;
 static vehicle_control_mode_s vehicle_control_mode;
+static vehicle_global_position_s vehicle_global_position;
 static vehicle_land_detected_s vehicle_land_detected;
 static vehicle_local_position_s vehicle_local_position;
 static vehicle_local_position_setpoint_s vehicle_local_position_setpoint;
