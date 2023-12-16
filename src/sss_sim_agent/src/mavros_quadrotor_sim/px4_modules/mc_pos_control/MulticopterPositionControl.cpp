@@ -335,6 +335,17 @@ void MulticopterPositionControl::Run()
 		const float dt = math::constrain(((time_stamp_now - _time_stamp_last_loop) * 1e-6f), 0.002f, 0.04f);
 		_time_stamp_last_loop = time_stamp_now;
 
+		/***************** Added by Peixuan Shu ******************************/
+		if ((time_stamp_now - _time_stamp_last_loop) * 1e-6f < 0.002f)
+		{
+			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too small and less than 0.002s!" << std::endl;
+		}
+		if ((time_stamp_now - _time_stamp_last_loop) * 1e-6f > 0.04f)
+		{
+			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too large and large than 0.04s!" << std::endl;
+		}
+		/********************************************************************/
+
 		// set _dt in controllib Block for BlockDerivative
 		// setDt(dt);
 		_in_failsafe = false;

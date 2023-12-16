@@ -268,6 +268,17 @@ MulticopterAttitudeControl::Run()
 		const float dt = math::constrain(((v_att.timestamp_sample - _last_run) * 1e-6f), 0.0002f, 0.02f);
 		_last_run = v_att.timestamp_sample;
 
+		/***************** Added by Peixuan Shu ******************************/
+		if ((v_att.timestamp_sample - _last_run) * 1e-6f < 0.0002f)
+		{
+			std::cout << "[MulticopterAttitudeControl::Run] Warn! loop period is too small and less than 0.0002s!" << std::endl;
+		}
+		if ((v_att.timestamp_sample - _last_run) * 1e-6f > 0.02f)
+		{
+			std::cout << "[MulticopterAttitudeControl::Run] Warn! loop period is too large and large than 0.02s!" << std::endl;
+		}
+		/********************************************************************/
+
 		const Quatf q{v_att.q};
 
 		// Check for new attitude setpoint

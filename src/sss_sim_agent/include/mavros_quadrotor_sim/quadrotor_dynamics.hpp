@@ -61,6 +61,8 @@ class Dynamics
     double getMass();
     double getGravityAcc();
     Eigen::Vector3d getAcc();
+    Eigen::Quaterniond getQuat();
+    Eigen::Vector3d getAngVel();
 
     void differentialEquation(const StateVector& x, StateVector& dxdt, double t);
 
@@ -74,6 +76,7 @@ class Dynamics
     double thrust_;
     Eigen::Vector3d omega_;
     Eigen::Vector3d acc_;
+    Eigen::Quaterniond q_;
 
     Dynamics::State state_;
     StateVector state_vec_;

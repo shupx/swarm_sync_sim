@@ -42,8 +42,8 @@ class Agent
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
 
-        std::shared_ptr<PX4SITL> px4sitl_;
         std::shared_ptr<Dynamics> dynamics_;
+        std::shared_ptr<PX4SITL> px4sitl_;
 
         double mainloop_period_;
         sss_utils::Timer mainloop_timer_;

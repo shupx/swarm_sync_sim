@@ -31,6 +31,7 @@
 #include <uORB/topics/vehicle_land_detected.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_local_position_setpoint.h>
+#include <uORB/topics/vehicle_odometry.h>
 #include <uORB/topics/vehicle_rates_setpoint.h>
 #include <uORB/topics/vehicle_status.h>
 
@@ -43,6 +44,7 @@
 namespace uORB_sim { 
 
 // TODO: initialize if no publisher exists?
+// store all px4 uORB messages
 static autotune_attitude_control_status_s autotune_attitude_control_status;
 static home_position_s home_position;
 static manual_control_setpoint_s manual_control_setpoint;
@@ -57,6 +59,7 @@ static vehicle_land_detected_s vehicle_land_detected;
 static vehicle_local_position_s vehicle_local_position;
 static vehicle_local_position_setpoint_s vehicle_local_position_setpoint;
 static vehicle_local_position_setpoint_s trajectory_setpoint;
+static vehicle_odometry_s vehicle_odometry;
 static vehicle_rates_setpoint_s vehicle_rates_setpoint;
 static vehicle_status_s vehicle_status;
 

@@ -38,8 +38,6 @@ namespace MavrosQuadSimulator
 Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh), nh_private_(nh_private)
 {
-    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_);
-
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {
@@ -49,6 +47,8 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
 
     dynamics_ = std::make_shared<Dynamics>();
     dynamics_->setSimStep(0.01);
+
+    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
 
     mainloop_period_ = 0.02;
     mainloop_timer_ = sss_utils::createTimer(ros::Duration(mainloop_period_), &Agent::mainloop, this);

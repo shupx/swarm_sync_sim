@@ -4,7 +4,7 @@
  * @brief PX4 main function. Communicate with mavros and dynamics.
  * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  * 
- * Note: This program relies on mavlink, px4_modules
+ * Note: This program relies on mavlink, px4_modules, quadrotor_dynamics
  * 
  * @version 1.0
  * @date 2023-12-11
@@ -25,11 +25,14 @@
 
 #include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink
 #include <parameters/px4_parameters.hpp> // store all px4 parameters
+#include <matrix/matrix/math.hpp> // for px4 geometry utils
+#include <uORB/uORB_sim.hpp> // for uORB publication and subscription and Messages
 
 #include "px4_modules/mavlink/mavlink_receiver.h"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
 
+#include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
 
 namespace MavrosQuadSimulator
 {
@@ -41,13 +44,18 @@ namespace MavrosQuadSimulator
 class PX4SITL
 {
 public:
-    PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+    PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
 
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/    
     void load_px4_params_from_ros_params();
 
-    /* Run pos and att controller to calculate control output */
-    void RunController();
+    /**
+     * \brief Run px4 modules for one step. Run pos and att controller to calculate control output
+     * @param time_us The microseconds (us) now.
+     */
+    void Run(const uint64_t &time_us);
+
+    void StreamMavlink(const uint64_t &time_us);
 
     /* Get px4 params from px4::parameters */
     template <px4::params p>
@@ -65,10 +73,23 @@ private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
 
+	// publications with topic
+	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};
+	uORB_sim::Publication<vehicle_local_position_s>     _local_position_pub{ORB_ID(vehicle_local_position)};
+	uORB_sim::Publication<vehicle_global_position_s>    _global_position_pub{ORB_ID(vehicle_global_position)};
+	uORB_sim::Publication<vehicle_odometry_s>           _odometry_pub{ORB_ID(vehicle_odometry)};
+
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
     std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
 
+    std::shared_ptr<Dynamics> uav_dynamics_;
+
+    /**
+     * \brief Update px4 uorb states from UAV dynamical model 
+     * @param time_us The microseconds (us) now.
+     */
+    void UpdateStates(const uint64_t &time_us);
 
     // void set_position_target_local_ned(const mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED& sp);
     // void set_position_target_global_int(const mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT& sp);

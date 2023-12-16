@@ -34,6 +34,7 @@ Dynamics::Dynamics()
     state_.R = Eigen::Matrix3d::Identity();
     vectorizeState(state_vec_, state_); // Initialize state_vec_
     acc_ = Eigen::Vector3d::Zero();
+    q_ = Eigen::Quaterniond(1, 0, 0, 0);
 
     /* Initialize input */
     thrust_ = 0.0;
@@ -68,6 +69,8 @@ void Dynamics::differentialEquation(const StateVector& x, StateVector& dxdt, dou
   dot_state.R = R * omega_vee;
 
   acc_ = dot_state.vel;
+//   q_ = Eigen::Quaterniond(R);
+//   q_.normalize();
 
   vectorizeState(dxdt, dot_state); // vectorize dot_state into dxdt
 
@@ -176,6 +179,19 @@ Eigen::Vector3d Dynamics::getAcc()
 {
     return acc_;
 }
+
+Eigen::Quaterniond Dynamics::getQuat()
+{
+  q_ = Eigen::Quaterniond(state_.R);
+  q_.normalize();
+  return q_;
+}
+
+Eigen::Vector3d Dynamics::getAngVel()
+{
+    return omega_;
+}
+
 
 void Dynamics::vectorizeState(StateVector& vec, const Dynamics::State& state)
 {
