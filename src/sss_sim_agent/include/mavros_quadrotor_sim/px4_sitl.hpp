@@ -90,11 +90,7 @@ private:
      * \brief Update px4 uorb states from UAV dynamical model 
      * @param time_us The microseconds (us) now.
      */
-    void UpdateStates(const uint64_t &time_us);
-
-    // void set_position_target_local_ned(const mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED& sp);
-    // void set_position_target_global_int(const mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT& sp);
-    // void set_attitude_target(const mavlink::common::msg::SET_ATTITUDE_TARGET& sp);
+    void UpdateUorbStates(const uint64_t &time_us);
 
 };
 

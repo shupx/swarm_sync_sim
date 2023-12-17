@@ -138,7 +138,9 @@ class Mavlink;
 
 class MavlinkReceiver : public ModuleParams
 {
-friend class PX4SITL;
+
+friend class MavlinkManager; // Added by Peixuan Shu
+
 public:
 	MavlinkReceiver(); // Added by Peixuan Shu
 	MavlinkReceiver(Mavlink *parent);
@@ -152,8 +154,6 @@ public:
 	// void print_detailed_rx_stats() const;
 
 	// void request_stop() { _should_exit.store(true); }
-
-	void handle_message(mavlink_message_t *msg); // moved to public: by Peixuan Shu
 
 private:
 	// static void *start_trampoline(void *context);
@@ -171,7 +171,7 @@ private:
 	uint8_t handle_request_message_command(uint16_t message_id, float param2 = 0.0f, float param3 = 0.0f,
 					       float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
-	// void handle_message(mavlink_message_t *msg); // moved to public: by Peixuan Shu
+	void handle_message(mavlink_message_t *msg);
 
 	void handle_message_adsb_vehicle(mavlink_message_t *msg);
 	void handle_message_att_pos_mocap(mavlink_message_t *msg);
@@ -437,4 +437,5 @@ private:
 	// Disallow copy construction and move assignment.
 	MavlinkReceiver(const MavlinkReceiver &) = delete;
 	MavlinkReceiver operator=(const MavlinkReceiver &) = delete;
+
 };

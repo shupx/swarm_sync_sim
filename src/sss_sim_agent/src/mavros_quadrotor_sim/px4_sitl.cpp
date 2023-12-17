@@ -76,7 +76,7 @@ void PX4SITL::load_px4_params_from_ros_params()
 void PX4SITL::Run(const uint64_t &time_us)
 {
     /* Update px4 uorb states from UAV dynamical model */
-    UpdateStates(time_us);
+    UpdateUorbStates(time_us);
 
     /* Run mavlink receiver to update command uorb messages */
     // mavlink_message_t msg; 
@@ -93,7 +93,7 @@ void PX4SITL::StreamMavlink(const uint64_t &time_us)
 
 }
 
-void PX4SITL::UpdateStates(const uint64_t &time_us)
+void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
 {
     /* Read true values from uav dynamic models */
     Dynamics::State state = uav_dynamics_->getState();

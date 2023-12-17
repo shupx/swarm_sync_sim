@@ -14,9 +14,11 @@
  * 
  */
 
+#ifndef __MAVLINK_MSG_LIST_HPP__
+#define __MAVLINK_MSG_LIST_HPP__
+
 #include <mavlink/v2.0/common/mavlink.h> // mavlink c headers from ros-noetic-mavlink
 
-namespace px4 { 
 
 struct mavlink_info_s
 {
@@ -25,26 +27,33 @@ struct mavlink_info_s
 };
 
 
+namespace px4 
+{ 
+
+#define MAVLINK_STREAM_NUM 5 // number of mavlink_receive
 enum class mavlink_stream_handle : uint16_t {
 	ATTITUDE_QUATERNION,
 	ATTITUDE_TARGET,
 	HEARTBEAT,
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
-	Cout = 5  // number of mavlink_stream
+	Cout = MAVLINK_STREAM_NUM  // number of mavlink_stream
 };
 // Store the streaming mavlink messages
-static mavlink_info_s mavlink_stream_list[(int)mavlink_stream_handle::Cout];
+static mavlink_info_s mavlink_stream_list[(int) mavlink_stream_handle::Cout];
 
 
+#define MAVLINK_RECEIVE_NUM 3 // number of mavlink_receive
 enum class mavlink_receive_handle : uint16_t {
 	SET_POSITION_TARGET_LOCAL_NED,
 	SET_POSITION_TARGET_GLOBAL_INT,
 	SET_ATTITUDE_TARGET,
-	Cout = 3 // number of mavlink_receive
+	Cout = MAVLINK_RECEIVE_NUM 
 };
 // Store the receiving mavlink messages
-static mavlink_info_s mavlink_receive_list[(int)mavlink_receive_handle::Cout];
+static mavlink_info_s mavlink_receive_list[(int) mavlink_receive_handle::Cout];
 
 
 }
+
+#endif
