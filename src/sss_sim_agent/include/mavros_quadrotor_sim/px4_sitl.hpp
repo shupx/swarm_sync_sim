@@ -29,6 +29,7 @@
 #include <uORB/uORB_sim.hpp> // for uORB publication and subscription and Messages
 
 #include "px4_modules/mavlink/mavlink_receiver.h"
+#include "px4_modules/mavlink/mavlink_msg_list.hpp"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
 

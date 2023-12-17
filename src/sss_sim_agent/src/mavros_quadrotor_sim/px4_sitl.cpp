@@ -140,36 +140,38 @@ void PX4SITL::UpdateStates(const uint64_t &time_us)
     vehicle_local_position_msg.heading_good_for_control = true;
     _local_position_pub.publish(vehicle_local_position_msg);
 
+    // vehicle_angular_velocity
+    // vehicle_status
 
     //TODO: vehicle_global_position_msg
     // vehicle_global_position_s vehicle_global_position_msg{};
     // _global_position_pub.publish(vehicle_global_position_msg);
 
 
-    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_odometry.msg
-    vehicle_odometry_s vehicle_odometry_msg{};
-    vehicle_odometry_msg.timestamp = time_us;
-    vehicle_odometry_msg.timestamp_sample = time_us;
-    vehicle_odometry_msg.local_frame = vehicle_odometry_s::LOCAL_FRAME_NED;
-    vehicle_odometry_msg.x = state.pos[0];
-    vehicle_odometry_msg.y = state.pos[1];
-    vehicle_odometry_msg.z = state.pos[2];
-    vehicle_odometry_msg.q[0] = q.w();
-    vehicle_odometry_msg.q[1] = q.x();
-    vehicle_odometry_msg.q[2] = q.y();
-    vehicle_odometry_msg.q[3] = q.z();
-    vehicle_odometry_msg.q_offset[0] = 1.0;
-    vehicle_odometry_msg.q_offset[1] = 0.0;
-    vehicle_odometry_msg.q_offset[2] = 0.0;
-    vehicle_odometry_msg.q_offset[3] = 0.0;
-    vehicle_odometry_msg.velocity_frame = vehicle_odometry_s::LOCAL_FRAME_NED;
-    vehicle_odometry_msg.vx = state.vel[0];
-    vehicle_odometry_msg.vy = state.vel[1];
-    vehicle_odometry_msg.vz = state.vel[2];   
-    vehicle_odometry_msg.rollspeed = omega[0];
-    vehicle_odometry_msg.pitchspeed = omega[1];
-    vehicle_odometry_msg.yawspeed = omega[2];
-    _odometry_pub.publish(vehicle_odometry_msg);
+    // // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_odometry.msg
+    // vehicle_odometry_s vehicle_odometry_msg{};
+    // vehicle_odometry_msg.timestamp = time_us;
+    // vehicle_odometry_msg.timestamp_sample = time_us;
+    // vehicle_odometry_msg.local_frame = vehicle_odometry_s::LOCAL_FRAME_NED;
+    // vehicle_odometry_msg.x = state.pos[0];
+    // vehicle_odometry_msg.y = state.pos[1];
+    // vehicle_odometry_msg.z = state.pos[2];
+    // vehicle_odometry_msg.q[0] = q.w();
+    // vehicle_odometry_msg.q[1] = q.x();
+    // vehicle_odometry_msg.q[2] = q.y();
+    // vehicle_odometry_msg.q[3] = q.z();
+    // vehicle_odometry_msg.q_offset[0] = 1.0;
+    // vehicle_odometry_msg.q_offset[1] = 0.0;
+    // vehicle_odometry_msg.q_offset[2] = 0.0;
+    // vehicle_odometry_msg.q_offset[3] = 0.0;
+    // vehicle_odometry_msg.velocity_frame = vehicle_odometry_s::LOCAL_FRAME_NED;
+    // vehicle_odometry_msg.vx = state.vel[0];
+    // vehicle_odometry_msg.vy = state.vel[1];
+    // vehicle_odometry_msg.vz = state.vel[2];   
+    // vehicle_odometry_msg.rollspeed = omega[0];
+    // vehicle_odometry_msg.pitchspeed = omega[1];
+    // vehicle_odometry_msg.yawspeed = omega[2];
+    // _odometry_pub.publish(vehicle_odometry_msg);
 
 }
 
