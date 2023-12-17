@@ -28,8 +28,9 @@
 #include <matrix/matrix/math.hpp> // for px4 geometry utils
 #include <uORB/uORB_sim.hpp> // for uORB publication and subscription and Messages
 
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages
 #include "px4_modules/mavlink/mavlink_receiver.h"
-#include "px4_modules/mavlink/mavlink_msg_list.hpp"
+#include "px4_modules/mavlink/mavlink_streamer.hpp"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
 
@@ -56,8 +57,6 @@ public:
      */
     void Run(const uint64_t &time_us);
 
-    void StreamMavlink(const uint64_t &time_us);
-
     /* Get px4 params from px4::parameters */
     template <px4::params p>
     void get_px4_param(float& output);
@@ -81,6 +80,7 @@ private:
 	uORB_sim::Publication<vehicle_odometry_s>           _odometry_pub{ORB_ID(vehicle_odometry)};
 
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
+    std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
     std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
     std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
 
@@ -91,6 +91,11 @@ private:
      * @param time_us The microseconds (us) now.
      */
     void UpdateUorbStates(const uint64_t &time_us);
+
+	/* Search for mavlink receiving list and handle the updated messages (transfer into PX4 uORB messages) */
+	void MavlinkReceive();
+
+    void MavlinkStream(const uint64_t &time_us);
 
 };
 

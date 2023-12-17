@@ -72,6 +72,7 @@ target_include_directories(mc_att_control PUBLIC
 
 add_library(px4_mavlink
             src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
+            src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
             )
 
 # link libraries for this lib

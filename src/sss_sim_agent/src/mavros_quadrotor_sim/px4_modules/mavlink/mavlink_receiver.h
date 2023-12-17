@@ -139,8 +139,6 @@ class Mavlink;
 class MavlinkReceiver : public ModuleParams
 {
 
-friend class MavlinkManager; // Added by Peixuan Shu
-
 public:
 	MavlinkReceiver(); // Added by Peixuan Shu
 	MavlinkReceiver(Mavlink *parent);
@@ -171,8 +169,10 @@ private:
 	uint8_t handle_request_message_command(uint16_t message_id, float param2 = 0.0f, float param3 = 0.0f,
 					       float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
-	void handle_message(mavlink_message_t *msg);
+public:
+	void handle_message(mavlink_message_t *msg); // move to public by Peixuan Shu
 
+private:
 	void handle_message_adsb_vehicle(mavlink_message_t *msg);
 	void handle_message_att_pos_mocap(mavlink_message_t *msg);
 	void handle_message_battery_status(mavlink_message_t *msg);
