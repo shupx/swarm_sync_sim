@@ -20,8 +20,8 @@ namespace px4 {
 
 struct mavlink_info_s
 {
-	bool updated;
-	mavlink_message_t msg;
+	bool updated = false; // init on struct definition (only supported after c++11)
+	mavlink_message_t msg {}; // init on struct definition (only supported after c++11)
 };
 
 
