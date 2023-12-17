@@ -82,6 +82,8 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Run mavlink receiver to update command uorb messages */
     MavlinkReceive();
 
+    mavlink_streamer_->Stream(time_us);
+
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
     mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
