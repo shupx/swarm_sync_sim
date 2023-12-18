@@ -18,20 +18,62 @@
 
 #include <iostream> // for std::cout, std::endl
 #include <memory>  // for std::shared_ptr
+#include <boost/signals2.hpp> // for signal2
+
+#include "streams/ATTITUDE_QUATERNION.hpp"
+// #include "streams/ATTITUDE_TARGET.hpp"
+// #include "streams/HEARTBEAT.hpp"
+// #include "streams/LOCAL_POSITION_NED.hpp"
+// #include "streams/POSITION_TARGET_LOCAL_NED.hpp"
 
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
+
+
+#define STREAM_PTR(...) std::shared_ptr<MavlinkStream<__VA_ARGS__> >
+#define STREAM_MAKE_PTR(...) std::make_shared<MavlinkStream<__VA_ARGS__> >
 
 class MavlinkStreamer
 {
 public:
+	typedef boost::signals2::signal<void(const uint64_t&)> VoidSignal;
+	VoidSignal stream_signal_;
+
+	template <typename T> 
+	class MavlinkStream
+	{
+		public:
+			MavlinkStream(const float& rate, MavlinkStreamer* parent) : period_us_(1.e6/rate) 
+			{
+				parent->stream_signal_.connect(boost::bind(&MavlinkStream::Stream, this, boost::placeholders::_1));
+			}
+
+			/* Streaming the mavlink messages at a given rate */
+			void Stream(const uint64_t &time_us)
+			{
+				static uint64_t last_send = 0.0;
+				if (time_us > last_send + period_us_)
+				{
+					stream_.send();
+					last_send = time_us < last_send + 2*period_us_ ? last_send+period_us_ : time_us;
+				}
+			}
+
+		private:
+			T stream_; 
+			uint64_t period_us_; // us
+	};
+
+	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream1;
+
 	MavlinkStreamer();
 
-	~MavlinkStreamer() {}
+	~MavlinkStreamer();
 
+	/**
+	 * \brief stream all mavlink messages
+	 * @param time_us time now (microseconds, us)
+	 */
 	void Stream(const uint64_t &time_us);
-
-private:
-
 };
 
 

@@ -14,16 +14,21 @@
  * 
  */
 
-#pragma once
-
 #include "mavlink_streamer.hpp"
 
 MavlinkStreamer::MavlinkStreamer()
 {
+    mavlink_stream1 = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this);
+}
 
+
+MavlinkStreamer::~MavlinkStreamer()
+{
+    stream_signal_.disconnect_all_slots();
 }
 
 void MavlinkStreamer::Stream(const uint64_t &time_us)
 {
-
+    // stream all mavlink messages
+    stream_signal_(time_us); 
 }

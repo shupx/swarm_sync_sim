@@ -82,7 +82,8 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Run mavlink receiver to update command uorb messages */
     MavlinkReceive();
 
-    mavlink_streamer_->Stream(time_us);
+    /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
+    MavlinkStream(time_us);
 
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
@@ -105,10 +106,9 @@ void PX4SITL::MavlinkReceive()
 	}
 }
 
-
 void PX4SITL::MavlinkStream(const uint64_t &time_us)
 {
-
+    mavlink_streamer_->Stream(time_us);
 }
 
 void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
@@ -158,7 +158,15 @@ void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
     vehicle_local_position_msg.heading_good_for_control = true;
     _local_position_pub.publish(vehicle_local_position_msg);
 
-    // vehicle_angular_velocity
+    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_angular_velocity.msg
+    vehicle_angular_velocity_s vehicle_angular_velocity_msg{};
+    vehicle_angular_velocity_msg.timestamp = time_us;
+    vehicle_angular_velocity_msg.timestamp_sample = time_us;
+    vehicle_angular_velocity_msg.xyz[0] = omega[0];
+    vehicle_angular_velocity_msg.xyz[1] = omega[1];
+    vehicle_angular_velocity_msg.xyz[2] = omega[2];
+
+
     // vehicle_status
 
     //TODO: vehicle_global_position_msg

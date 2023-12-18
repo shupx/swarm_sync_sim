@@ -95,6 +95,7 @@ private:
 	/* Search for mavlink receiving list and handle the updated messages (transfer into PX4 uORB messages) */
 	void MavlinkReceive();
 
+    /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
     void MavlinkStream(const uint64_t &time_us);
 
 };
