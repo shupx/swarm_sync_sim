@@ -16,13 +16,27 @@
  * 
  */
 
+
+// macros for mavlink cpp to c headers conversions by Peixuan Shu
+#ifndef FLOAT4_TO_ARRAY
+#include <array>
+#define FLOAT4_TO_ARRAY(x) std::array<float, 4>{x[0], x[1], x[2], x[3]}
+#endif
+#ifndef ARRAY_TO_FLOAT4
+#include <iostream>
+#include <algorithm>
+#define ARRAY_TO_FLOAT4(arr, x) std::copy(arr.begin(), arr.end(), x)
+#endif
+
 // header files added by Peixuan Shu
 #include <ros/ros.h>
 #include <Eigen/Geometry>
 #include <eigen_conversions/eigen_msg.h> // for tf::
 #include <tf_conversions/tf_eigen.h>
+#include <mavros/frame_tf.h> // Added by Peixuan Shu for ftf::
+#include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
+
 #include "setpoint_mixin.h" // modified in mavros_sim namespace
-// #include "lib/frame_tf.h" // for ftf:: // modified in mavros_sim namespace
 
 #include <mavros_msgs/AttitudeTarget.h>
 #include <mavros_msgs/PositionTarget.h>
@@ -69,8 +83,12 @@ class SetpointRawPlugin :
 
         /* -*- message handlers (publish mavlink messages to ROS topics) -*- */
 
-	    void handle_position_target_local_ned(mavlink::common::msg::POSITION_TARGET_LOCAL_NED &tgt) //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
+	    void handle_position_target_local_ned(const mavlink_message_t& msg) // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
         {
+            // Decode mavlink message. Added by Peixuan Shu
+            mavlink_position_target_local_ned_t tgt;
+            mavlink_msg_position_target_local_ned_decode(&msg, &tgt); // mavlink c lib
+
             // Transform desired position,velocities,and accels from ENU to NED frame
             auto position = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.x, tgt.y, tgt.z));
             auto velocity = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.vx, tgt.vy, tgt.vz));
@@ -98,8 +116,12 @@ class SetpointRawPlugin :
             target_local_pub.publish(target);
         }
 
-        void handle_position_target_global_int(mavlink::common::msg::POSITION_TARGET_GLOBAL_INT &tgt)  //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
+        void handle_position_target_global_int(const mavlink_message_t& msg) // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
         {
+            // Decode mavlink message. Added by Peixuan Shu
+            mavlink_position_target_global_int_t tgt;
+            mavlink_msg_position_target_global_int_decode(&msg, &tgt); // mavlink c lib
+
             // Transform desired velocities from ENU to NED frame
             auto velocity = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.vx, tgt.vy, tgt.vz));
             auto af = ftf::transform_frame_ned_enu(Eigen::Vector3d(tgt.afx, tgt.afy, tgt.afz));
@@ -128,13 +150,17 @@ class SetpointRawPlugin :
             target_global_pub.publish(target);
         }
 
-        void handle_attitude_target(mavlink::common::msg::ATTITUDE_TARGET &tgt)  //delete "const mavlink::mavlink_message_t *msg" by Peixuan Shu
+        void handle_attitude_target(const mavlink_message_t& msg) // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
         {
+            // Decode mavlink message. Added by Peixuan Shu
+            mavlink_attitude_target_t tgt;
+            mavlink_msg_attitude_target_decode(&msg, &tgt); // mavlink c lib
+
             // Transform orientation from baselink -> ENU
             // to aircraft -> NED
             auto orientation = ftf::transform_orientation_ned_enu(
                         ftf::transform_orientation_baselink_aircraft(
-                            ftf::mavlink_to_quaternion(tgt.q)));
+                            ftf::mavlink_to_quaternion(FLOAT4_TO_ARRAY(tgt.q)))); // Change float[4] into std::array by Peixuan Shu
 
             auto body_rate = ftf::transform_frame_baselink_aircraft(Eigen::Vector3d(tgt.body_roll_rate, tgt.body_pitch_rate, tgt.body_yaw_rate));
 
@@ -150,24 +176,6 @@ class SetpointRawPlugin :
             target_attitude_pub.publish(target);
         }
 
-        /* -*- get the updated mavlink messages (added by Peixuan Shu) -*- */
-
-        mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED get_SET_POSITION_TARGET_LOCAL_NED()
-        {
-            return sp_SET_POSITION_TARGET_LOCAL_NED;
-        }
-
-        mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT get_SET_POSITION_TARGET_GLOBAL_INT()
-        {
-            return sp_SET_POSITION_TARGET_GLOBAL_INT;
-        }
-
-        mavlink::common::msg::SET_ATTITUDE_TARGET get_SET_ATTITUDE_TARGET()
-        {
-            return sp_SET_ATTITUDE_TARGET;
-        }
-
-    
     private:
         ros::NodeHandle sp_nh;
         ros::NodeHandle sp_nh_private;

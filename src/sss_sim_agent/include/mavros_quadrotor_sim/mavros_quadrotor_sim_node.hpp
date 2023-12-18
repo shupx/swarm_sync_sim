@@ -21,12 +21,11 @@
 #include <ros/ros.h>
 #include <sss_sim_env/sss_utils.hpp>
 
-// #include "mavros_sim/MavrosSim.hpp"
+#include "mavros_sim/MavrosSim.hpp"
 #include "mavros_quadrotor_sim/px4_sitl.hpp"
 #include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
 
 
-// using namespace mavros_sim;
 
 namespace MavrosQuadSimulator
 {
@@ -44,6 +43,7 @@ class Agent
 
         std::shared_ptr<Dynamics> dynamics_;
         std::shared_ptr<PX4SITL> px4sitl_;
+        std::shared_ptr<mavros_sim::MavrosSim> mavros_sim_;
 
         double mainloop_period_;
         sss_utils::Timer mainloop_timer_;

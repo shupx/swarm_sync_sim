@@ -33,14 +33,24 @@
 #pragma once
 
 #include <functional>
-#include <mavros/utils.h>
-#include <mavros/mavros_plugin.h>
+// #include <mavros/utils.h> // commented out by Peixuan Shu to avoid mavlink hpp headers
+// #include <mavros/mavros_plugin.h> // commented out by Peixuan Shu to avoid mavlink hpp headers
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages
 
 #include <geometry_msgs/TransformStamped.h>
 
 #include "tf2_ros/message_filter.h"
 #include <message_filters/subscriber.h>
 
+// macros for mavlink cpp to c headers conversions by Peixuan Shu
+#ifndef FLOAT4_TO_ARRAY
+#define FLOAT4_TO_ARRAY(x) std::array<float, 4>{x[0], x[1], x[2], x[3]}
+#endif
+#ifndef ARRAY_TO_FLOAT4
+#include <iostream>
+#include <algorithm>
+#define ARRAY_TO_FLOAT4(arr, x) std::copy(arr.begin(), arr.end(), x)
+#endif
 
 namespace mavros_sim { // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace plugin {
@@ -50,7 +60,6 @@ namespace plugin {
 template <class D>
 class SetPositionTargetLocalNEDMixin {
 public:
-	mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED sp_SET_POSITION_TARGET_LOCAL_NED = {}; //added by Peixuan Shu
 	//! Message specification: @p https://mavlink.io/en/messages/common.html#SET_POSITION_TARGET_LOCAL_NED
 	void set_position_target_local_ned(uint32_t time_boot_ms, uint8_t coordinate_frame,
 			uint16_t type_mask,
@@ -60,7 +69,8 @@ public:
 			float yaw, float yaw_rate)
 	{
 		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
-		mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED sp = {};
+		// mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED sp = {}; //deleted by Peixuan Shu
+		mavlink_set_position_target_local_ned_t sp{}; // use mavlink c headers by Peixuan Shu
 
 		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
 
@@ -88,7 +98,11 @@ public:
 		// [[[end]]] (checksum: 6a9b9dacbcf85c5d428d754c20afe110)
 
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
-		sp_SET_POSITION_TARGET_LOCAL_NED = sp; //added by Peixuan Shu
+
+		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int handle = (int) px4::mavlink_receive_handle::SET_POSITION_TARGET_LOCAL_NED;
+		mavlink_msg_set_position_target_local_ned_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
+		px4::mavlink_receive_list[handle].updated = true;
 	}
 };
 
@@ -98,7 +112,6 @@ public:
 template <class D>
 class SetPositionTargetGlobalIntMixin {
 public:
-	mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT sp_SET_POSITION_TARGET_GLOBAL_INT = {}; //added by Peixuan Shu
 	//! Message specification: @p https://mavlink.io/en/messages/common.html#SET_POSITION_TARGET_GLOBAL_INT
 	void set_position_target_global_int(uint32_t time_boot_ms, uint8_t coordinate_frame,
 			uint16_t type_mask,
@@ -108,7 +121,8 @@ public:
 			float yaw, float yaw_rate)
 	{
 		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
-		mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT sp = {};
+		// mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT sp = {};  //deleted by Peixuan Shu
+		mavlink_set_position_target_global_int_t sp{}; // use mavlink c headers by Peixuan Shu
 
 		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
 
@@ -136,7 +150,11 @@ public:
 		// [[[end]]] (checksum: 30c9629ad309d488df1f63b683dac6a4)
 
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
-		sp_SET_POSITION_TARGET_GLOBAL_INT = sp; //added by Peixuan Shu
+
+		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int handle = (int) px4::mavlink_receive_handle::SET_POSITION_TARGET_GLOBAL_INT;
+		mavlink_msg_set_position_target_global_int_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
+		px4::mavlink_receive_list[handle].updated = true;
 	}
 };
 
@@ -146,7 +164,6 @@ public:
 template <class D>
 class SetAttitudeTargetMixin {
 public:
-	mavlink::common::msg::SET_ATTITUDE_TARGET sp_SET_ATTITUDE_TARGET = {}; //added by Peixuan Shu
 	//! Message sepecification: @p https://mavlink.io/en/messages/common.html#SET_ATTITUDE_TARGET
 	void set_attitude_target(uint32_t time_boot_ms,
 			uint8_t type_mask,
@@ -155,10 +172,14 @@ public:
 			float thrust)
 	{
 		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
-		mavlink::common::msg::SET_ATTITUDE_TARGET sp = {};
+		// mavlink::common::msg::SET_ATTITUDE_TARGET sp = {};  //deleted by Peixuan Shu
+		mavlink_set_attitude_target_t sp{}; // use mavlink c headers by Peixuan Shu
 
 		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
-		mavros::ftf::quaternion_to_mavlink(orientation, sp.q);
+
+		std::array<float, 4> q_array;
+		mavros::ftf::quaternion_to_mavlink(orientation, q_array);
+		ARRAY_TO_FLOAT4(q_array, sp.q); // Transfer cpp std::array into c float array
 
 		// [[[cog:
 		// for f in ('time_boot_ms', 'type_mask', 'thrust'):
@@ -175,7 +196,11 @@ public:
 		// [[[end]]] (checksum: aa941484927bb7a7d39a2c31d08fcfc1)
 
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
-		sp_SET_ATTITUDE_TARGET = sp; //added by Peixuan Shu
+
+		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int handle = (int) px4::mavlink_receive_handle::SET_ATTITUDE_TARGET;
+		mavlink_msg_set_attitude_target_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
+		px4::mavlink_receive_list[handle].updated = true;
 	}
 };
 

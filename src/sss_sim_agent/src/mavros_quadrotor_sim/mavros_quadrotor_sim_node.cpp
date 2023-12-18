@@ -38,6 +38,8 @@ namespace MavrosQuadSimulator
 Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh), nh_private_(nh_private)
 {
+    /* Check if sim time is used */
+
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {
@@ -45,17 +47,28 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
         nh_.setParam("/use_sim_time", true);
     }
 
+
+    /* init sim modules */
+
     dynamics_ = std::make_shared<Dynamics>();
-    dynamics_->setSimStep(0.01);
+    dynamics_->setSimStep(0.01); // set odeint integration step
 
     px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
 
-    mainloop_period_ = 0.02;
+    mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
+
+
+    /* Set main loop */
+    
+    mainloop_period_ = 0.02; // multiples of the dynamics_->getSimStep()
+    float times = mainloop_period_ / dynamics_->getSimStep();
+    ROS_ASSERT_MSG(times >= 1 && times == int(times), "[MavrosQuadSimulator::Agent] mainloop_period_ should be multiples of dynamic sim step!");
     mainloop_timer_ = sss_utils::createTimer(ros::Duration(mainloop_period_), &Agent::mainloop, this);
 }
 
 void Agent::mainloop(const ros::TimerEvent &event)
 {
+    /*  Validate time  */
     static double last_time = ros::Time::now().toSec(); // use sim time
     double next_time = ros::Time::now().toSec() + mainloop_period_;
     if (next_time < last_time)
@@ -65,6 +78,9 @@ void Agent::mainloop(const ros::TimerEvent &event)
 
     /* Run PX4 SITL for one loop */
     px4sitl_->Run(ros::Time::now().toNSec() * 1e3);
+
+    /* Mavros publishing mavlink messages */
+    mavros_sim_->Publish();
 
     /* Dynamics step forward (ode integrate the numerical model) */
     dynamics_->step(last_time, next_time);

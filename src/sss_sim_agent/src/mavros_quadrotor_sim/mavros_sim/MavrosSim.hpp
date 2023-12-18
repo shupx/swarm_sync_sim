@@ -27,13 +27,19 @@ namespace mavros_sim
 class MavrosSim
 {
     public:
+        /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
         MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+
+        /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */
+        void Publish();
 
     private:
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
         std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin_;
-        
+
+        /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
+        void handle_message(const mavlink_message_t &msg);
 
 };
 

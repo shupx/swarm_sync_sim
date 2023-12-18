@@ -80,10 +80,10 @@ void PX4SITL::Run(const uint64_t &time_us)
     UpdateUorbStates(time_us);
 
     /* Run mavlink receiver to update command uorb messages */
-    MavlinkReceive();
+    ReceiveMavlink();
 
     /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
-    MavlinkStream(time_us);
+    StreamMavlink(time_us);
 
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
@@ -91,7 +91,7 @@ void PX4SITL::Run(const uint64_t &time_us)
 
 }
 
-void PX4SITL::MavlinkReceive()
+void PX4SITL::ReceiveMavlink()
 {
 	/* Search for mavlink receiving list and handle the updated messages */
 	for (int i=0; i<MAVLINK_RECEIVE_NUM; ++i)
@@ -106,7 +106,7 @@ void PX4SITL::MavlinkReceive()
 	}
 }
 
-void PX4SITL::MavlinkStream(const uint64_t &time_us)
+void PX4SITL::StreamMavlink(const uint64_t &time_us)
 {
     mavlink_streamer_->Stream(time_us);
 }

@@ -122,6 +122,10 @@ target_link_libraries(MavrosSim
   # ${catkin_LIBRARIES} for libmavros.so from eigen_conversions ROS package
 )
 
+# Supress the warnings of packed member in mavlink c_library_v2
+# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
+target_compile_options(MavrosSim PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
+
 
 add_executable(mavros_quadrotor_sim_node
                   src/mavros_quadrotor_sim/mavros_quadrotor_sim_node.cpp)
