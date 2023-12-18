@@ -165,6 +165,7 @@ void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
     vehicle_angular_velocity_msg.xyz[0] = omega[0];
     vehicle_angular_velocity_msg.xyz[1] = omega[1];
     vehicle_angular_velocity_msg.xyz[2] = omega[2];
+    _vehicle_angular_velocity_pub.publish(vehicle_angular_velocity_msg);
 
 
     // vehicle_status

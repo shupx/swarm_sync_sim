@@ -70,12 +70,12 @@ template<typename T>
 class Subscription
 {
     public:
-        Subscription(T& uorb_msg): global_uorb_msg_(uorb_msg) {}
+        Subscription(T& uorb_msg): global_uorb_msg_(&uorb_msg) {}
         bool valid() {return !memcmp(&global_uorb_msg_, "\0\0\0", sizeof(global_uorb_msg_)) == 0;}
 	    bool update(void *dst)
         {
             if (valid()){
-                memcpy(dst, &global_uorb_msg_, sizeof(global_uorb_msg_));
+                memcpy(dst, global_uorb_msg_, sizeof(*global_uorb_msg_));
                 return true;
             }
             else{
@@ -95,7 +95,7 @@ class Subscription
         bool copy(void *dst) { return update(dst);}
 
     private:
-        T &global_uorb_msg_; // & denotes Reference passing
+        T* global_uorb_msg_; // the pointer of the global uorb message in this file
 };
 
 /**

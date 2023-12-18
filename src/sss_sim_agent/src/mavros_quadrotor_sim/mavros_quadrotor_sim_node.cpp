@@ -63,6 +63,9 @@ void Agent::mainloop(const ros::TimerEvent &event)
         ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(last_time).c_str());
     }
 
+    /* Run PX4 SITL for one loop */
+    px4sitl_->Run(ros::Time::now().toNSec() * 1e3);
+
     /* Dynamics step forward (ode integrate the numerical model) */
     dynamics_->step(last_time, next_time);
 
