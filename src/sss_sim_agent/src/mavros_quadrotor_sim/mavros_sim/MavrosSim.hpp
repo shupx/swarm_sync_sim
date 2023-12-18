@@ -17,9 +17,10 @@
  
 
 #include <ros/ros.h>
+
 #include "plugins/setpoint_raw.cpp"
 
-
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages (Created by Peixuan Shu)
 
 namespace mavros_sim
 {

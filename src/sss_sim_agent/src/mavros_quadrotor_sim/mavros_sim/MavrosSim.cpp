@@ -18,8 +18,6 @@
 
 #include "MavrosSim.hpp"
 
-
-
 namespace mavros_sim
 {
 
