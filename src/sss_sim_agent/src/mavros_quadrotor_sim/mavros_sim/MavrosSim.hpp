@@ -19,6 +19,9 @@
 #include <ros/ros.h>
 
 #include "plugins/setpoint_raw.cpp"
+#include "plugins/local_position.cpp"
+
+#include "lib/mavros_uas.h"
 
 #include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages (Created by Peixuan Shu)
 
@@ -37,7 +40,11 @@ class MavrosSim
     private:
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
+
+        std::shared_ptr<UAS> uas; // store some common data and functions
+
         std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin_;
+        std::unique_ptr<std_plugins::LocalPositionPlugin> local_position_plugin_;
 
         /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
         void handle_message(const mavlink_message_t &msg);

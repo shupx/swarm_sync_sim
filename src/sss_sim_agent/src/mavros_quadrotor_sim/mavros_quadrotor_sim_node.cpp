@@ -43,8 +43,9 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {
-        ROS_WARN("[Agent] /use_sim_time is false! Force to set /use_sim_time to true");
-        nh_.setParam("/use_sim_time", true);
+        // ROS_WARN("[Agent] /use_sim_time is false! Force to set /use_sim_time to true");
+        // nh_.setParam("/use_sim_time", true);
+        ROS_WARN("[Agent] /use_sim_time is false! Maybe real time is used.");
     }
 
 
@@ -59,7 +60,7 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
 
 
     /* Set main loop */
-    
+
     mainloop_period_ = 0.02; // multiples of the dynamics_->getSimStep()
     float times = mainloop_period_ / dynamics_->getSimStep();
     ROS_ASSERT_MSG(times >= 1 && times == int(times), "[MavrosQuadSimulator::Agent] mainloop_period_ should be multiples of dynamic sim step!");

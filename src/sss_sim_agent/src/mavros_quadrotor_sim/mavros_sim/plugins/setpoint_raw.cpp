@@ -16,6 +16,22 @@
  * 
  */
 
+/**
+ * @brief SetpointRAW plugin
+ * @file setpoint_raw.cpp
+ * @author Vladimir Ermakov <vooon341@gmail.com>
+ *
+ * @addtogroup plugin
+ * @{
+ */
+/*
+ * Copyright 2015,2016 Vladimir Ermakov.
+ *
+ * This file is part of the mavros package and subject to the license terms
+ * in the top-level LICENSE file of the mavros repository.
+ * https://github.com/mavlink/mavros/tree/master/LICENSE.md
+ */
+
 
 // macros for mavlink cpp to c headers conversions by Peixuan Shu
 #ifndef FLOAT4_TO_ARRAY
@@ -77,7 +93,8 @@ class SetpointRawPlugin :
             if (!sp_nh_private.getParam("thrust_scaling", thrust_scaling))  //sp_nh_private modified by Peixuan Shu
             {   
                 ROS_WARN_THROTTLE_NAMED(5, "setpoint_raw", "thrust_scaling parameter is unset. Attitude (and angular rate/thrust) setpoints will be ignored.");
-                thrust_scaling = -1.0;
+                // thrust_scaling = -1.0;
+                thrust_scaling = 1.0; // modified by Peixuan Shu (default value in px4_config.yaml)
             }
         }
 
@@ -308,5 +325,5 @@ class SetpointRawPlugin :
 
 };
 
-}
-}
+}	// namespace std_plugins
+}	// namespace mavros_sim

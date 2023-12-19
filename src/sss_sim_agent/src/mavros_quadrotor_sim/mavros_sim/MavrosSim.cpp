@@ -29,6 +29,8 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     // std_plugins::SetpointRawPlugin* setpoint_raw_plugin = new std_plugins::SetpointRawPlugin(); //unsafe pointer (need manual delete)
     setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>();
 
+    local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas);
+
 }
 
 /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */
@@ -62,6 +64,12 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
         case MAVLINK_MSG_ID_ATTITUDE_TARGET:
             setpoint_raw_plugin_->handle_attitude_target(msg);
             break;
+        
+        /* local_position_plugin_ */
+        case MAVLINK_MSG_ID_LOCAL_POSITION_NED:
+            local_position_plugin_->handle_local_position_ned(msg);
+        case MAVLINK_MSG_ID_LOCAL_POSITION_NED_COV:
+            local_position_plugin_->handle_local_position_ned_cov(msg);
         
         default:
 		    std::cout << "[MavrosSim::handle_message] Unknown mavlink message id: " << msg.msgid << std::endl;

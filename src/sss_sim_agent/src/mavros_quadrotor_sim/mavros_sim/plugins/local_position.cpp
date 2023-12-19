@@ -1,4 +1,22 @@
 /**
+ * @file local_position.cpp
+ * @author Peixuan Shu (shupeixuan@qq.com)
+ * @brief Simulated mavros plugins.
+ * 
+ * Similar to https://github.com/mavlink/mavros/blob/master/mavros/src/plugins/local_position.cpp
+ * 
+ * Note: This program relies on 
+ * 
+ * @version 1.0
+ * @date 2023-12-19
+ * 
+ * @license BSD 3-Clause License
+ * @copyright (c) 2023, Peixuan Shu
+ * All rights reserved.
+ * 
+ */
+
+/**
  * @brief LocalPosition plugin
  * @file local_position.cpp
  * @author Vladimir Ermakov <vooon341@gmail.com>
@@ -16,8 +34,19 @@
  * https://github.com/mavlink/mavros/tree/master/LICENSE.md
  */
 
-#include <mavros/mavros_plugin.h>
-#include <eigen_conversions/eigen_msg.h>
+// macros for mavlink cpp to c headers conversions by Peixuan Shu
+#ifndef FLOAT4_TO_ARRAY
+#include <array>
+#define FLOAT4_TO_ARRAY(x) std::array<float, 4>{x[0], x[1], x[2], x[3]}
+#endif
+#ifndef ARRAY_TO_FLOAT4
+#include <iostream>
+#include <algorithm>
+#define ARRAY_TO_FLOAT4(arr, x) std::copy(arr.begin(), arr.end(), x)
+#endif
+
+// #include <mavros/mavros_plugin.h>
+#include <eigen_conversions/eigen_msg.h> // for tf::
 
 #include <geometry_msgs/AccelWithCovarianceStamped.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -28,25 +57,36 @@
 
 #include <nav_msgs/Odometry.h>
 
-namespace mavros {
+// header files added by Peixuan Shu
+#include <ros/ros.h>
+#include <mavros/frame_tf.h> // Added by Peixuan Shu for ftf::
+#include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
+#include <mavlink/v2.0/minimal/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
+#include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
+
+
+using namespace mavros; // for mavros::ftf, added by Peixuan Shu
+
+
+namespace mavros_sim {  // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace std_plugins {
 /**
  * @brief Local position plugin.
  * Publish local position to TF, PositionStamped, TwistStamped
  * and Odometry
  */
-class LocalPositionPlugin : public plugin::PluginBase {
+class LocalPositionPlugin
+{
 public:
-	LocalPositionPlugin() : PluginBase(),
-		lp_nh("~local_position"),
+	LocalPositionPlugin(const std::shared_ptr<UAS> &uas) :
+		lp_nh("mavros/local_position"),  // nodehandle modified by Peixuan Shu
+		lp_nh_private("~local_position"),   // nodehandle added by Peixuan Shu
 		tf_send(false),
 		has_local_position_ned(false),
-		has_local_position_ned_cov(false)
-	{ }
-
-	void initialize(UAS &uas_) override
+		has_local_position_ned_cov(false),
+		m_uas(uas) // added by Peixuan Shu
 	{
-		PluginBase::initialize(uas_);
+		// PluginBase::initialize(uas_);
 
 		// header frame_id.
 		// default to map (world-fixed,ENU as per REP-105).
@@ -66,15 +106,11 @@ public:
 		local_odom = lp_nh.advertise<nav_msgs::Odometry>("odom",10);
 	}
 
-	Subscriptions get_subscriptions() override {
-		return {
-			       make_handler(&LocalPositionPlugin::handle_local_position_ned),
-			       make_handler(&LocalPositionPlugin::handle_local_position_ned_cov)
-		};
-	}
-
 private:
+	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
+
 	ros::NodeHandle lp_nh;
+	ros::NodeHandle lp_nh_private; // nodehandle added by Peixuan Shu
 
 	ros::Publisher local_position;
 	ros::Publisher local_position_cov;
@@ -106,8 +142,13 @@ private:
 		}
 	}
 
-	void handle_local_position_ned(const mavlink::mavlink_message_t *msg, mavlink::common::msg::LOCAL_POSITION_NED &pos_ned)
+public: // public by Peixuan Shu
+	void handle_local_position_ned(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_local_position_ned_t pos_ned;
+		mavlink_msg_local_position_ned_decode(&msg, &pos_ned); // mavlink c lib		
+
 		has_local_position_ned = true;
 
 		//--------------- Transform FCU position and Velocity Data ---------------//
@@ -165,8 +206,12 @@ private:
 		publish_tf(odom);
 	}
 
-	void handle_local_position_ned_cov(const mavlink::mavlink_message_t *msg, mavlink::common::msg::LOCAL_POSITION_NED_COV &pos_ned)
+	void handle_local_position_ned_cov(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_local_position_ned_cov_t pos_ned;
+		mavlink_msg_local_position_ned_cov_decode(&msg, &pos_ned); // mavlink c lib		
+
 		has_local_position_ned_cov = true;
 
 		auto enu_position = ftf::transform_frame_ned_enu(Eigen::Vector3d(pos_ned.x, pos_ned.y, pos_ned.z));
@@ -244,7 +289,4 @@ private:
 	}
 };
 }	// namespace std_plugins
-}	// namespace mavros
-
-#include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(mavros::std_plugins::LocalPositionPlugin, mavros::plugin::PluginBase)
+}	// namespace mavros_sim

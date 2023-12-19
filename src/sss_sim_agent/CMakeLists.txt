@@ -107,8 +107,9 @@ target_compile_options(px4_sitl PUBLIC -Wno-address-of-packed-member -Wno-cast-a
 
 add_library(MavrosSim
             src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp
-            # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_frame_conversions.cpp
-            # src/mavros_quadrotor_sim/mavros_sim/lib/ftf_quaternion_utils.cpp
+            src/mavros_quadrotor_sim/mavros_sim/lib/uas_data.cpp
+            src/mavros_quadrotor_sim/mavros_sim/lib/uas_stringify.cpp
+            src/mavros_quadrotor_sim/mavros_sim/lib/uas_timesync.cpp
           )
 
 # add *.hpp header path for which use this lib
