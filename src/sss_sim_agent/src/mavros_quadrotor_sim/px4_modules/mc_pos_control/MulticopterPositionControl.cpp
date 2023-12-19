@@ -333,18 +333,19 @@ void MulticopterPositionControl::Run()
 	if (_local_pos_sub.update(&local_pos)) {
 		const hrt_abstime time_stamp_now = local_pos.timestamp_sample;
 		const float dt = math::constrain(((time_stamp_now - _time_stamp_last_loop) * 1e-6f), 0.002f, 0.04f);
-		_time_stamp_last_loop = time_stamp_now;
 
 		/***************** Added by Peixuan Shu ******************************/
 		if ((time_stamp_now - _time_stamp_last_loop) * 1e-6f < 0.002f)
 		{
-			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too small and less than 0.002s!" << std::endl;
+			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too small and less than 0.002s! time_stamp_now - _time_stamp_last_loop = " << (time_stamp_now - _time_stamp_last_loop) * 1e-6f << " s" << std::endl;
 		}
 		if ((time_stamp_now - _time_stamp_last_loop) * 1e-6f > 0.04f)
 		{
-			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too large and large than 0.04s!" << std::endl;
+			std::cout << "[MulticopterPositionControl::Run] Warn! loop period is too large and large than 0.04s! time_stamp_now - _time_stamp_last_loop = " << (time_stamp_now - _time_stamp_last_loop) * 1e-6f << " s" << std::endl;
 		}
 		/********************************************************************/
+
+		_time_stamp_last_loop = time_stamp_now;
 
 		// set _dt in controllib Block for BlockDerivative
 		// setDt(dt);

@@ -23,7 +23,7 @@
 #include "streams/ATTITUDE_QUATERNION.hpp"
 // #include "streams/ATTITUDE_TARGET.hpp"
 // #include "streams/HEARTBEAT.hpp"
-// #include "streams/LOCAL_POSITION_NED.hpp"
+#include "streams/LOCAL_POSITION_NED.hpp"
 // #include "streams/POSITION_TARGET_LOCAL_NED.hpp"
 
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
@@ -50,9 +50,10 @@ public:
 			/* Streaming the mavlink messages at a given rate */
 			void Stream(const uint64_t &time_us)
 			{
-				static uint64_t last_send = 0.0;
+				static uint64_t last_send = 0;
 				if (time_us > last_send + period_us_)
 				{
+					// std::cout << "[MavlinkStream::Stream] time_us: " << time_us << std::endl;
 					stream_.send();
 					last_send = time_us < last_send + 2*period_us_ ? last_send+period_us_ : time_us;
 				}
@@ -63,7 +64,8 @@ public:
 			uint64_t period_us_; // us
 	};
 
-	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream1;
+	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream1_;
+	STREAM_PTR(MavlinkStreamLocalPositionNED) mavlink_stream2_;
 
 	MavlinkStreamer();
 

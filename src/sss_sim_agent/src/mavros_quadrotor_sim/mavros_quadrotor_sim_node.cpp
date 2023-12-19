@@ -61,7 +61,7 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
 
     /* Set main loop */
 
-    mainloop_period_ = 0.02; // multiples of the dynamics_->getSimStep()
+    mainloop_period_ = 0.01; // should be multiples of the dynamics_->getSimStep()
     float times = mainloop_period_ / dynamics_->getSimStep();
     ROS_ASSERT_MSG(times >= 1 && times == int(times), "[MavrosQuadSimulator::Agent] mainloop_period_ should be multiples of dynamic sim step!");
     mainloop_timer_ = sss_utils::createTimer(ros::Duration(mainloop_period_), &Agent::mainloop, this);
@@ -78,7 +78,8 @@ void Agent::mainloop(const ros::TimerEvent &event)
     }
 
     /* Run PX4 SITL for one loop */
-    px4sitl_->Run(ros::Time::now().toNSec() * 1e3);
+    uint64_t time_us = ros::Time::now().toNSec() / uint64_t(1e3); // do not use 1e3 along as it is double type!
+    px4sitl_->Run(time_us);
 
     /* Mavros publishing mavlink messages */
     mavros_sim_->Publish();

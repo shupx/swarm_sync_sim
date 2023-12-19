@@ -14,10 +14,12 @@
  * 
  */
 
-#pragma once
+#ifndef __UORB_SIM_HPP__
+#define __UORB_SIM_HPP__
 
 #include <px4_platform_common/defines.h>
 
+#include <stdint.h> // for uint64_t
 #include <uORB/topics/autotune_attitude_control_status.h>
 #include <uORB/topics/home_position.h>
 #include <uORB/topics/manual_control_setpoint.h>
@@ -44,26 +46,46 @@
 
 namespace uORB_sim { 
 
-// TODO: initialize if no publisher exists?
-// store all px4 uORB messages
-static autotune_attitude_control_status_s autotune_attitude_control_status;
-static home_position_s home_position;
-static manual_control_setpoint_s manual_control_setpoint;
-static takeoff_status_s takeoff_status;
-static offboard_control_mode_s offboard_control_mode;
-static vehicle_angular_velocity_s vehicle_angular_velocity;
-static vehicle_attitude_s vehicle_attitude;
-static vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
-static vehicle_constraints_s vehicle_constraints;
-static vehicle_control_mode_s vehicle_control_mode;
-static vehicle_global_position_s vehicle_global_position;
-static vehicle_land_detected_s vehicle_land_detected;
-static vehicle_local_position_s vehicle_local_position;
-static vehicle_local_position_setpoint_s vehicle_local_position_setpoint;
-static vehicle_local_position_setpoint_s trajectory_setpoint;
-static vehicle_odometry_s vehicle_odometry;
-static vehicle_rates_setpoint_s vehicle_rates_setpoint;
-static vehicle_status_s vehicle_status;
+// store all px4 uORB messages (declaring global)
+extern autotune_attitude_control_status_s autotune_attitude_control_status;
+extern home_position_s home_position;
+extern manual_control_setpoint_s manual_control_setpoint;
+extern takeoff_status_s takeoff_status;
+extern offboard_control_mode_s offboard_control_mode;
+extern vehicle_angular_velocity_s vehicle_angular_velocity;
+extern vehicle_attitude_s vehicle_attitude;
+extern vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
+extern vehicle_constraints_s vehicle_constraints;
+extern vehicle_control_mode_s vehicle_control_mode;
+extern vehicle_global_position_s vehicle_global_position;
+extern vehicle_land_detected_s vehicle_land_detected;
+extern vehicle_local_position_s vehicle_local_position;
+extern vehicle_local_position_setpoint_s vehicle_local_position_setpoint;
+extern vehicle_local_position_setpoint_s trajectory_setpoint;
+extern vehicle_odometry_s vehicle_odometry;
+extern vehicle_rates_setpoint_s vehicle_rates_setpoint;
+extern vehicle_status_s vehicle_status;
+
+// @TODO: Initialize if no publisher exists?
+// autotune_attitude_control_status_s autotune_attitude_control_status={};
+// home_position_s home_position={};
+// manual_control_setpoint_s manual_control_setpoint={};
+// takeoff_status_s takeoff_status={};
+// offboard_control_mode_s offboard_control_mode={};
+// vehicle_angular_velocity_s vehicle_angular_velocity={};
+// vehicle_attitude_s vehicle_attitude={};
+// vehicle_attitude_setpoint_s vehicle_attitude_setpoint={};
+// vehicle_constraints_s vehicle_constraints={};
+// vehicle_control_mode_s vehicle_control_mode={};
+// vehicle_global_position_s vehicle_global_position={};
+// vehicle_land_detected_s vehicle_land_detected={};
+// vehicle_local_position_s vehicle_local_position={.xy_valid=true, .v_xy_valid=true};
+// vehicle_local_position_setpoint_s vehicle_local_position_setpoint={};
+// vehicle_local_position_setpoint_s trajectory_setpoint={};
+// vehicle_odometry_s vehicle_odometry={};
+// vehicle_rates_setpoint_s vehicle_rates_setpoint={};
+// vehicle_status_s vehicle_status={};
+
 
 // Base uORB subscription wrapper class
 template<typename T>
@@ -71,7 +93,11 @@ class Subscription
 {
     public:
         Subscription(T& uorb_msg): global_uorb_msg_(&uorb_msg) {}
-        bool valid() {return !memcmp(&global_uorb_msg_, "\0\0\0", sizeof(global_uorb_msg_)) == 0;}
+
+        //@TODO: check if global_uorb_msg_ is updated and not null
+         // compare it with \0\0\0 is invalid actually
+        bool valid() {return !(memcmp(global_uorb_msg_, "\0\0\0", sizeof(*global_uorb_msg_)) == 0);}
+
 	    bool update(void *dst)
         {
             if (valid()){
@@ -149,3 +175,5 @@ private:
 };
 
 }
+
+#endif

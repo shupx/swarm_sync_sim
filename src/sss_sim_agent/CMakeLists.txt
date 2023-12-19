@@ -39,7 +39,9 @@ add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
 
 add_library(px4_lib
               src/mavros_quadrotor_sim/px4_modules/px4_lib/hysteresis/hysteresis.cpp
-              src/mavros_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp) 
+              src/mavros_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp
+              src/mavros_quadrotor_sim/px4_modules/px4_lib/parameters/px4_parameters.cpp
+              src/mavros_quadrotor_sim/px4_modules/px4_lib/uORB/uORB_sim.cpp) 
 
 add_library(mc_pos_control
               src/mavros_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/ControlMath.cpp
@@ -71,13 +73,14 @@ target_include_directories(mc_att_control PUBLIC
 
 
 add_library(px4_mavlink
-            src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
-            src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
+              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_msg_list.cpp
+              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
+              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
             )
 
 # link libraries for this lib
-# target_link_libraries(px4_mavlink 
-#                 px4_lib)
+target_link_libraries(px4_mavlink 
+                px4_lib)
 
 # add *.hpp header path for which use this lib
 target_include_directories(px4_mavlink PUBLIC

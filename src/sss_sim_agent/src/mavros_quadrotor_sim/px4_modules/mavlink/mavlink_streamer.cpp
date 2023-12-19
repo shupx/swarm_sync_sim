@@ -18,7 +18,8 @@
 
 MavlinkStreamer::MavlinkStreamer()
 {
-    mavlink_stream1 = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this);
+    mavlink_stream1_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this); // set streaming rate
+    mavlink_stream2_ = STREAM_MAKE_PTR(MavlinkStreamLocalPositionNED)(30, this); // set streaming rate
 }
 
 

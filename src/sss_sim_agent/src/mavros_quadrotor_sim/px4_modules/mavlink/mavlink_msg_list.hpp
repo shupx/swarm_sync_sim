@@ -22,8 +22,8 @@
 
 struct mavlink_info_s
 {
-	bool updated = false; // init on struct definition (only supported after c++11)
-	mavlink_message_t msg {}; // init on struct definition (only supported after c++11)
+	bool updated;
+	mavlink_message_t msg;
 };
 
 
@@ -39,8 +39,8 @@ enum class mavlink_stream_handle : uint16_t {
 	POSITION_TARGET_LOCAL_NED,
 	Cout = MAVLINK_STREAM_NUM  // number of mavlink_stream
 };
-// Store the streaming mavlink messages
-static mavlink_info_s mavlink_stream_list[(int) mavlink_stream_handle::Cout];
+// Store the streaming mavlink messages (declaring global)
+extern mavlink_info_s mavlink_stream_list[(int) mavlink_stream_handle::Cout]; // declare global
 
 
 #define MAVLINK_RECEIVE_NUM 3 // number of mavlink_receive
@@ -51,7 +51,7 @@ enum class mavlink_receive_handle : uint16_t {
 	Cout = MAVLINK_RECEIVE_NUM 
 };
 // Store the receiving mavlink messages
-static mavlink_info_s mavlink_receive_list[(int) mavlink_receive_handle::Cout];
+extern mavlink_info_s mavlink_receive_list[(int) mavlink_receive_handle::Cout]; // declare global
 
 
 }

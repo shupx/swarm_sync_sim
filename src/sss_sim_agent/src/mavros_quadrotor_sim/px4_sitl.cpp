@@ -89,6 +89,9 @@ void PX4SITL::Run(const uint64_t &time_us)
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
     mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
 
+    /* @TODO Send command to dynamics */
+    SendControlInput();
+
 }
 
 void PX4SITL::ReceiveMavlink()

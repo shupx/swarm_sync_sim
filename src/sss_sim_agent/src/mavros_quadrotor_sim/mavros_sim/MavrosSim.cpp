@@ -24,12 +24,11 @@ namespace mavros_sim
 MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh), nh_private_(nh_private)
 {
+    uas_ = std::make_shared<UAS>(); // uas_ stores some common data and functions
+
     /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
-
-    // std_plugins::SetpointRawPlugin* setpoint_raw_plugin = new std_plugins::SetpointRawPlugin(); //unsafe pointer (need manual delete)
     setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>();
-
-    local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas);
+    local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_);
 
 }
 
@@ -39,12 +38,11 @@ void MavrosSim::Publish()
 	/* Search for mavlink streaming list and handle the updated messages */
 	for (int i=0; i<MAVLINK_STREAM_NUM; ++i)
 	{
-		mavlink_info_s mavlink_info = px4::mavlink_stream_list[i];
-		
-		if (mavlink_info.updated)
+		if (px4::mavlink_stream_list[i].updated)
 		{
-			handle_message(mavlink_info.msg);
-			mavlink_info.updated = false; // waiting for the next update
+            // std::cout << "[MavrosSim::Publish] handle " << px4::mavlink_stream_list[i].msg.msgid << std::endl;
+			handle_message(px4::mavlink_stream_list[i].msg);
+			px4::mavlink_stream_list[i].updated = false; // waiting for the next update
 		}
 	}
 }
@@ -68,8 +66,10 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
         /* local_position_plugin_ */
         case MAVLINK_MSG_ID_LOCAL_POSITION_NED:
             local_position_plugin_->handle_local_position_ned(msg);
+            break;
         case MAVLINK_MSG_ID_LOCAL_POSITION_NED_COV:
             local_position_plugin_->handle_local_position_ned_cov(msg);
+            break;
         
         default:
 		    std::cout << "[MavrosSim::handle_message] Unknown mavlink message id: " << msg.msgid << std::endl;

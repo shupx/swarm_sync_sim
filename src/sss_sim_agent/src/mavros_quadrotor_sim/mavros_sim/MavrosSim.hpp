@@ -41,7 +41,7 @@ class MavrosSim
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;
 
-        std::shared_ptr<UAS> uas; // store some common data and functions
+        std::shared_ptr<UAS> uas_; // store some common data and functions
 
         std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin_;
         std::unique_ptr<std_plugins::LocalPositionPlugin> local_position_plugin_;

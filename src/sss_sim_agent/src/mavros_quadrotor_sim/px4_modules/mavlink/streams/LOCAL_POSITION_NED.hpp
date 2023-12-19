@@ -1,3 +1,9 @@
+/**
+ * Copied from PX4-Autopilot/src/modules/mavlink/streams
+ * Comment out useless defines.
+ * @author Peixuan Shu
+ */
+
 /****************************************************************************
  *
  *   Copyright (c) 2021 PX4 Development Team. All rights reserved.
@@ -36,28 +42,17 @@
 
 #include <uORB/topics/vehicle_local_position.h>
 
-class MavlinkStreamLocalPositionNED : public MavlinkStream
+#include <uORB/uORB_sim.hpp> // Added by Peixuan Shu
+#include "../mavlink_msg_list.hpp"  // Added by Peixuan Shu
+
+class MavlinkStreamLocalPositionNED
 {
-public:
-	static MavlinkStream *new_instance(Mavlink *mavlink) { return new MavlinkStreamLocalPositionNED(mavlink); }
-
-	static constexpr const char *get_name_static() { return "LOCAL_POSITION_NED"; }
-	static constexpr uint16_t get_id_static() { return MAVLINK_MSG_ID_LOCAL_POSITION_NED; }
-
-	const char *get_name() const override { return get_name_static(); }
-	uint16_t get_id() override { return get_id_static(); }
-
-	unsigned get_size() override
-	{
-		return _lpos_sub.advertised() ? MAVLINK_MSG_ID_LOCAL_POSITION_NED_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES : 0;
-	}
-
 private:
-	explicit MavlinkStreamLocalPositionNED(Mavlink *mavlink) : MavlinkStream(mavlink) {}
 
-	uORB::Subscription _lpos_sub{ORB_ID(vehicle_local_position)};
+	uORB_sim::Subscription<vehicle_local_position_s> _lpos_sub{ORB_ID(vehicle_local_position)};
 
-	bool send() override
+public:
+	bool send()
 	{
 		vehicle_local_position_s lpos;
 
@@ -73,7 +68,13 @@ private:
 				msg.vy = lpos.vy;
 				msg.vz = lpos.vz;
 
-				mavlink_msg_local_position_ned_send_struct(_mavlink->get_channel(), &msg);
+				// mavlink_msg_local_position_ned_send_struct(_mavlink->get_channel(), &msg);
+
+				/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+				int handle = (int) px4::mavlink_stream_handle::LOCAL_POSITION_NED;
+				mavlink_msg_local_position_ned_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+				px4::mavlink_stream_list[handle].updated = true;
+				// std::cout << "[MavlinkStreamLocalPositionNED::send] updated px4::mavlink_stream_list[handle].updated = " << px4::mavlink_stream_list[handle].msg.payload64 << std::endl;
 
 				return true;
 			}
