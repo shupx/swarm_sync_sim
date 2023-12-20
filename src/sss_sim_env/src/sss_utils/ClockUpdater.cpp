@@ -25,7 +25,7 @@ ClockUpdater::ClockUpdater()
     nh_.param<bool>("/use_sim_time", use_sim_time, false);
 
     if (use_sim_time){
-        ROS_INFO("[ClockUpdater] use_sim_time == true. Init");
+        ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for service /sss_timeclient_register");
         init();
     }
     else{

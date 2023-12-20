@@ -34,7 +34,7 @@
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
 
-#include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
+#include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
 
 namespace MavrosQuadSimulator
 {

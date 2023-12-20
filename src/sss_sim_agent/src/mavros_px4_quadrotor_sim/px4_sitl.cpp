@@ -16,7 +16,7 @@
  */
 
 
-#include "mavros_quadrotor_sim/px4_sitl.hpp"
+#include "mavros_px4_quadrotor_sim/px4_sitl.hpp"
 
 namespace MavrosQuadSimulator
 {

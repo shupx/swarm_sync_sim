@@ -1,5 +1,5 @@
 /**
- * @file mavros_quadrotor_sim_node.cpp
+ * @file mavros_px4_quadrotor_sim_node.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Mavros(sim) + PX4 controller + quadrotor_dynamics. main loop
  * 
@@ -15,13 +15,13 @@
  */
 
 
-#include "mavros_quadrotor_sim/mavros_quadrotor_sim_node.hpp"
+#include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
 using namespace MavrosQuadSimulator;
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "mavros_quadrotor_sim_node");
+    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 

@@ -26,7 +26,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 include_directories(
   include
-  src/mavros_quadrotor_sim/px4_modules/px4_lib # for px4_modules build
+  src/mavros_px4_quadrotor_sim/px4_modules/px4_lib # for px4_modules build
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -35,19 +35,19 @@ catkin_package(
    INCLUDE_DIRS include
 )
 
-add_library(quadrotor_dynamics src/mavros_quadrotor_sim/quadrotor_dynamics.cpp)
+add_library(quadrotor_dynamics src/mavros_px4_quadrotor_sim/quadrotor_dynamics.cpp)
 
 add_library(px4_lib
-              src/mavros_quadrotor_sim/px4_modules/px4_lib/hysteresis/hysteresis.cpp
-              src/mavros_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp
-              src/mavros_quadrotor_sim/px4_modules/px4_lib/parameters/px4_parameters.cpp
-              src/mavros_quadrotor_sim/px4_modules/px4_lib/uORB/uORB_sim.cpp) 
+              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/hysteresis/hysteresis.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/parameters/px4_parameters.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/uORB/uORB_sim.cpp) 
 
 add_library(mc_pos_control
-              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/ControlMath.cpp
-              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/PositionControl.cpp
-              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/Takeoff/Takeoff.cpp
-              src/mavros_quadrotor_sim/px4_modules/mc_pos_control/MulticopterPositionControl.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/ControlMath.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/PositionControl.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/Takeoff/Takeoff.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/MulticopterPositionControl.cpp
               )
 # link libraries for this lib
 target_link_libraries(mc_pos_control 
@@ -55,12 +55,12 @@ target_link_libraries(mc_pos_control
 
 # add *.hpp header path for which use this lib
 target_include_directories(mc_pos_control PUBLIC
-            src/mavros_quadrotor_sim)
+            src/mavros_px4_quadrotor_sim)
 
 
 add_library(mc_att_control
-              src/mavros_quadrotor_sim/px4_modules/mc_att_control/AttitudeControl/AttitudeControl.cpp
-              src/mavros_quadrotor_sim/px4_modules/mc_att_control/mc_att_control_main.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_att_control/AttitudeControl/AttitudeControl.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mc_att_control/mc_att_control_main.cpp
               )
 
 # link libraries for this lib
@@ -69,13 +69,13 @@ target_link_libraries(mc_att_control
 
 # add *.hpp header path for which use this lib
 target_include_directories(mc_att_control PUBLIC
-            src/mavros_quadrotor_sim)
+            src/mavros_px4_quadrotor_sim)
 
 
 add_library(px4_mavlink
-              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_msg_list.cpp
-              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
-              src/mavros_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_msg_list.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
+              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
             )
 
 # link libraries for this lib
@@ -84,7 +84,7 @@ target_link_libraries(px4_mavlink
 
 # add *.hpp header path for which use this lib
 target_include_directories(px4_mavlink PUBLIC
-          src/mavros_quadrotor_sim)
+          src/mavros_px4_quadrotor_sim)
 
 # Supress the warnings of packed member in mavlink c_library_v2
 # Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
@@ -92,7 +92,7 @@ target_compile_options(px4_mavlink PUBLIC -Wno-address-of-packed-member -Wno-cas
 
 
 add_library(px4_sitl
-              src/mavros_quadrotor_sim/px4_sitl.cpp
+              src/mavros_px4_quadrotor_sim/px4_sitl.cpp
             )
 
 # link libraries for this lib
@@ -109,15 +109,15 @@ target_compile_options(px4_sitl PUBLIC -Wno-address-of-packed-member -Wno-cast-a
 
 
 add_library(MavrosSim
-            src/mavros_quadrotor_sim/mavros_sim/MavrosSim.cpp
-            src/mavros_quadrotor_sim/mavros_sim/lib/uas_data.cpp
-            src/mavros_quadrotor_sim/mavros_sim/lib/uas_stringify.cpp
-            src/mavros_quadrotor_sim/mavros_sim/lib/uas_timesync.cpp
+            src/mavros_px4_quadrotor_sim/mavros_sim/MavrosSim.cpp
+            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_data.cpp
+            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_stringify.cpp
+            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_timesync.cpp
           )
 
 # add *.hpp header path for which use this lib
 target_include_directories(MavrosSim PUBLIC
-            src/mavros_quadrotor_sim)
+            src/mavros_px4_quadrotor_sim)
 
 # link libraries for this lib
 target_link_libraries(MavrosSim
@@ -131,11 +131,11 @@ target_link_libraries(MavrosSim
 target_compile_options(MavrosSim PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
 
 
-add_executable(mavros_quadrotor_sim_node
-                  src/mavros_quadrotor_sim/mavros_quadrotor_sim_node.cpp)
+add_executable(mavros_px4_quadrotor_sim_node
+                  src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
 
 # link libraries for this lib
-target_link_libraries(mavros_quadrotor_sim_node
+target_link_libraries(mavros_px4_quadrotor_sim_node
    ${catkin_LIBRARIES}
    quadrotor_dynamics
    px4_sitl

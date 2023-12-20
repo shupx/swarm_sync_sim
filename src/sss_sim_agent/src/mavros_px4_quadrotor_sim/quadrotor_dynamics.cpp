@@ -15,7 +15,7 @@
  * 
  */
 
-#include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
+#include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
 
 namespace odeint = boost::numeric::odeint;
 

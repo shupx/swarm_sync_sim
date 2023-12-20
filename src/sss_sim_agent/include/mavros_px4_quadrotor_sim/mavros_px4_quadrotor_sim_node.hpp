@@ -1,5 +1,5 @@
 /**
- * @file mavros_quadrotor_sim_node.hpp
+ * @file mavros_px4_quadrotor_sim_node.hpp
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Mavros(sim) + PX4 controller + quadrotor_dynamics. main loop
  * 
@@ -15,15 +15,15 @@
  */
 
 
-#ifndef __MAVROS_QUADROTOR_SIM_NODE_H__
-#define __MAVROS_QUADROTOR_SIM_NODE_H__
+#ifndef __MAVROS_PX4_QUADROTOR_SIM_NODE_H__
+#define __MAVROS_PX4_QUADROTOR_SIM_NODE_H__
 
 #include <ros/ros.h>
 #include <sss_sim_env/sss_utils.hpp>
 
 #include "mavros_sim/MavrosSim.hpp"
-#include "mavros_quadrotor_sim/px4_sitl.hpp"
-#include "mavros_quadrotor_sim/quadrotor_dynamics.hpp"
+#include "mavros_px4_quadrotor_sim/px4_sitl.hpp"
+#include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
 
 
 
