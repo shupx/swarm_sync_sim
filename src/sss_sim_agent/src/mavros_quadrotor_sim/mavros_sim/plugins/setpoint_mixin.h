@@ -43,6 +43,10 @@
 #include "tf2_ros/message_filter.h"
 #include <message_filters/subscriber.h>
 
+#include <Eigen/Geometry> // added by Peixuan Shu for Eigen::
+#include <mavros/frame_tf.h> // Added by Peixuan Shu for ftf::
+#include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
+
 // macros for mavlink cpp to c headers conversions by Peixuan Shu
 #ifndef FLOAT4_TO_ARRAY
 #define FLOAT4_TO_ARRAY(x) std::array<float, 4>{x[0], x[1], x[2], x[3]}
@@ -52,6 +56,8 @@
 #include <algorithm>
 #define ARRAY_TO_FLOAT4(arr, x) std::copy(arr.begin(), arr.end(), x)
 #endif
+
+using namespace mavros;
 
 namespace mavros_sim { // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace plugin {
@@ -69,11 +75,11 @@ public:
 			Eigen::Vector3d af,
 			float yaw, float yaw_rate)
 	{
-		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
+		std::shared_ptr<mavros_sim::UAS> m_uas_ = static_cast<D *>(this)->m_uas; //modified by Peixuan Shu
 		// mavlink::common::msg::SET_POSITION_TARGET_LOCAL_NED sp = {}; //deleted by Peixuan Shu
 		mavlink_set_position_target_local_ned_t sp{}; // use mavlink c headers by Peixuan Shu
 
-		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
+		m_uas_->msg_set_target(sp);
 
 		// [[[cog:
 		// for f in ('time_boot_ms', 'coordinate_frame', 'type_mask', 'yaw', 'yaw_rate'):
@@ -121,11 +127,11 @@ public:
 			Eigen::Vector3d af,
 			float yaw, float yaw_rate)
 	{
-		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
+		std::shared_ptr<mavros_sim::UAS> m_uas_ = static_cast<D *>(this)->m_uas; //modified by Peixuan Shu
 		// mavlink::common::msg::SET_POSITION_TARGET_GLOBAL_INT sp = {};  //deleted by Peixuan Shu
 		mavlink_set_position_target_global_int_t sp{}; // use mavlink c headers by Peixuan Shu
 
-		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
+		m_uas_->msg_set_target(sp);
 
 		// [[[cog:
 		// for f in ('time_boot_ms', 'coordinate_frame', 'type_mask', 'lat_int', 'lon_int', 'alt', 'yaw', 'yaw_rate'):
@@ -172,11 +178,11 @@ public:
 			Eigen::Vector3d body_rate,
 			float thrust)
 	{
-		// mavros::UAS *m_uas_ = static_cast<D *>(this)->m_uas; //deleted by Peixuan Shu
+		std::shared_ptr<mavros_sim::UAS> m_uas_ = static_cast<D *>(this)->m_uas; //modified by Peixuan Shu
 		// mavlink::common::msg::SET_ATTITUDE_TARGET sp = {};  //deleted by Peixuan Shu
 		mavlink_set_attitude_target_t sp{}; // use mavlink c headers by Peixuan Shu
 
-		// m_uas_->msg_set_target(sp); //deleted by Peixuan Shu
+		m_uas_->msg_set_target(sp);
 
 		std::array<float, 4> q_array;
 		mavros::ftf::quaternion_to_mavlink(orientation, q_array);

@@ -30,28 +30,31 @@ struct mavlink_info_s
 namespace px4 
 { 
 
-#define MAVLINK_STREAM_NUM 5 // number of mavlink_receive
 enum class mavlink_stream_handle : uint16_t {
 	ATTITUDE_QUATERNION,
 	ATTITUDE_TARGET,
 	HEARTBEAT,
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
-	Cout = MAVLINK_STREAM_NUM  // number of mavlink_stream
+	//@TODO SysStatus for battery
+	ENUM_NUM  // number of mavlink_stream
 };
+#define MAVLINK_STREAM_NUM (int)px4::mavlink_stream_handle::ENUM_NUM // number of mavlink_receive
 // Store the streaming mavlink messages (declaring global)
-extern mavlink_info_s mavlink_stream_list[(int) mavlink_stream_handle::Cout]; // declare global
+extern mavlink_info_s mavlink_stream_list[MAVLINK_STREAM_NUM]; // declare global
 
 
-#define MAVLINK_RECEIVE_NUM 3 // number of mavlink_receive
 enum class mavlink_receive_handle : uint16_t {
 	SET_POSITION_TARGET_LOCAL_NED,
 	SET_POSITION_TARGET_GLOBAL_INT,
 	SET_ATTITUDE_TARGET,
-	Cout = MAVLINK_RECEIVE_NUM 
+	SET_MODE,
+	//@TODO COMMAND_LONG //for arming/takeoff...
+	ENUM_NUM // number of mavlink_receive
 };
+#define MAVLINK_RECEIVE_NUM (int)px4::mavlink_receive_handle::ENUM_NUM // number of mavlink_receive
 // Store the receiving mavlink messages
-extern mavlink_info_s mavlink_receive_list[(int) mavlink_receive_handle::Cout]; // declare global
+extern mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // declare global
 
 
 }

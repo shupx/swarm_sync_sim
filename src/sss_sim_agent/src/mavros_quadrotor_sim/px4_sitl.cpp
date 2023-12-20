@@ -171,9 +171,10 @@ void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
     _vehicle_angular_velocity_pub.publish(vehicle_angular_velocity_msg);
 
 
-    // vehicle_status
+    //@TODO publish vehicle_status for heartbeat mavlink and battery
+    //@TODO handle vehicle_command for set_mode and arming
 
-    //TODO: vehicle_global_position_msg
+    //@TODO: vehicle_global_position_msg
     // vehicle_global_position_s vehicle_global_position_msg{};
     // _global_position_pub.publish(vehicle_global_position_msg);
 

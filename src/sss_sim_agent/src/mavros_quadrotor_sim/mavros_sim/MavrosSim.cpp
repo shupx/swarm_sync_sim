@@ -25,11 +25,16 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     : nh_(nh), nh_private_(nh_private)
 {
     uas_ = std::make_shared<UAS>(); // uas_ stores some common data and functions
+    uas_->set_tgt(1, 1); // set target_system_id, target_component_id
+    uas_->set_timesync_mode(UAS::timesync_mode::PASSTHROUGH); // PASSTHROUGH: pass mavlink message time rather than ROS time into ROS message timestamp header
+    // timesync_mode will be overwritten by the parameter "time/timesync_mode" in px4_config.yaml (default MAVLINK) if sys_time.cpp plugin is loaded!
 
     /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
-    setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>();
+    setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>(uas_);
     local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_);
     imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_);
+    sys_status_plugin_ = std::make_unique<std_plugins::SystemStatusPlugin>(uas_);
+    //@TODO plugin command.cpp for cmd/arming cmd/takeoff
 
 }
 
@@ -91,7 +96,24 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
         case MAVLINK_MSG_ID_SCALED_PRESSURE:
             imu_plugin_->handle_scaled_pressure(msg);
             break;
-
+        
+        /* sys_status_plugin_ */
+        case MAVLINK_MSG_ID_HEARTBEAT:
+            sys_status_plugin_->handle_heartbeat(msg);
+            break;
+        case MAVLINK_MSG_ID_EXTENDED_SYS_STATE:
+            sys_status_plugin_->handle_extended_sys_state(msg);
+            break;
+        case MAVLINK_MSG_ID_SYS_STATUS:
+            sys_status_plugin_->handle_sys_status(msg);
+            break;
+        case MAVLINK_MSG_ID_STATUSTEXT:
+            sys_status_plugin_->handle_statustext(msg);
+            break;
+        case MAVLINK_MSG_ID_ESTIMATOR_STATUS:
+            sys_status_plugin_->handle_estimator_status(msg);
+            break;
+        
         default:
 		    std::cout << "[MavrosSim::handle_message] Unknown mavlink message id: " << msg.msgid << std::endl;
 		    break;

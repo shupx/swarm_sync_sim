@@ -44,6 +44,10 @@
 #define ARRAY_TO_FLOAT4(arr, x) std::copy(arr.begin(), arr.end(), x)
 #endif
 
+#include <mavros_msgs/AttitudeTarget.h>
+#include <mavros_msgs/PositionTarget.h>
+#include <mavros_msgs/GlobalPositionTarget.h>
+
 // header files added by Peixuan Shu
 #include <ros/ros.h>
 #include <Eigen/Geometry>
@@ -51,12 +55,8 @@
 #include <tf_conversions/tf_eigen.h>
 #include <mavros/frame_tf.h> // Added by Peixuan Shu for ftf::
 #include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
-
+#include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
 #include "setpoint_mixin.h" // modified in mavros_sim namespace
-
-#include <mavros_msgs/AttitudeTarget.h>
-#include <mavros_msgs/PositionTarget.h>
-#include <mavros_msgs/GlobalPositionTarget.h>
 
 
 using namespace mavros; // for mavros::ftf, added by Peixuan Shu
@@ -71,14 +71,16 @@ namespace std_plugins {
  * User can decide what set of filed needed for operation via IGNORE bits.
  */
 
-class SetpointRawPlugin : 
-	private plugin::SetPositionTargetLocalNEDMixin<SetpointRawPlugin>,
-	private plugin::SetPositionTargetGlobalIntMixin<SetpointRawPlugin>,
-	private plugin::SetAttitudeTargetMixin<SetpointRawPlugin> 
+class SetpointRawPlugin :
+	public plugin::SetPositionTargetLocalNEDMixin<SetpointRawPlugin>,
+	public plugin::SetPositionTargetGlobalIntMixin<SetpointRawPlugin>,
+	public plugin::SetAttitudeTargetMixin<SetpointRawPlugin>
 {
     public:
-        SetpointRawPlugin()
-            : sp_nh("mavros/setpoint_raw"), sp_nh_private("~setpoint_raw") // nodehandle modified by Peixuan Shu
+        SetpointRawPlugin(const std::shared_ptr<UAS> &uas) : 
+            sp_nh("mavros/setpoint_raw"),
+            sp_nh_private("~setpoint_raw"), // nodehandle modified by Peixuan Shu
+            m_uas(uas) // added by Peixuan Shu
         {
             bool tf_listen;
 
@@ -120,8 +122,7 @@ class SetpointRawPlugin :
 
             auto target = boost::make_shared<mavros_msgs::PositionTarget>();
 
-            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
-            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
+            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
             target->coordinate_frame = tgt.coordinate_frame;
             target->type_mask = tgt.type_mask;
             tf::pointEigenToMsg(position, target->position);
@@ -152,8 +153,7 @@ class SetpointRawPlugin :
 
             auto target = boost::make_shared<mavros_msgs::GlobalPositionTarget>();
 
-            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
-            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
+            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
             target->coordinate_frame = tgt.coordinate_frame;
             target->type_mask = tgt.type_mask;
             target->latitude = tgt.lat_int / 1e7;
@@ -183,8 +183,7 @@ class SetpointRawPlugin :
 
             auto target = boost::make_shared<mavros_msgs::AttitudeTarget>();
 
-            // target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
-            target->header.stamp = ros::Time::now();  //modified by Peixuan Shu
+            target->header.stamp = m_uas->synchronise_stamp(tgt.time_boot_ms);
             target->type_mask = tgt.type_mask;
             tf::quaternionEigenToMsg(orientation, target->orientation);
             tf::vectorEigenToMsg(body_rate, target->body_rate);
@@ -193,9 +192,11 @@ class SetpointRawPlugin :
             target_attitude_pub.publish(target);
         }
 
-    private:
+    	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
+
+private:
         ros::NodeHandle sp_nh;
-        ros::NodeHandle sp_nh_private;
+        ros::NodeHandle sp_nh_private;  // nodehandle added by Peixuan Shu
         ros::Subscriber local_sub, global_sub, attitude_sub;
         ros::Publisher target_local_pub, target_global_pub, target_attitude_pub;
 

@@ -23,9 +23,9 @@ namespace px4
 
 // Init mavlink lists here (they are global/extern!)
 
-mavlink_info_s mavlink_stream_list[(int) mavlink_stream_handle::Cout]; // define (allocate storage)
+mavlink_info_s mavlink_stream_list[MAVLINK_STREAM_NUM]; // define (allocate storage)
 
-mavlink_info_s mavlink_receive_list[(int) mavlink_receive_handle::Cout]; // define (allocate 
+mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // define (allocate 
 
 
 }

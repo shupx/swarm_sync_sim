@@ -268,16 +268,16 @@ MulticopterAttitudeControl::Run()
 		const float dt = math::constrain(((v_att.timestamp_sample - _last_run) * 1e-6f), 0.0002f, 0.02f);
 
 		/***************** Added by Peixuan Shu ******************************/
-		if ((v_att.timestamp_sample - _last_run) * 1e-6f < 0.0002f)
+		if ((v_att.timestamp_sample - _last_run) * 1e-6f < 0.0002f && _last_run!=0)
 		{
 			std::cout << "[MulticopterAttitudeControl::Run] Warn! loop period is too small and less than 0.0002s! loop period = " << (v_att.timestamp_sample - _last_run) * 1e-6f << " s" << std::endl;
 		}
-		if ((v_att.timestamp_sample - _last_run) * 1e-6f > 0.02f)
+		if ((v_att.timestamp_sample - _last_run) * 1e-6f > 0.02f && _last_run!=0)
 		{
 			std::cout << "[MulticopterAttitudeControl::Run] Warn! loop period is too large and large than 0.02s! loop period = " << (v_att.timestamp_sample - _last_run) * 1e-6f << " s" << std::endl;
 		}
 		/********************************************************************/
-		
+
 		_last_run = v_att.timestamp_sample;
 
 		const Quatf q{v_att.q};

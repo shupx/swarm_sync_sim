@@ -411,6 +411,8 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
 {
+	//@TODO handle command long for MAV_CMD
+
 	// /* command */
 	// mavlink_command_long_t cmd_mavlink;
 	// mavlink_msg_command_long_decode(msg, &cmd_mavlink);
@@ -928,6 +930,8 @@ MavlinkReceiver::handle_message_hil_optical_flow(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_set_mode(mavlink_message_t *msg)
 {
+	//@TODO handle SET_MODE
+
 	// mavlink_set_mode_t new_mode;
 	// mavlink_msg_set_mode_decode(msg, &new_mode);
 

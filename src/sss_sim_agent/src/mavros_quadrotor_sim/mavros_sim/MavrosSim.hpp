@@ -21,6 +21,7 @@
 #include "plugins/setpoint_raw.cpp"
 #include "plugins/local_position.cpp"
 #include "plugins/imu.cpp"
+#include "plugins/sys_status.cpp"
 
 #include "lib/mavros_uas.h"
 
@@ -47,6 +48,7 @@ class MavrosSim
         std::unique_ptr<std_plugins::SetpointRawPlugin> setpoint_raw_plugin_;
         std::unique_ptr<std_plugins::LocalPositionPlugin> local_position_plugin_;
         std::unique_ptr<std_plugins::IMUPlugin> imu_plugin_;
+        std::unique_ptr<std_plugins::SystemStatusPlugin> sys_status_plugin_;
 
         /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
         void handle_message(const mavlink_message_t &msg);

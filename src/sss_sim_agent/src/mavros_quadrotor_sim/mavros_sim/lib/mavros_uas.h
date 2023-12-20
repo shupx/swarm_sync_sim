@@ -140,20 +140,20 @@ public:
 
 	/* -*- HEARTBEAT data -*- */
 
-	// /**
-	//  * Update autopilot type on every HEARTBEAT
-	//  */
-	// void update_heartbeat(uint8_t type_, uint8_t autopilot_, uint8_t base_mode_);
+	/**
+	 * Update autopilot type on every HEARTBEAT
+	 */
+	void update_heartbeat(uint8_t type_, uint8_t autopilot_, uint8_t base_mode_);
 
-	// /**
-	//  * Update autopilot connection status (every HEARTBEAT/conn_timeout)
-	//  */
-	// void update_connection_status(bool conn_);
+	/**
+	 * Update autopilot connection status (every HEARTBEAT/conn_timeout)
+	 */
+	void update_connection_status(bool conn_);
 
-	// /**
-	//  * @brief Add connection change handler callback
-	//  */
-	// void add_connection_change_handler(ConnectionCb cb);
+	/**
+	 * @brief Add connection change handler callback
+	 */
+	void add_connection_change_handler(ConnectionCb cb);
 
 	/**
 	 * @brief Returns vehicle type
@@ -351,7 +351,7 @@ public:
 	}
 
 	/* -*- autopilot version -*- */
-	// uint64_t get_capabilities();
+	uint64_t get_capabilities();
 
 	// /**
 	//  * @brief Function to check if the flight controller has a capability
@@ -378,17 +378,17 @@ public:
 	// 	return ret;
 	// }
 
-	// /**
-	//  * @brief Update the capabilities if they've changed every VERSION/timeout
-	//  */
-	// void update_capabilities(bool known, uint64_t caps = 0);
+	/**
+	 * @brief Update the capabilities if they've changed every VERSION/timeout
+	 */
+	void update_capabilities(bool known, uint64_t caps = 0);
 
-	// /**
-	//  * @brief Adds a function to the capabilities callback queue
-	//  *
-	//  * @param cb A void function that takes a single mavlink::common::MAV_PROTOCOL_CAPABILITY(MAV_CAP) param
-	//  */
-	// void add_capabilities_change_handler(CapabilitiesCb cb);
+	/**
+	 * @brief Adds a function to the capabilities callback queue
+	 *
+	 * @param cb A void function that takes a single mavlink::common::MAV_PROTOCOL_CAPABILITY(MAV_CAP) param
+	 */
+	void add_capabilities_change_handler(CapabilitiesCb cb);
 
 	/**
 	 * @brief Compute FCU message time from time_boot_ms or time_usec field
