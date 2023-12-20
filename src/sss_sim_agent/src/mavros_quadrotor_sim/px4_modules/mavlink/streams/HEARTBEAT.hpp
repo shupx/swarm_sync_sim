@@ -1,3 +1,9 @@
+/**
+ * Copied from PX4-Autopilot/src/modules/mavlink/streams
+ * Comment out useless defines.
+ * @author Peixuan Shu
+ */
+
 /****************************************************************************
  *
  *   Copyright (c) 2021 PX4 Development Team. All rights reserved.
@@ -39,35 +45,121 @@
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vehicle_status_flags.h>
 
-class MavlinkStreamHeartbeat : public MavlinkStream
+#include <uORB/uORB_sim.hpp> // Added by Peixuan Shu
+#include "../mavlink_msg_list.hpp"  // Added by Peixuan Shu
+
+#include <commander/px4_custom_mode.h> // Added by Peixuan Shu
+
+/* Added by Peixuan Shu. Originally in https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/mavlink/mavlink_messages.cpp */
+#ifndef MAVLINK_MESSAGES_H_
+union px4_custom_mode get_px4_custom_mode(uint8_t nav_state)
 {
-public:
-	static MavlinkStream *new_instance(Mavlink *mavlink) { return new MavlinkStreamHeartbeat(mavlink); }
+	union px4_custom_mode custom_mode;
+	custom_mode.data = 0;
 
-	static constexpr const char *get_name_static() { return "HEARTBEAT"; }
-	static constexpr uint16_t get_id_static() { return MAVLINK_MSG_ID_HEARTBEAT; }
+	switch (nav_state) {
+	case vehicle_status_s::NAVIGATION_STATE_MANUAL:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_MANUAL;
+		break;
 
-	const char *get_name() const override { return get_name_static(); }
-	uint16_t get_id() override { return get_id_static(); }
+	case vehicle_status_s::NAVIGATION_STATE_ALTCTL:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_ALTCTL;
+		break;
 
-	bool const_rate() override { return true; }
+	case vehicle_status_s::NAVIGATION_STATE_POSCTL:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_POSCTL;
+		break;
 
-	unsigned get_size() override
-	{
-		return MAVLINK_MSG_ID_HEARTBEAT_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES;
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_MISSION;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_LOITER;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_RTL;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_LANDENGFAIL:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_LAND;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_ACRO:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_ACRO;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_DESCEND:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_LAND;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_TERMINATION:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_MANUAL;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_STAB:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_STABILIZED;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_LAND:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_LAND;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_FOLLOW_TARGET:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_FOLLOW_TARGET;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_PRECLAND;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_ORBIT:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_POSCTL;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_POSCTL_ORBIT;
+		break;
+
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF:
+		custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_AUTO;
+		custom_mode.sub_mode = PX4_CUSTOM_SUB_MODE_AUTO_VTOL_TAKEOFF;
+		break;
 	}
 
+	return custom_mode;
+}
+#endif //MAVLINK_MESSAGES_H_
+
+
+class MavlinkStreamHeartbeat
+{
 private:
-	explicit MavlinkStreamHeartbeat(Mavlink *mavlink) : MavlinkStream(mavlink) {}
 
-	uORB::Subscription _acturator_armed_sub{ORB_ID(actuator_armed)};
-	uORB::Subscription _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
-	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
-	uORB::Subscription _vehicle_status_flags_sub{ORB_ID(vehicle_status_flags)};
+	uORB_sim::Subscription<actuator_armed_s> _acturator_armed_sub{ORB_ID(actuator_armed)};
+	uORB_sim::Subscription<vehicle_control_mode_s> _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
+	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{ORB_ID(vehicle_status)};
+	uORB_sim::Subscription<vehicle_status_flags_s> _vehicle_status_flags_sub{ORB_ID(vehicle_status_flags)};
 
-	bool send() override
+public:
+	bool send()
 	{
-		if (_mavlink->get_free_tx_buf() >= get_size()) {
+		if (/*_mavlink->get_free_tx_buf() >= get_size()*/ true) {
 			// always send the heartbeat, independent of the update status of the topics
 			vehicle_status_s vehicle_status{};
 			_vehicle_status_sub.copy(&vehicle_status);
@@ -139,8 +231,19 @@ private:
 			}
 
 
-			mavlink_msg_heartbeat_send(_mavlink->get_channel(), _mavlink->get_system_type(), MAV_AUTOPILOT_PX4,
-						   base_mode, custom_mode.data, system_status);
+			// mavlink_msg_heartbeat_send(_mavlink->get_channel(), _mavlink->get_system_type(), MAV_AUTOPILOT_PX4,
+			// 			   base_mode, custom_mode.data, system_status);
+
+			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+			mavlink_heartbeat_t msg{};
+			msg.type = 0; // equal to _mavlink->get_system_type(), which is _param_mav_type.get()
+			msg.autopilot = MAV_AUTOPILOT_PX4;
+			msg.base_mode = base_mode;
+			msg.custom_mode = custom_mode.data;
+			msg.system_status = system_status;
+			int handle = (int) px4::mavlink_stream_handle::HEARTBEAT;
+			mavlink_msg_heartbeat_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+			px4::mavlink_stream_list[handle].updated = true;
 
 			return true;
 		}
@@ -148,5 +251,6 @@ private:
 		return false;
 	}
 };
+
 
 #endif // HEARTBEAT_HPP

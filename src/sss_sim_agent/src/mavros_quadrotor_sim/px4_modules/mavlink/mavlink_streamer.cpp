@@ -20,6 +20,10 @@ MavlinkStreamer::MavlinkStreamer()
 {
     mavlink_stream1_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this); // set streaming rate
     mavlink_stream2_ = STREAM_MAKE_PTR(MavlinkStreamLocalPositionNED)(30, this); // set streaming rate
+    mavlink_stream3_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeTarget)(50, this); // set streaming rate
+    mavlink_stream4_ = STREAM_MAKE_PTR(MavlinkStreamPositionTargetLocalNed)(30, this); // set streaming rate
+    mavlink_stream5_ = STREAM_MAKE_PTR(MavlinkStreamHeartbeat)(50, this); // set streaming rate
+
 }
 
 

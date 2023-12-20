@@ -1,4 +1,22 @@
 /**
+ * @file imu.cpp
+ * @author Peixuan Shu (shupeixuan@qq.com)
+ * @brief Simulated mavros plugins. Change from mavlink cpp headers to c headers in aligned with PX4
+ * 
+ * Similar to https://github.com/mavlink/mavros/blob/master/mavros/src/plugins/imu.cpp
+ * 
+ * Note: This program relies on 
+ * 
+ * @version 1.0
+ * @date 2023-12-20
+ * 
+ * @license BSD 3-Clause License
+ * @copyright (c) 2023, Peixuan Shu
+ * All rights reserved.
+ * 
+ */
+
+/**
  * @brief IMU and attitude data parser plugin
  * @file imu.cpp
  * @author Vladimir Ermakov <vooon341@gmail.com>
@@ -15,7 +33,7 @@
  */
 
 #include <cmath>
-#include <mavros/mavros_plugin.h>
+// #include <mavros/mavros_plugin.h>
 #include <eigen_conversions/eigen_msg.h>
 
 #include <sensor_msgs/Imu.h>
@@ -24,7 +42,15 @@
 #include <sensor_msgs/FluidPressure.h>
 #include <geometry_msgs/Vector3.h>
 
-namespace mavros {
+// header files added by Peixuan Shu
+#include <ros/ros.h>
+#include <mavros/frame_tf.h> // Added by Peixuan Shu for ftf::
+#include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
+#include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
+
+using namespace mavros; // for mavros::ftf, added by Peixuan Shu
+
+namespace mavros_sim {   // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace std_plugins {
 //! Gauss to Tesla coeff
 static constexpr double GAUSS_TO_TESLA = 1.0e-4;
@@ -43,24 +69,24 @@ static constexpr double RAD_TO_DEG = 180.0 / M_PI;
 
 
 //! @brief IMU and attitude data publication plugin
-class IMUPlugin : public plugin::PluginBase {
+class IMUPlugin
+{
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	IMUPlugin() : PluginBase(),
-		imu_nh("~imu"),
+	IMUPlugin(const std::shared_ptr<UAS> &uas) : // uas added by Peixuan Shu
+		imu_nh("mavros/imu"),  // nodehandle modified by Peixuan Shu
+		imu_nh_private("~imu"),  // nodehandle modified by Peixuan Shu
 		has_hr_imu(false),
 		has_raw_imu(false),
 		has_scaled_imu(false),
 		has_att_quat(false),
 		received_linear_accel(false),
 		linear_accel_vec_flu(Eigen::Vector3d::Zero()),
-		linear_accel_vec_frd(Eigen::Vector3d::Zero())
-	{ }
-
-	void initialize(UAS &uas_) override
+		linear_accel_vec_frd(Eigen::Vector3d::Zero()),
+		m_uas(uas) // added by Peixuan Shu
 	{
-		PluginBase::initialize(uas_);
+		// PluginBase::initialize(uas_);
 
 		double linear_stdev, angular_stdev, orientation_stdev, mag_stdev;
 
@@ -70,11 +96,11 @@ public:
 		 * transformation from the ENU frame to the base_link frame (ENU <-> base_link).
 		 * THIS ORIENTATION IS NOT THE SAME AS THAT REPORTED BY THE FCU (NED <-> aircraft).
 		 */
-		imu_nh.param<std::string>("frame_id", frame_id, "base_link");
-		imu_nh.param("linear_acceleration_stdev", linear_stdev, 0.0003);		// check default by MPU6000 spec
-		imu_nh.param("angular_velocity_stdev", angular_stdev, 0.02 * (M_PI / 180.0));	// check default by MPU6000 spec
-		imu_nh.param("orientation_stdev", orientation_stdev, 1.0);
-		imu_nh.param("magnetic_stdev", mag_stdev, 0.0);
+		imu_nh_private.param<std::string>("frame_id", frame_id, "base_link");
+		imu_nh_private.param("linear_acceleration_stdev", linear_stdev, 0.0003);		// check default by MPU6000 spec
+		imu_nh_private.param("angular_velocity_stdev", angular_stdev, 0.02 * (M_PI / 180.0));	// check default by MPU6000 spec
+		imu_nh_private.param("orientation_stdev", orientation_stdev, 1.0);
+		imu_nh_private.param("magnetic_stdev", mag_stdev, 0.0);
 
 		setup_covariance(linear_acceleration_cov, linear_stdev);
 		setup_covariance(angular_velocity_cov, angular_stdev);
@@ -91,22 +117,14 @@ public:
 		imu_raw_pub = imu_nh.advertise<sensor_msgs::Imu>("data_raw", 10);
 
 		// Reset has_* flags on connection change
-		enable_connection_cb();
-	}
-
-	Subscriptions get_subscriptions() override {
-		return {
-			       make_handler(&IMUPlugin::handle_attitude),
-			       make_handler(&IMUPlugin::handle_attitude_quaternion),
-			       make_handler(&IMUPlugin::handle_highres_imu),
-			       make_handler(&IMUPlugin::handle_raw_imu),
-			       make_handler(&IMUPlugin::handle_scaled_imu),
-			       make_handler(&IMUPlugin::handle_scaled_pressure),
-		};
+		// enable_connection_cb();
 	}
 
 private:
+	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
+
 	ros::NodeHandle imu_nh;
+	ros::NodeHandle imu_nh_private; // nodehandle added by Peixuan Shu
 	std::string frame_id;
 
 	ros::Publisher imu_pub;
@@ -270,6 +288,8 @@ private:
 		magn_pub.publish(magn_msg);
 	}
 
+public: // public by Peixuan Shu
+
 	/* -*- message handlers -*- */
 
 	/**
@@ -278,8 +298,12 @@ private:
 	 * @param msg	Received Mavlink msg
 	 * @param att	ATTITUDE msg
 	 */
-	void handle_attitude(const mavlink::mavlink_message_t *msg, mavlink::common::msg::ATTITUDE &att)
+	void handle_attitude(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_attitude_t att;
+		mavlink_msg_attitude_decode(&msg, &att); // mavlink c lib				
+
 		if (has_att_quat)
 			return;
 
@@ -323,8 +347,12 @@ private:
 	 * @param msg		Received Mavlink msg
 	 * @param att_q		ATTITUDE_QUATERNION msg
 	 */
-	void handle_attitude_quaternion(const mavlink::mavlink_message_t *msg, mavlink::common::msg::ATTITUDE_QUATERNION &att_q)
+	void handle_attitude_quaternion(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_attitude_quaternion_t att_q;
+		mavlink_msg_attitude_quaternion_decode(&msg, &att_q); // mavlink c lib	
+
 		ROS_INFO_COND_NAMED(!has_att_quat, "imu", "IMU: Attitude quaternion IMU detected!");
 		has_att_quat = true;
 
@@ -365,8 +393,12 @@ private:
 	 * @param msg		Received Mavlink msg
 	 * @param imu_hr	HIGHRES_IMU msg
 	 */
-	void handle_highres_imu(const mavlink::mavlink_message_t *msg, mavlink::common::msg::HIGHRES_IMU &imu_hr)
+	void handle_highres_imu(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_highres_imu_t imu_hr;
+		mavlink_msg_highres_imu_decode(&msg, &imu_hr); // mavlink c lib		
+
 		ROS_INFO_COND_NAMED(!has_hr_imu, "imu", "IMU: High resolution IMU detected!");
 		has_hr_imu = true;
 
@@ -450,8 +482,12 @@ private:
 	 * @param msg		Received Mavlink msg
 	 * @param imu_raw	RAW_IMU msg
 	 */
-	void handle_raw_imu(const mavlink::mavlink_message_t *msg, mavlink::common::msg::RAW_IMU &imu_raw)
+	void handle_raw_imu(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_raw_imu_t imu_raw;
+		mavlink_msg_raw_imu_decode(&msg, &imu_raw); // mavlink c lib	
+
 		ROS_INFO_COND_NAMED(!has_raw_imu, "imu", "IMU: Raw IMU message used.");
 		has_raw_imu = true;
 
@@ -502,8 +538,12 @@ private:
 	 * @param msg		Received Mavlink msg
 	 * @param imu_raw	SCALED_IMU msg
 	 */
-	void handle_scaled_imu(const mavlink::mavlink_message_t *msg, mavlink::common::msg::SCALED_IMU &imu_raw)
+	void handle_scaled_imu(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_scaled_imu_t imu_raw;
+		mavlink_msg_scaled_imu_decode(&msg, &imu_raw); // mavlink c lib	
+
 		if (has_hr_imu)
 			return;
 
@@ -535,8 +575,12 @@ private:
 	 * @param msg		Received Mavlink msg
 	 * @param press		SCALED_PRESSURE msg
 	 */
-	void handle_scaled_pressure(const mavlink::mavlink_message_t *msg, mavlink::common::msg::SCALED_PRESSURE &press)
+	void handle_scaled_pressure(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_scaled_pressure_t press;
+		mavlink_msg_scaled_pressure_decode(&msg, &press); // mavlink c lib		
+
 		if (has_hr_imu)
 			return;
 
@@ -559,7 +603,7 @@ private:
 	}
 
 	// Checks for connection and overrides variable values
-	void connection_cb(bool connected) override
+	void connection_cb(bool connected) //override
 	{
 		has_hr_imu = false;
 		has_scaled_imu = false;
@@ -569,5 +613,5 @@ private:
 }	// namespace std_plugins
 }	// namespace mavros
 
-#include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(mavros::std_plugins::IMUPlugin, mavros::plugin::PluginBase)
+// #include <pluginlib/class_list_macros.hpp>
+// PLUGINLIB_EXPORT_CLASS(mavros::std_plugins::IMUPlugin, mavros::plugin::PluginBase)

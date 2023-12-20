@@ -29,6 +29,7 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
     setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>();
     local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_);
+    imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_);
 
 }
 
@@ -71,6 +72,26 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
             local_position_plugin_->handle_local_position_ned_cov(msg);
             break;
         
+        /* imu_plugin_ */
+        case MAVLINK_MSG_ID_ATTITUDE:
+            imu_plugin_->handle_attitude(msg);
+            break;
+        case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:
+            imu_plugin_->handle_attitude_quaternion(msg);
+            break;
+        case MAVLINK_MSG_ID_HIGHRES_IMU:
+            imu_plugin_->handle_highres_imu(msg);
+            break;
+        case MAVLINK_MSG_ID_RAW_IMU:
+            imu_plugin_->handle_raw_imu(msg);
+            break;
+        case MAVLINK_MSG_ID_SCALED_IMU:
+            imu_plugin_->handle_scaled_imu(msg);
+            break;
+        case MAVLINK_MSG_ID_SCALED_PRESSURE:
+            imu_plugin_->handle_scaled_pressure(msg);
+            break;
+
         default:
 		    std::cout << "[MavrosSim::handle_message] Unknown mavlink message id: " << msg.msgid << std::endl;
 		    break;

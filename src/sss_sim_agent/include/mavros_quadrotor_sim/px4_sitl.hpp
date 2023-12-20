@@ -99,7 +99,7 @@ private:
     /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
     void StreamMavlink(const uint64_t &time_us);
 
-    void SendControlInput();
+    void SendControlInput(){}
 
 };
 

@@ -36,6 +36,9 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 struct home_position_s {
 	uint64_t timestamp;

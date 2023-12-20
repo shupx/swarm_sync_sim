@@ -36,6 +36,9 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 struct autotune_attitude_control_status_s {
 	uint64_t timestamp;

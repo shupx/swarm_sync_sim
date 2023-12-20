@@ -21,10 +21,10 @@
 #include <boost/signals2.hpp> // for signal2
 
 #include "streams/ATTITUDE_QUATERNION.hpp"
-// #include "streams/ATTITUDE_TARGET.hpp"
-// #include "streams/HEARTBEAT.hpp"
+#include "streams/ATTITUDE_TARGET.hpp"
+#include "streams/HEARTBEAT.hpp"
 #include "streams/LOCAL_POSITION_NED.hpp"
-// #include "streams/POSITION_TARGET_LOCAL_NED.hpp"
+#include "streams/POSITION_TARGET_LOCAL_NED.hpp"
 
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
 
@@ -66,6 +66,9 @@ public:
 
 	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream1_;
 	STREAM_PTR(MavlinkStreamLocalPositionNED) mavlink_stream2_;
+	STREAM_PTR(MavlinkStreamAttitudeTarget) mavlink_stream3_;
+	STREAM_PTR(MavlinkStreamPositionTargetLocalNed) mavlink_stream4_;
+	STREAM_PTR(MavlinkStreamHeartbeat) mavlink_stream5_;
 
 	MavlinkStreamer();
 

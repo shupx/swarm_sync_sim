@@ -1,7 +1,7 @@
 /**
  * @file local_position.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Simulated mavros plugins.
+ * @brief Simulated mavros plugins. Change from mavlink cpp headers to c headers in aligned with PX4
  * 
  * Similar to https://github.com/mavlink/mavros/blob/master/mavros/src/plugins/local_position.cpp
  * 
@@ -90,12 +90,12 @@ public:
 
 		// header frame_id.
 		// default to map (world-fixed,ENU as per REP-105).
-		lp_nh.param<std::string>("frame_id", frame_id, "map");
+		lp_nh_private.param<std::string>("frame_id", frame_id, "map");  // nodehandle modified by Peixuan Shu
 		// Important tf subsection
 		// Report the transform from world to base_link here.
-		lp_nh.param("tf/send", tf_send, false);
-		lp_nh.param<std::string>("tf/frame_id", tf_frame_id, "map");
-		lp_nh.param<std::string>("tf/child_frame_id", tf_child_frame_id, "base_link");
+		lp_nh_private.param("tf/send", tf_send, false);  // nodehandle modified by Peixuan Shu
+		lp_nh_private.param<std::string>("tf/frame_id", tf_frame_id, "map");  // nodehandle modified by Peixuan Shu
+		lp_nh_private.param<std::string>("tf/child_frame_id", tf_child_frame_id, "base_link");  // nodehandle modified by Peixuan Shu
 
 		local_position = lp_nh.advertise<geometry_msgs::PoseStamped>("pose", 10);
 		local_position_cov = lp_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("pose_cov", 10);

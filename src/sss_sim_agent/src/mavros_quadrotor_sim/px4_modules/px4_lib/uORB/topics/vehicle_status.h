@@ -36,6 +36,10 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 struct vehicle_status_s {
 	uint64_t timestamp;
 	uint64_t nav_state_timestamp;

@@ -1,3 +1,19 @@
+/**
+ * @author Peixuan Shu (shupeixuan@qq.com)
+ * @brief Transform from px4 uorb messages to mavlink message stream
+ * 
+ * modified from https://github.com/PX4/PX4-Autopilot/tree/v1.13.3/src/modules/mavlink/streams/${FILE_NAME}.hpp
+ * 
+ * 
+ * @version 1.0
+ * @date 2023-11-30
+ * 
+ * @license BSD 3-Clause License
+ * @copyright (c) 2023, Peixuan Shu
+ * All rights reserved.
+ * 
+ */
+
 /****************************************************************************
  *
  *   Copyright (c) 2020 PX4 Development Team. All rights reserved.
@@ -31,49 +47,22 @@
  *
  ****************************************************************************/
 
-/**
- * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Transform from px4 uorb messages to mavlink message stream
- * 
- * modified from https://github.com/PX4/PX4-Autopilot/tree/v1.13.3/src/modules/mavlink/streams/${FILE_NAME}.hpp
- * 
- * 
- * @version 1.0
- * @date 2023-11-30
- * 
- * @license BSD 3-Clause License
- * @copyright (c) 2023, Peixuan Shu
- * All rights reserved.
- * 
- */
-
 #ifndef POSITION_TARGET_LOCAL_NED_HPP
 #define POSITION_TARGET_LOCAL_NED_HPP
 
 #include <uORB/topics/vehicle_local_position_setpoint.h>
 
-class MavlinkStreamPositionTargetLocalNed : public MavlinkStream
+#include <uORB/uORB_sim.hpp> // Added by Peixuan Shu
+#include "../mavlink_msg_list.hpp"  // Added by Peixuan Shu
+
+class MavlinkStreamPositionTargetLocalNed
 {
-public:
-	static MavlinkStream *new_instance(Mavlink *mavlink) { return new MavlinkStreamPositionTargetLocalNed(mavlink); }
-
-	static constexpr const char *get_name_static() { return "POSITION_TARGET_LOCAL_NED"; }
-	static constexpr uint16_t get_id_static() { return MAVLINK_MSG_ID_POSITION_TARGET_LOCAL_NED; }
-
-	const char *get_name() const override { return get_name_static(); }
-	uint16_t get_id() override { return get_id_static(); }
-
-	unsigned get_size() override
-	{
-		return _pos_sp_sub.advertised() ? MAVLINK_MSG_ID_POSITION_TARGET_LOCAL_NED_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES : 0;
-	}
-
 private:
-	explicit MavlinkStreamPositionTargetLocalNed(Mavlink *mavlink) : MavlinkStream(mavlink) {}
 
-	uORB::Subscription _pos_sp_sub{ORB_ID(vehicle_local_position_setpoint)};
+	uORB_sim::Subscription<vehicle_local_position_setpoint_s> _pos_sp_sub{ORB_ID(vehicle_local_position_setpoint)};
 
-	bool send() override
+public:
+	bool send()
 	{
 		vehicle_local_position_setpoint_s pos_sp;
 
@@ -144,7 +133,12 @@ private:
 			msg.yaw = pos_sp.yaw;
 			msg.yaw_rate = pos_sp.yawspeed;
 
-			mavlink_msg_position_target_local_ned_send_struct(_mavlink->get_channel(), &msg);
+			// mavlink_msg_position_target_local_ned_send_struct(_mavlink->get_channel(), &msg);
+
+			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+			int handle = (int) px4::mavlink_stream_handle::POSITION_TARGET_LOCAL_NED;
+			mavlink_msg_position_target_local_ned_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+			px4::mavlink_stream_list[handle].updated = true;
 
 			return true;
 		}

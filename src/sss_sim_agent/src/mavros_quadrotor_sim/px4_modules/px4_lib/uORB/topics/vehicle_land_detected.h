@@ -36,6 +36,10 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 struct vehicle_land_detected_s {
 	uint64_t timestamp;
 	bool freefall;

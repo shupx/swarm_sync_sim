@@ -36,6 +36,10 @@
 
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 struct offboard_control_mode_s {
 
 	uint64_t timestamp;

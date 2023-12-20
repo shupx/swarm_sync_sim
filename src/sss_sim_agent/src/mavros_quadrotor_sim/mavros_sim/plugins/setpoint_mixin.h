@@ -1,3 +1,20 @@
+
+/**
+ * @author Peixuan Shu (shupeixuan@qq.com)
+ * @brief Modified Mixin for setpoint plugins
+ * 
+ * Modified from https://github.com/mavlink/mavros/blob/master/mavros/include/mavros/setpoint_mixin.h
+ * Change from mavlink cpp headers to c headers in aligned with PX4
+ * 
+ * @version 1.0
+ * @date 2023-11-30
+ * 
+ * @license BSD 3-Clause License
+ * @copyright (c) 2023, Peixuan Shu
+ * All rights reserved.
+ * 
+ */
+
 /**
  * @brief Mixin for setpoint plugins
  * @file setpoint_mixin.h
@@ -12,22 +29,6 @@
  * This file is part of the mavros package and subject to the license terms
  * in the top-level LICENSE file of the mavros repository.
  * https://github.com/mavlink/mavros/tree/master/LICENSE.md
- */
-
-/**
- * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Modified Mixin for setpoint plugins
- * 
- * modified from https://github.com/mavlink/mavros/blob/master/mavros/include/mavros/setpoint_mixin.h
- * 
- * 
- * @version 1.0
- * @date 2023-11-30
- * 
- * @license BSD 3-Clause License
- * @copyright (c) 2023, Peixuan Shu
- * All rights reserved.
- * 
  */
 
 #pragma once

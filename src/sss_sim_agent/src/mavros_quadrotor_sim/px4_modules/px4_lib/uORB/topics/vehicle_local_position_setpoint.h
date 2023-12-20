@@ -14,6 +14,10 @@
  
 #pragma once
 
+#include <sys/types.h>
+#include <stdint.h>
+#include <stdbool.h>
+
 struct vehicle_local_position_setpoint_s {
 
 	uint64_t timestamp;

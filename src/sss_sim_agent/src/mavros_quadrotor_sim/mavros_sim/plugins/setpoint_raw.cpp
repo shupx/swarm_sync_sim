@@ -1,7 +1,7 @@
 /**
  * @file setpoint_raw.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Simulated mavros plugins.
+ * @brief Simulated mavros plugins.  Change from mavlink cpp headers to c headers in aligned with PX4
  * 
  * Similar to https://github.com/mavlink/mavros/blob/master/mavros/src/plugins/setpoint_raw.cpp
  * 
