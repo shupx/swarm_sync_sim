@@ -63,8 +63,8 @@ void ClockUpdater::init()
 void ClockUpdater::request_clock_update(ros::Time new_time)
 {
     if (use_sim_time){
-        rosgraph_msgs::Clock msg;
-        msg.clock = new_time;
+        rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
+        msg->clock = new_time;
         update_clock_pub_.publish(msg);
         // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
     }

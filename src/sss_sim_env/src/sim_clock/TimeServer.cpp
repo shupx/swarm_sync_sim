@@ -159,8 +159,8 @@ void TimeServer::try_update_clock()
     if (all_client_has_new_request == true){
         if (min_time_request > sim_time_){
             sim_time_ = min_time_request;
-            rosgraph_msgs::Clock msg;
-            msg.clock = min_time_request;
+            rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
+            msg->clock = min_time_request;
             sim_clock_pub_.publish(msg);
 
             ROS_INFO("[TimeServer] try_update_clock() publish %ss to /clock", std::to_string(sim_time_.toSec()).c_str());
