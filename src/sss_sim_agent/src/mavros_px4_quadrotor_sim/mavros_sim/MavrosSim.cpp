@@ -39,7 +39,7 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
 }
 
 /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */
-void MavrosSim::Publish()
+void MavrosSim::PublishRosMessage()
 {
 	/* Search for mavlink streaming list and handle the updated messages */
 	for (int i=0; i<MAVLINK_STREAM_NUM; ++i)
@@ -52,6 +52,8 @@ void MavrosSim::Publish()
 		}
 	}
 }
+
+//@TODO create a new thread to async handle IO messages
 
 /* Publish mavlink messages into ROS topics (Added by Peixuan Shu) */
 void MavrosSim::handle_message(const mavlink_message_t &msg)

@@ -128,6 +128,7 @@
 
 #include <drivers/drv_hrt.h> // added by Peixuan Shu
 #include <mavlink/v2.0/common/mavlink.h> // added by Peixuan Shu
+#include <commander/px4_custom_mode.h> // added by Peixuan Shu
 
 #include <uORB/uORB_sim.hpp> // added by Peixuan Shu
 
@@ -166,8 +167,8 @@ private:
 	// void handle_message_command_both(mavlink_message_t *msg, const T &cmd_mavlink,
 	// 				 const vehicle_command_s &vehicle_command);
 
-	uint8_t handle_request_message_command(uint16_t message_id, float param2 = 0.0f, float param3 = 0.0f,
-					       float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
+	// uint8_t handle_request_message_command(uint16_t message_id, float param2 = 0.0f, float param3 = 0.0f,
+	// 				       float param4 = 0.0f, float param5 = 0.0f, float param6 = 0.0f, float param7 = 0.0f);
 
 public:
 	void handle_message(mavlink_message_t *msg); // move to public by Peixuan Shu
@@ -360,7 +361,7 @@ private:
 	// // ORB publications (queue length > 1)
 	// uORB_sim::Publication<gps_inject_data_s>     _gps_inject_data_pub{ORB_ID(gps_inject_data)};
 	// uORB_sim::Publication<transponder_report_s>  _transponder_report_pub{ORB_ID(transponder_report)};
-	// uORB_sim::Publication<vehicle_command_s>     _cmd_pub{ORB_ID(vehicle_command)};
+	uORB_sim::Publication<vehicle_command_s>     _cmd_pub{ORB_ID(vehicle_command)};
 	// uORB_sim::Publication<vehicle_command_ack_s> _cmd_ack_pub{ORB_ID(vehicle_command_ack)};
 
 	// ORB subscriptions

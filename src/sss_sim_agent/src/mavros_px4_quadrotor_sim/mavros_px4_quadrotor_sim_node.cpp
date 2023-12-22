@@ -81,11 +81,11 @@ void Agent::mainloop(const ros::TimerEvent &event)
     uint64_t time_us = ros::Time::now().toNSec() / uint64_t(1e3); // do not use 1e3 along as it is double type!
     px4sitl_->Run(time_us);
 
-    /* Mavros publishing mavlink messages */
-    mavros_sim_->Publish();
-
     /* Dynamics step forward (ode integrate the numerical model) */
     dynamics_->step(last_time, next_time);
+
+    /* Mavros publishing mavlink messages to ROS topics */
+    mavros_sim_->PublishRosMessage();
 
     last_time = next_time;
 }

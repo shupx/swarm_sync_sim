@@ -37,7 +37,7 @@ class MavrosSim
         MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
         /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */
-        void Publish();
+        void PublishRosMessage();
 
     private:
         ros::NodeHandle nh_;

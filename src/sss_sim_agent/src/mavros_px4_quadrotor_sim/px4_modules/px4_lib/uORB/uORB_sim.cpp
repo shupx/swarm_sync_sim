@@ -27,6 +27,7 @@ takeoff_status_s takeoff_status{};
 offboard_control_mode_s offboard_control_mode{};
 vehicle_angular_velocity_s vehicle_angular_velocity{};
 vehicle_attitude_s vehicle_attitude{};
+vehicle_command_s vehicle_command{};
 vehicle_attitude_setpoint_s vehicle_attitude_setpoint{};
 vehicle_constraints_s vehicle_constraints{};
 vehicle_control_mode_s vehicle_control_mode{};

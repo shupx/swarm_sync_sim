@@ -36,6 +36,7 @@ enum class mavlink_stream_handle : uint16_t {
 	HEARTBEAT,
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
+	
 	//@TODO SysStatus for battery
 	ENUM_NUM  // number of mavlink_stream
 };
@@ -49,7 +50,8 @@ enum class mavlink_receive_handle : uint16_t {
 	SET_POSITION_TARGET_GLOBAL_INT,
 	SET_ATTITUDE_TARGET,
 	SET_MODE,
-	//@TODO COMMAND_LONG //for arming/takeoff...
+	COMMAND_LONG,
+	COMMAND_INT,
 	ENUM_NUM // number of mavlink_receive
 };
 #define MAVLINK_RECEIVE_NUM (int)px4::mavlink_receive_handle::ENUM_NUM // number of mavlink_receive

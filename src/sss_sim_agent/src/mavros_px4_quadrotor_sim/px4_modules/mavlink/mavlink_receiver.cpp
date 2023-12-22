@@ -411,355 +411,358 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
 {
-	//@TODO handle command long for MAV_CMD
+	/* command */
+	mavlink_command_long_t cmd_mavlink;
+	mavlink_msg_command_long_decode(msg, &cmd_mavlink);
 
-	// /* command */
-	// mavlink_command_long_t cmd_mavlink;
-	// mavlink_msg_command_long_decode(msg, &cmd_mavlink);
+	vehicle_command_s vcmd{};
 
-	// vehicle_command_s vcmd{};
+	vcmd.timestamp = hrt_absolute_time();
 
-	// vcmd.timestamp = hrt_absolute_time();
+	const float before_int32_max = nextafterf((float)INT32_MAX, 0.0f);
+	const float after_int32_max = nextafterf((float)INT32_MAX, (float)INFINITY);
 
-	// const float before_int32_max = nextafterf((float)INT32_MAX, 0.0f);
-	// const float after_int32_max = nextafterf((float)INT32_MAX, (float)INFINITY);
+	if (cmd_mavlink.param5 >= before_int32_max && cmd_mavlink.param5 <= after_int32_max &&
+	    cmd_mavlink.param6 >= before_int32_max && cmd_mavlink.param6 <= after_int32_max) {
+		// This looks suspicously like INT32_MAX was sent in a COMMAND_LONG instead of
+		// a COMMAND_INT.
+		// PX4_ERR("param5/param6 invalid of command %" PRIu16, cmd_mavlink.command);
+		std::cout << "param5/param6 invalid of command " << cmd_mavlink.command << std::endl; //added by Peixuan Shu
+		// acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
+		return;
+	}
 
-	// if (cmd_mavlink.param5 >= before_int32_max && cmd_mavlink.param5 <= after_int32_max &&
-	//     cmd_mavlink.param6 >= before_int32_max && cmd_mavlink.param6 <= after_int32_max) {
-	// 	// This looks suspicously like INT32_MAX was sent in a COMMAND_LONG instead of
-	// 	// a COMMAND_INT.
-	// 	PX4_ERR("param5/param6 invalid of command %" PRIu16, cmd_mavlink.command);
-	// 	acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
-	// 	return;
-	// }
-
-	// /* Copy the content of mavlink_command_long_t cmd_mavlink into command_t cmd */
-	// vcmd.param1 = cmd_mavlink.param1;
-	// vcmd.param2 = cmd_mavlink.param2;
-	// vcmd.param3 = cmd_mavlink.param3;
-	// vcmd.param4 = cmd_mavlink.param4;
-	// vcmd.param5 = (double)cmd_mavlink.param5;
-	// vcmd.param6 = (double)cmd_mavlink.param6;
-	// vcmd.param7 = cmd_mavlink.param7;
-	// vcmd.command = cmd_mavlink.command;
-	// vcmd.target_system = cmd_mavlink.target_system;
-	// vcmd.target_component = cmd_mavlink.target_component;
-	// vcmd.source_system = msg->sysid;
-	// vcmd.source_component = msg->compid;
-	// vcmd.confirmation = cmd_mavlink.confirmation;
-	// vcmd.from_external = true;
+	/* Copy the content of mavlink_command_long_t cmd_mavlink into command_t cmd */
+	vcmd.param1 = cmd_mavlink.param1;
+	vcmd.param2 = cmd_mavlink.param2;
+	vcmd.param3 = cmd_mavlink.param3;
+	vcmd.param4 = cmd_mavlink.param4;
+	vcmd.param5 = (double)cmd_mavlink.param5;
+	vcmd.param6 = (double)cmd_mavlink.param6;
+	vcmd.param7 = cmd_mavlink.param7;
+	vcmd.command = cmd_mavlink.command;
+	vcmd.target_system = cmd_mavlink.target_system;
+	vcmd.target_component = cmd_mavlink.target_component;
+	vcmd.source_system = msg->sysid;
+	vcmd.source_component = msg->compid;
+	vcmd.confirmation = cmd_mavlink.confirmation;
+	vcmd.from_external = true;
 
 	// handle_message_command_both(msg, cmd_mavlink, vcmd);
+	_cmd_pub.publish(vcmd); // modified by Peixuan Shu
 }
 
 void
 MavlinkReceiver::handle_message_command_int(mavlink_message_t *msg)
 {
-	// /* command */
-	// mavlink_command_int_t cmd_mavlink;
-	// mavlink_msg_command_int_decode(msg, &cmd_mavlink);
+	/* command */
+	mavlink_command_int_t cmd_mavlink;
+	mavlink_msg_command_int_decode(msg, &cmd_mavlink);
 
-	// vehicle_command_s vcmd{};
-	// vcmd.timestamp = hrt_absolute_time();
+	vehicle_command_s vcmd{};
+	vcmd.timestamp = hrt_absolute_time();
 
-	// if (cmd_mavlink.x == 0x7ff80000 && cmd_mavlink.y == 0x7ff80000) {
-	// 	// This looks like NAN was by accident sent as int.
-	// 	PX4_ERR("x/y invalid of command %" PRIu16, cmd_mavlink.command);
-	// 	acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
-	// 	return;
-	// }
+	if (cmd_mavlink.x == 0x7ff80000 && cmd_mavlink.y == 0x7ff80000) {
+		// This looks like NAN was by accident sent as int.
+		// PX4_ERR("x/y invalid of command %" PRIu16, cmd_mavlink.command);
+		std::cout << "x/y invalid of command " << cmd_mavlink.command << std::endl; //added by Peixuan Shu
+		// acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
+		return;
+	}
 
-	// /* Copy the content of mavlink_command_int_t cmd_mavlink into command_t cmd */
-	// vcmd.param1 = cmd_mavlink.param1;
-	// vcmd.param2 = cmd_mavlink.param2;
-	// vcmd.param3 = cmd_mavlink.param3;
-	// vcmd.param4 = cmd_mavlink.param4;
+	/* Copy the content of mavlink_command_int_t cmd_mavlink into command_t cmd */
+	vcmd.param1 = cmd_mavlink.param1;
+	vcmd.param2 = cmd_mavlink.param2;
+	vcmd.param3 = cmd_mavlink.param3;
+	vcmd.param4 = cmd_mavlink.param4;
 
-	// if (cmd_mavlink.x == INT32_MAX && cmd_mavlink.y == INT32_MAX) {
-	// 	// INT32_MAX for x and y means to ignore it.
-	// 	vcmd.param5 = (double)NAN;
-	// 	vcmd.param6 = (double)NAN;
+	if (cmd_mavlink.x == INT32_MAX && cmd_mavlink.y == INT32_MAX) {
+		// INT32_MAX for x and y means to ignore it.
+		vcmd.param5 = (double)NAN;
+		vcmd.param6 = (double)NAN;
 
-	// } else {
-	// 	vcmd.param5 = ((double)cmd_mavlink.x) / 1e7;
-	// 	vcmd.param6 = ((double)cmd_mavlink.y) / 1e7;
-	// }
+	} else {
+		vcmd.param5 = ((double)cmd_mavlink.x) / 1e7;
+		vcmd.param6 = ((double)cmd_mavlink.y) / 1e7;
+	}
 
-	// vcmd.param7 = cmd_mavlink.z;
-	// vcmd.command = cmd_mavlink.command;
-	// vcmd.target_system = cmd_mavlink.target_system;
-	// vcmd.target_component = cmd_mavlink.target_component;
-	// vcmd.source_system = msg->sysid;
-	// vcmd.source_component = msg->compid;
-	// vcmd.confirmation = false;
-	// vcmd.from_external = true;
+	vcmd.param7 = cmd_mavlink.z;
+	vcmd.command = cmd_mavlink.command;
+	vcmd.target_system = cmd_mavlink.target_system;
+	vcmd.target_component = cmd_mavlink.target_component;
+	vcmd.source_system = msg->sysid;
+	vcmd.source_component = msg->compid;
+	vcmd.confirmation = false;
+	vcmd.from_external = true;
 
 	// handle_message_command_both(msg, cmd_mavlink, vcmd);
+	_cmd_pub.publish(vcmd); // modified by Peixuan Shu
+
 }
 
 // template <class T>
 // void MavlinkReceiver::handle_message_command_both(mavlink_message_t *msg, const T &cmd_mavlink,
 // 		const vehicle_command_s &vehicle_command)
 // {
-	// bool target_ok = evaluate_target_ok(cmd_mavlink.command, cmd_mavlink.target_system, cmd_mavlink.target_component);
-	// bool send_ack = true;
-	// uint8_t result = vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED;
-	// uint8_t progress = 0; // TODO: should be 255, 0 for backwards compatibility
+// 	bool target_ok = evaluate_target_ok(cmd_mavlink.command, cmd_mavlink.target_system, cmd_mavlink.target_component);
+// 	bool send_ack = true;
+// 	uint8_t result = vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED;
+// 	uint8_t progress = 0; // TODO: should be 255, 0 for backwards compatibility
 
-	// if (!target_ok) {
-	// 	// Reject alien commands only if there is no forwarding or we've never seen target component before
-	// 	if (!_mavlink->get_forwarding_on()
-	// 	    || !_mavlink->component_was_seen(cmd_mavlink.target_system, cmd_mavlink.target_component, _mavlink)) {
-	// 		acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_FAILED);
-	// 	}
+// 	if (!target_ok) {
+// 		// Reject alien commands only if there is no forwarding or we've never seen target component before
+// 		if (!_mavlink->get_forwarding_on()
+// 		    || !_mavlink->component_was_seen(cmd_mavlink.target_system, cmd_mavlink.target_component, _mavlink)) {
+// 			acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, vehicle_command_ack_s::VEHICLE_RESULT_FAILED);
+// 		}
 
-	// 	return;
-	// }
+// 		return;
+// 	}
 
-	// // First we handle legacy support requests which were used before we had
-	// // the generic MAV_CMD_REQUEST_MESSAGE.
-	// if (cmd_mavlink.command == MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES) {
-	// 	result = handle_request_message_command(MAVLINK_MSG_ID_AUTOPILOT_VERSION);
+// 	// First we handle legacy support requests which were used before we had
+// 	// the generic MAV_CMD_REQUEST_MESSAGE.
+// 	if (cmd_mavlink.command == MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES) {
+// 		result = handle_request_message_command(MAVLINK_MSG_ID_AUTOPILOT_VERSION);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_REQUEST_PROTOCOL_VERSION) {
-	// 	result = handle_request_message_command(MAVLINK_MSG_ID_PROTOCOL_VERSION);
+// 	} else if (cmd_mavlink.command == MAV_CMD_REQUEST_PROTOCOL_VERSION) {
+// 		result = handle_request_message_command(MAVLINK_MSG_ID_PROTOCOL_VERSION);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_GET_HOME_POSITION) {
-	// 	result = handle_request_message_command(MAVLINK_MSG_ID_HOME_POSITION);
+// 	} else if (cmd_mavlink.command == MAV_CMD_GET_HOME_POSITION) {
+// 		result = handle_request_message_command(MAVLINK_MSG_ID_HOME_POSITION);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_REQUEST_FLIGHT_INFORMATION) {
-	// 	result = handle_request_message_command(MAVLINK_MSG_ID_FLIGHT_INFORMATION);
+// 	} else if (cmd_mavlink.command == MAV_CMD_REQUEST_FLIGHT_INFORMATION) {
+// 		result = handle_request_message_command(MAVLINK_MSG_ID_FLIGHT_INFORMATION);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_REQUEST_STORAGE_INFORMATION) {
-	// 	result = handle_request_message_command(MAVLINK_MSG_ID_STORAGE_INFORMATION);
+// 	} else if (cmd_mavlink.command == MAV_CMD_REQUEST_STORAGE_INFORMATION) {
+// 		result = handle_request_message_command(MAVLINK_MSG_ID_STORAGE_INFORMATION);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_SET_MESSAGE_INTERVAL) {
-	// 	if (set_message_interval((int)roundf(cmd_mavlink.param1), cmd_mavlink.param2, cmd_mavlink.param3)) {
-	// 		result = vehicle_command_ack_s::VEHICLE_RESULT_FAILED;
-	// 	}
+// 	} else if (cmd_mavlink.command == MAV_CMD_SET_MESSAGE_INTERVAL) {
+// 		if (set_message_interval((int)roundf(cmd_mavlink.param1), cmd_mavlink.param2, cmd_mavlink.param3)) {
+// 			result = vehicle_command_ack_s::VEHICLE_RESULT_FAILED;
+// 		}
 
-	// } else if (cmd_mavlink.command == MAV_CMD_GET_MESSAGE_INTERVAL) {
-	// 	get_message_interval((int)roundf(cmd_mavlink.param1));
+// 	} else if (cmd_mavlink.command == MAV_CMD_GET_MESSAGE_INTERVAL) {
+// 		get_message_interval((int)roundf(cmd_mavlink.param1));
 
-	// } else if (cmd_mavlink.command == MAV_CMD_REQUEST_MESSAGE) {
+// 	} else if (cmd_mavlink.command == MAV_CMD_REQUEST_MESSAGE) {
 
-	// 	uint16_t message_id = (uint16_t)roundf(vehicle_command.param1);
-	// 	result = handle_request_message_command(message_id,
-	// 						vehicle_command.param2, vehicle_command.param3, vehicle_command.param4,
-	// 						vehicle_command.param5, vehicle_command.param6, vehicle_command.param7);
+// 		uint16_t message_id = (uint16_t)roundf(vehicle_command.param1);
+// 		result = handle_request_message_command(message_id,
+// 							vehicle_command.param2, vehicle_command.param3, vehicle_command.param4,
+// 							vehicle_command.param5, vehicle_command.param6, vehicle_command.param7);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_SET_CAMERA_ZOOM) {
-	// 	struct actuator_controls_s actuator_controls = {};
-	// 	actuator_controls.timestamp = hrt_absolute_time();
+// 	} else if (cmd_mavlink.command == MAV_CMD_SET_CAMERA_ZOOM) {
+// 		struct actuator_controls_s actuator_controls = {};
+// 		actuator_controls.timestamp = hrt_absolute_time();
 
-	// 	for (size_t i = 0; i < 8; i++) {
-	// 		actuator_controls.control[i] = NAN;
-	// 	}
+// 		for (size_t i = 0; i < 8; i++) {
+// 			actuator_controls.control[i] = NAN;
+// 		}
 
-	// 	switch ((int)(cmd_mavlink.param1 + 0.5f)) {
-	// 	case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_RANGE:
-	// 		actuator_controls.control[actuator_controls_s::INDEX_CAMERA_ZOOM] = cmd_mavlink.param2 / 50.0f - 1.0f;
-	// 		break;
+// 		switch ((int)(cmd_mavlink.param1 + 0.5f)) {
+// 		case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_RANGE:
+// 			actuator_controls.control[actuator_controls_s::INDEX_CAMERA_ZOOM] = cmd_mavlink.param2 / 50.0f - 1.0f;
+// 			break;
 
-	// 	case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_STEP:
-	// 	case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_CONTINUOUS:
-	// 	case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_FOCAL_LENGTH:
-	// 	default:
-	// 		send_ack = false;
-	// 	}
+// 		case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_STEP:
+// 		case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_CONTINUOUS:
+// 		case vehicle_command_s::VEHICLE_CAMERA_ZOOM_TYPE_FOCAL_LENGTH:
+// 		default:
+// 			send_ack = false;
+// 		}
 
-	// 	_actuator_controls_pubs[actuator_controls_s::GROUP_INDEX_GIMBAL].publish(actuator_controls);
+// 		_actuator_controls_pubs[actuator_controls_s::GROUP_INDEX_GIMBAL].publish(actuator_controls);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_INJECT_FAILURE) {
-	// 	if (_mavlink->failure_injection_enabled()) {
-	// 		_cmd_pub.publish(vehicle_command);
-	// 		send_ack = false;
+// 	} else if (cmd_mavlink.command == MAV_CMD_INJECT_FAILURE) {
+// 		if (_mavlink->failure_injection_enabled()) {
+// 			_cmd_pub.publish(vehicle_command);
+// 			send_ack = false;
 
-	// 	} else {
-	// 		result = vehicle_command_ack_s::VEHICLE_RESULT_DENIED;
-	// 		send_ack = true;
-	// 	}
+// 		} else {
+// 			result = vehicle_command_ack_s::VEHICLE_RESULT_DENIED;
+// 			send_ack = true;
+// 		}
 
-	// } else if (cmd_mavlink.command == MAV_CMD_DO_SET_ACTUATOR) {
-	// 	// since we're only paying attention to 3 AUX outputs, the
-	// 	// index should be 0, otherwise ignore the message
-	// 	if (((int) vehicle_command.param7) == 0) {
-	// 		actuator_controls_s actuator_controls{};
-	// 		// update with existing values to avoid changing unspecified controls
-	// 		_actuator_controls_3_sub.update(&actuator_controls);
+// 	} else if (cmd_mavlink.command == MAV_CMD_DO_SET_ACTUATOR) {
+// 		// since we're only paying attention to 3 AUX outputs, the
+// 		// index should be 0, otherwise ignore the message
+// 		if (((int) vehicle_command.param7) == 0) {
+// 			actuator_controls_s actuator_controls{};
+// 			// update with existing values to avoid changing unspecified controls
+// 			_actuator_controls_3_sub.update(&actuator_controls);
 
-	// 		actuator_controls.timestamp = hrt_absolute_time();
+// 			actuator_controls.timestamp = hrt_absolute_time();
 
-	// 		bool updated = false;
+// 			bool updated = false;
 
-	// 		if (PX4_ISFINITE(vehicle_command.param1)) {
-	// 			actuator_controls.control[5] = vehicle_command.param1;
-	// 			updated = true;
-	// 		}
+// 			if (PX4_ISFINITE(vehicle_command.param1)) {
+// 				actuator_controls.control[5] = vehicle_command.param1;
+// 				updated = true;
+// 			}
 
-	// 		if (PX4_ISFINITE(vehicle_command.param2)) {
-	// 			actuator_controls.control[6] = vehicle_command.param2;
-	// 			updated = true;
-	// 		}
+// 			if (PX4_ISFINITE(vehicle_command.param2)) {
+// 				actuator_controls.control[6] = vehicle_command.param2;
+// 				updated = true;
+// 			}
 
-	// 		if (PX4_ISFINITE(vehicle_command.param3)) {
-	// 			actuator_controls.control[7] = vehicle_command.param3;
-	// 			updated = true;
-	// 		}
+// 			if (PX4_ISFINITE(vehicle_command.param3)) {
+// 				actuator_controls.control[7] = vehicle_command.param3;
+// 				updated = true;
+// 			}
 
-	// 		if (updated) {
-	// 			_actuator_controls_pubs[3].publish(actuator_controls);
-	// 		}
-	// 	}
+// 			if (updated) {
+// 				_actuator_controls_pubs[3].publish(actuator_controls);
+// 			}
+// 		}
 
-	// 	_cmd_pub.publish(vehicle_command);
+// 		_cmd_pub.publish(vehicle_command);
 
-	// } else if (cmd_mavlink.command == MAV_CMD_DO_AUTOTUNE_ENABLE) {
+// 	} else if (cmd_mavlink.command == MAV_CMD_DO_AUTOTUNE_ENABLE) {
 
-	// 	bool has_module = true;
-	// 	autotune_attitude_control_status_s status{};
-	// 	_autotune_attitude_control_status_sub.copy(&status);
+// 		bool has_module = true;
+// 		autotune_attitude_control_status_s status{};
+// 		_autotune_attitude_control_status_sub.copy(&status);
 
-	// 	// if not busy enable via the parameter
-	// 	// do not check the return value of the uORB copy above because the module
-	// 	// starts publishing only when MC_AT_START is set
-	// 	if (status.state == autotune_attitude_control_status_s::STATE_IDLE) {
-	// 		vehicle_status_s vehicle_status{};
-	// 		_vehicle_status_sub.copy(&vehicle_status);
+// 		// if not busy enable via the parameter
+// 		// do not check the return value of the uORB copy above because the module
+// 		// starts publishing only when MC_AT_START is set
+// 		if (status.state == autotune_attitude_control_status_s::STATE_IDLE) {
+// 			vehicle_status_s vehicle_status{};
+// 			_vehicle_status_sub.copy(&vehicle_status);
 
-	// 		if (!vehicle_status.in_transition_mode) {
-	// 			param_t atune_start;
+// 			if (!vehicle_status.in_transition_mode) {
+// 				param_t atune_start;
 
-	// 			switch (vehicle_status.vehicle_type) {
-	// 			case vehicle_status_s::VEHICLE_TYPE_FIXED_WING:
-	// 				atune_start = param_find("FW_AT_START");
+// 				switch (vehicle_status.vehicle_type) {
+// 				case vehicle_status_s::VEHICLE_TYPE_FIXED_WING:
+// 					atune_start = param_find("FW_AT_START");
 
-	// 				break;
+// 					break;
 
-	// 			case vehicle_status_s::VEHICLE_TYPE_ROTARY_WING:
-	// 				atune_start = param_find("MC_AT_START");
+// 				case vehicle_status_s::VEHICLE_TYPE_ROTARY_WING:
+// 					atune_start = param_find("MC_AT_START");
 
-	// 				break;
+// 					break;
 
-	// 			default:
-	// 				atune_start = PARAM_INVALID;
-	// 				break;
-	// 			}
+// 				default:
+// 					atune_start = PARAM_INVALID;
+// 					break;
+// 				}
 
-	// 			if (atune_start == PARAM_INVALID) {
-	// 				has_module = false;
+// 				if (atune_start == PARAM_INVALID) {
+// 					has_module = false;
 
-	// 			} else {
-	// 				int32_t start = 1;
-	// 				param_set(atune_start, &start);
-	// 			}
+// 				} else {
+// 					int32_t start = 1;
+// 					param_set(atune_start, &start);
+// 				}
 
-	// 		} else {
-	// 			has_module = false;
-	// 		}
-	// 	}
+// 			} else {
+// 				has_module = false;
+// 			}
+// 		}
 
-	// 	if (has_module) {
+// 		if (has_module) {
 
-	// 		// most are in progress
-	// 		result = vehicle_command_ack_s::VEHICLE_RESULT_IN_PROGRESS;
+// 			// most are in progress
+// 			result = vehicle_command_ack_s::VEHICLE_RESULT_IN_PROGRESS;
 
-	// 		switch (status.state) {
-	// 		case autotune_attitude_control_status_s::STATE_IDLE:
-	// 		case autotune_attitude_control_status_s::STATE_INIT:
-	// 			progress = 0;
-	// 			break;
+// 			switch (status.state) {
+// 			case autotune_attitude_control_status_s::STATE_IDLE:
+// 			case autotune_attitude_control_status_s::STATE_INIT:
+// 				progress = 0;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_ROLL:
-	// 		case autotune_attitude_control_status_s::STATE_ROLL_PAUSE:
-	// 			progress = 20;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_ROLL:
+// 			case autotune_attitude_control_status_s::STATE_ROLL_PAUSE:
+// 				progress = 20;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_PITCH:
-	// 		case autotune_attitude_control_status_s::STATE_PITCH_PAUSE:
-	// 			progress = 40;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_PITCH:
+// 			case autotune_attitude_control_status_s::STATE_PITCH_PAUSE:
+// 				progress = 40;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_YAW:
-	// 		case autotune_attitude_control_status_s::STATE_YAW_PAUSE:
-	// 			progress = 60;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_YAW:
+// 			case autotune_attitude_control_status_s::STATE_YAW_PAUSE:
+// 				progress = 60;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_VERIFICATION:
-	// 			progress = 80;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_VERIFICATION:
+// 				progress = 80;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_APPLY:
-	// 			progress = 85;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_APPLY:
+// 				progress = 85;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_TEST:
-	// 			progress = 90;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_TEST:
+// 				progress = 90;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_WAIT_FOR_DISARM:
-	// 			progress = 95;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_WAIT_FOR_DISARM:
+// 				progress = 95;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_COMPLETE:
-	// 			progress = 100;
-	// 			// ack it properly with an ACCEPTED once we're done
-	// 			result = vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED;
-	// 			break;
+// 			case autotune_attitude_control_status_s::STATE_COMPLETE:
+// 				progress = 100;
+// 				// ack it properly with an ACCEPTED once we're done
+// 				result = vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED;
+// 				break;
 
-	// 		case autotune_attitude_control_status_s::STATE_FAIL:
-	// 			progress = 0;
-	// 			result = vehicle_command_ack_s::VEHICLE_RESULT_FAILED;
-	// 			break;
-	// 		}
+// 			case autotune_attitude_control_status_s::STATE_FAIL:
+// 				progress = 0;
+// 				result = vehicle_command_ack_s::VEHICLE_RESULT_FAILED;
+// 				break;
+// 			}
 
-	// 	} else {
-	// 		result = vehicle_command_ack_s::VEHICLE_RESULT_UNSUPPORTED;
-	// 	}
+// 		} else {
+// 			result = vehicle_command_ack_s::VEHICLE_RESULT_UNSUPPORTED;
+// 		}
 
-	// 	send_ack = true;
+// 		send_ack = true;
 
-	// } else {
-	// 	send_ack = false;
+// 	} else {
+// 		send_ack = false;
 
-	// 	if (msg->sysid == mavlink_system.sysid && msg->compid == mavlink_system.compid) {
-	// 		PX4_WARN("ignoring CMD with same SYS/COMP (%" PRIu8 "/%" PRIu8 ") ID", mavlink_system.sysid, mavlink_system.compid);
-	// 		return;
-	// 	}
+// 		if (msg->sysid == mavlink_system.sysid && msg->compid == mavlink_system.compid) {
+// 			PX4_WARN("ignoring CMD with same SYS/COMP (%" PRIu8 "/%" PRIu8 ") ID", mavlink_system.sysid, mavlink_system.compid);
+// 			return;
+// 		}
 
-	// 	if (cmd_mavlink.command == MAV_CMD_LOGGING_START) {
-	// 		// check that we have enough bandwidth available: this is given by the configured logger topics
-	// 		// and rates. The 5000 is somewhat arbitrary, but makes sure that we cannot enable log streaming
-	// 		// on a radio link
-	// 		if (_mavlink->get_data_rate() < 5000) {
-	// 			send_ack = true;
-	// 			result = vehicle_command_ack_s::VEHICLE_RESULT_DENIED;
-	// 			_mavlink->send_statustext_critical("Not enough bandwidth to enable log streaming\t");
-	// 			events::send<uint32_t>(events::ID("mavlink_log_not_enough_bw"), events::Log::Error,
-	// 					       "Not enough bandwidth to enable log streaming ({1} \\< 5000)", _mavlink->get_data_rate());
+// 		if (cmd_mavlink.command == MAV_CMD_LOGGING_START) {
+// 			// check that we have enough bandwidth available: this is given by the configured logger topics
+// 			// and rates. The 5000 is somewhat arbitrary, but makes sure that we cannot enable log streaming
+// 			// on a radio link
+// 			if (_mavlink->get_data_rate() < 5000) {
+// 				send_ack = true;
+// 				result = vehicle_command_ack_s::VEHICLE_RESULT_DENIED;
+// 				_mavlink->send_statustext_critical("Not enough bandwidth to enable log streaming\t");
+// 				events::send<uint32_t>(events::ID("mavlink_log_not_enough_bw"), events::Log::Error,
+// 						       "Not enough bandwidth to enable log streaming ({1} \\< 5000)", _mavlink->get_data_rate());
 
-	// 		} else {
-	// 			// we already instanciate the streaming object, because at this point we know on which
-	// 			// mavlink channel streaming was requested. But in fact it's possible that the logger is
-	// 			// not even running. The main mavlink thread takes care of this by waiting for an ack
-	// 			// from the logger.
-	// 			_mavlink->try_start_ulog_streaming(msg->sysid, msg->compid);
-	// 		}
-	// 	}
+// 			} else {
+// 				// we already instanciate the streaming object, because at this point we know on which
+// 				// mavlink channel streaming was requested. But in fact it's possible that the logger is
+// 				// not even running. The main mavlink thread takes care of this by waiting for an ack
+// 				// from the logger.
+// 				_mavlink->try_start_ulog_streaming(msg->sysid, msg->compid);
+// 			}
+// 		}
 
-	// 	if (!send_ack) {
-	// 		_cmd_pub.publish(vehicle_command);
-	// 	}
-	// }
+// 		if (!send_ack) {
+// 			_cmd_pub.publish(vehicle_command);
+// 		}
+// 	}
 
-	// if (send_ack) {
-	// 	acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, result, progress);
-	// }
+// 	if (send_ack) {
+// 		acknowledge(msg->sysid, msg->compid, cmd_mavlink.command, result, progress);
+// 	}
 // }
 
-uint8_t MavlinkReceiver::handle_request_message_command(uint16_t message_id, float param2, float param3, float param4,
-		float param5, float param6, float param7)
-{
+// uint8_t MavlinkReceiver::handle_request_message_command(uint16_t message_id, float param2, float param3, float param4,
+// 		float param5, float param6, float param7)
+// {
 	// bool stream_found = false;
 	// bool message_sent = false;
 
@@ -789,9 +792,7 @@ uint8_t MavlinkReceiver::handle_request_message_command(uint16_t message_id, flo
 	// }
 
 	// return (message_sent ? vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED : vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
-
-	return 2; //vehicle_command_ack_s::VEHICLE_RESULT_DENIED=2 //added by Peixuan Shu
-}
+// }
 
 
 void
@@ -930,32 +931,30 @@ MavlinkReceiver::handle_message_hil_optical_flow(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_set_mode(mavlink_message_t *msg)
 {
-	//@TODO handle SET_MODE
+	mavlink_set_mode_t new_mode;
+	mavlink_msg_set_mode_decode(msg, &new_mode);
 
-	// mavlink_set_mode_t new_mode;
-	// mavlink_msg_set_mode_decode(msg, &new_mode);
+	union px4_custom_mode custom_mode;
+	custom_mode.data = new_mode.custom_mode;
 
-	// union px4_custom_mode custom_mode;
-	// custom_mode.data = new_mode.custom_mode;
+	vehicle_command_s vcmd{};
 
-	// vehicle_command_s vcmd{};
+	vcmd.timestamp = hrt_absolute_time();
 
-	// vcmd.timestamp = hrt_absolute_time();
+	/* copy the content of mavlink_command_long_t cmd_mavlink into command_t cmd */
+	vcmd.param1 = (float)new_mode.base_mode;
+	vcmd.param2 = (float)custom_mode.main_mode;
+	vcmd.param3 = (float)custom_mode.sub_mode;
 
-	// /* copy the content of mavlink_command_long_t cmd_mavlink into command_t cmd */
-	// vcmd.param1 = (float)new_mode.base_mode;
-	// vcmd.param2 = (float)custom_mode.main_mode;
-	// vcmd.param3 = (float)custom_mode.sub_mode;
+	vcmd.command = vehicle_command_s::VEHICLE_CMD_DO_SET_MODE;
+	vcmd.target_system = new_mode.target_system;
+	vcmd.target_component = MAV_COMP_ID_ALL;
+	vcmd.source_system = msg->sysid;
+	vcmd.source_component = msg->compid;
+	vcmd.confirmation = true;
+	vcmd.from_external = true;
 
-	// vcmd.command = vehicle_command_s::VEHICLE_CMD_DO_SET_MODE;
-	// vcmd.target_system = new_mode.target_system;
-	// vcmd.target_component = MAV_COMP_ID_ALL;
-	// vcmd.source_system = msg->sysid;
-	// vcmd.source_component = msg->compid;
-	// vcmd.confirmation = true;
-	// vcmd.from_external = true;
-
-	// _cmd_pub.publish(vcmd);
+	_cmd_pub.publish(vcmd);
 }
 
 void

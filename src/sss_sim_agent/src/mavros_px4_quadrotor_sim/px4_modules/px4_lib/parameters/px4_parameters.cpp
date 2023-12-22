@@ -9,6 +9,8 @@
 
 namespace px4 { 
 
+// Refer to https://docs.px4.io/v1.13/en/advanced_config/parameter_reference.html for parameter meanings
+
 // Store all global(extern) px4 parameters (Created by Peixuan Shu)
 param_info_s parameters[param_num] = {
 

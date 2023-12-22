@@ -76,22 +76,24 @@ void PX4SITL::load_px4_params_from_ros_params()
 
 void PX4SITL::Run(const uint64_t &time_us)
 {
-    /* Update px4 uorb states from UAV dynamical model */
+    /* Update px4 uorb states from UAV dynamics */
     UpdateUorbStates(time_us);
 
     /* Run mavlink receiver to update command uorb messages */
     ReceiveMavlink();
 
-    /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
-    StreamMavlink(time_us);
+    /* Run commander module to handle commands uorb messages */
+    //@TODO
 
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
     mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
 
-    /* @TODO Send command to dynamics */
-    SendControlInput();
+    /* Stream mavlink messages */
+    StreamMavlink(time_us);
 
+    /* @TODO Send control inputs to UAV dynamics */
+    SendControlInput();
 }
 
 void PX4SITL::ReceiveMavlink()

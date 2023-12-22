@@ -28,6 +28,7 @@
 #include <uORB/topics/vehicle_angular_velocity.h>
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
+#include <uORB/topics/vehicle_command.h>
 #include <uORB/topics/vehicle_constraints.h>
 #include <uORB/topics/vehicle_control_mode.h>
 #include <uORB/topics/vehicle_global_position.h>
@@ -57,6 +58,7 @@ extern offboard_control_mode_s offboard_control_mode;
 extern vehicle_angular_velocity_s vehicle_angular_velocity;
 extern vehicle_attitude_s vehicle_attitude;
 extern vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
+extern vehicle_command_s vehicle_command;
 extern vehicle_constraints_s vehicle_constraints;
 extern vehicle_control_mode_s vehicle_control_mode;
 extern vehicle_global_position_s vehicle_global_position;
