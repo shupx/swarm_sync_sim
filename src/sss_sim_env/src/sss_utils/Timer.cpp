@@ -48,6 +48,8 @@ Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callbac
         timer_ = nh_.createTimer(period_, callback_, oneshot_, autostart_); 
     }
 
+    //@TODO catch SIGINT error caused by ctrl+C, and destroy the parent before ros shutdown (for clock_updater_->unregister())
+
 }
 
 Timer::Impl::~Impl()

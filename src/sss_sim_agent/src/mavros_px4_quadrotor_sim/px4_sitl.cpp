@@ -82,7 +82,7 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Run mavlink receiver to update command uorb messages */
     ReceiveMavlink();
 
-    /* Run commander module to handle commands uorb messages */
+    /* Run commander module to handle vehicle_command uorb messages */
     //@TODO
 
     /* Run pos and att controller to calculate control output */

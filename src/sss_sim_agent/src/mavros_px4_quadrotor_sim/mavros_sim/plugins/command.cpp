@@ -49,7 +49,9 @@
 // header files added by Peixuan Shu
 #include <ros/ros.h>
 #include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
+#include <mavlink/v2.0/minimal/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // Added by Peixuan Shu store the simulated static(global) mavlink messages
 
 namespace mavros_sim {  // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace std_plugins {
@@ -84,7 +86,8 @@ public:
 	CommandPlugin(const std::shared_ptr<UAS> &uas) :
 		cmd_nh("mavros/cmd"),   // nodehandle modified by Peixuan Shu
 		cmd_nh_private("~cmd"),   // nodehandle added by Peixuan Shu
-		use_comp_id_system_control(false)
+		use_comp_id_system_control(false),
+		m_uas(uas) // added by Peixuan Shu
 	{
 		// PluginBase::initialize(uas_);
 
@@ -96,7 +99,7 @@ public:
 		command_ack_timeout_dt = ros::Duration(command_ack_timeout);
 
 		command_long_srv = cmd_nh.advertiseService("command", &CommandPlugin::command_long_cb, this);
-		command_ack_srv = cmd_nh.advertiseService("command_ack", &CommandPlugin::command_ack_cb, this);
+		// command_ack_srv = cmd_nh.advertiseService("command_ack", &CommandPlugin::command_ack_cb, this);
 		command_int_srv = cmd_nh.advertiseService("command_int", &CommandPlugin::command_int_cb, this);
 		arming_srv = cmd_nh.advertiseService("arming", &CommandPlugin::arming_cb, this);
 		// set_home_srv = cmd_nh.advertiseService("set_home", &CommandPlugin::set_home_cb, this);
@@ -132,10 +135,16 @@ private:
 	L_CommandTransaction ack_waiting_list;
 	ros::Duration command_ack_timeout_dt;
 
+
 	/* -*- message handlers -*- */
 
-	void handle_command_ack(const mavlink::mavlink_message_t *msg, mavlink::common::msg::COMMAND_ACK &ack)
+public: // public by Peixuan Shu
+	void handle_command_ack(const mavlink_message_t& msg)  // Change from mavlink cpp headers to mavlink c headers by Peixuan Shu
 	{
+		// Decode mavlink message. Added by Peixuan Shu
+		mavlink_command_ack_t ack;
+		mavlink_msg_command_ack_decode(&msg, &ack); // mavlink c lib		
+
 		lock_guard lock(mutex);
 
 		// XXX(vooon): place here source ids check
@@ -152,6 +161,7 @@ private:
 			ack.command, ack.result);
 	}
 
+private:
 	/* -*- mid-level functions -*- */
 
 	bool wait_ack_for(CommandTransaction &tr) {
@@ -196,6 +206,14 @@ private:
 		 * Don't expect any ACK in broadcast mode.
 		 */
 		bool is_ack_required = (confirmation != 0 || m_uas->is_ardupilotmega() || m_uas->is_px4()) && !broadcast;
+
+		/** Added by Peixuan Shu
+		 * Disable ack mechanism (no wait anymore) since it will block the ROS callback queue, 
+		 * which leads to the block of the mainloop timer!
+		 */ 
+		is_ack_required = false; // added by Peixuan Shu 
+		ROS_INFO("[mavros_sim::CommandPlugin] Caution! Vehicle command ack is not simulated by mavros_sim, so the service response is always true!");
+
 		if (is_ack_required)
 			ack_it = ack_waiting_list.emplace(ack_waiting_list.end(), command);
 
@@ -271,12 +289,12 @@ private:
 	template<typename MsgT>
 	inline void set_target(MsgT &cmd, bool broadcast)
 	{
-		using mavlink::minimal::MAV_COMPONENT;
+		// using mavlink::minimal::MAV_COMPONENT;
 
 		const uint8_t tgt_sys_id = (broadcast) ? 0 : m_uas->get_tgt_system();
 		const uint8_t tgt_comp_id = (broadcast) ? 0 :
 			(use_comp_id_system_control) ?
-			enum_value(MAV_COMPONENT::COMP_ID_SYSTEM_CONTROL) : m_uas->get_tgt_component();
+			MAV_COMP_ID_SYSTEM_CONTROL : m_uas->get_tgt_component();
 
 		cmd.target_system = tgt_sys_id;
 		cmd.target_component = tgt_comp_id;
@@ -291,7 +309,8 @@ private:
 	{
 		const uint8_t confirmation_fixed = (broadcast) ? 0 : confirmation;
 
-		mavlink::common::msg::COMMAND_LONG cmd {};
+		// mavlink::common::msg::COMMAND_LONG cmd {};
+		mavlink_command_long_t cmd {}; // modified to mavlink c headers by Peixuan Shu
 		set_target(cmd, broadcast);
 
 		cmd.command = command;
@@ -304,7 +323,12 @@ private:
 		cmd.param6 = param6;
 		cmd.param7 = param7;
 
-		UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+		// UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+
+		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int handle = (int) px4::mavlink_receive_handle::COMMAND_LONG;
+		mavlink_msg_command_long_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
+		px4::mavlink_receive_list[handle].updated = true;
 	}
 
 	void command_int(bool broadcast,
@@ -315,7 +339,8 @@ private:
 		int32_t x, int32_t y,
 		float z)
 	{
-		mavlink::common::msg::COMMAND_INT cmd {};
+		// mavlink::common::msg::COMMAND_INT cmd {};
+		mavlink_command_int_t cmd {}; // modified to mavlink c headers by Peixuan Shu
 		set_target(cmd, broadcast);
 
 		cmd.frame = frame;
@@ -330,21 +355,32 @@ private:
 		cmd.y = y;
 		cmd.z = z;
 
-		UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+		// UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+
+		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int handle = (int) px4::mavlink_receive_handle::COMMAND_INT;
+		mavlink_msg_command_int_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
+		px4::mavlink_receive_list[handle].updated = true;		
 	}
 
 	void command_ack( uint16_t command, uint8_t result,
 		uint8_t progress, int32_t result_param2)
 	{
-		mavlink::common::msg::COMMAND_ACK cmd {};
-		set_target(cmd, false);
+		// // mavlink::common::msg::COMMAND_ACK cmd {};
+		// mavlink_command_ack_t cmd {}; // modified to mavlink c headers by Peixuan Shu
+		// set_target(cmd, false);
 
-		cmd.command = command;
-		cmd.result = result;
-		cmd.progress = progress;
-		cmd.result_param2 = result_param2;
+		// cmd.command = command;
+		// cmd.result = result;
+		// cmd.progress = progress;
+		// cmd.result_param2 = result_param2;
 
-		UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+		// // UAS_FCU(m_uas)->send_message_ignore_drop(cmd);
+
+		// /*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		// int handle = (int) px4::mavlink_receive_handle::COMMAND_ACK;
+		// mavlink_msg_command_ack_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
+		// px4::mavlink_receive_list[handle].updated = true;		
 	}
 
 
@@ -386,9 +422,9 @@ private:
 	bool arming_cb(mavros_msgs::CommandBool::Request &req,
 		mavros_msgs::CommandBool::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::COMPONENT_ARM_DISARM), 1,
+			MAV_CMD_COMPONENT_ARM_DISARM, 1,
 			(req.value) ? 1.0 : 0.0,
 			0, 0, 0, 0, 0, 0,
 			res.success, res.result);
@@ -397,9 +433,9 @@ private:
 	bool set_home_cb(mavros_msgs::CommandHome::Request &req,
 		mavros_msgs::CommandHome::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::DO_SET_HOME), 1,
+			MAV_CMD_DO_SET_HOME, 1,
 			(req.current_gps) ? 1.0 : 0.0,
 			0, 0, req.yaw, req.latitude, req.longitude, req.altitude,
 			res.success, res.result);
@@ -408,9 +444,9 @@ private:
 	bool takeoff_cb(mavros_msgs::CommandTOL::Request &req,
 		mavros_msgs::CommandTOL::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::NAV_TAKEOFF), 1,
+			MAV_CMD_NAV_TAKEOFF, 1,
 			req.min_pitch,
 			0, 0,
 			req.yaw,
@@ -421,9 +457,9 @@ private:
 	bool land_cb(mavros_msgs::CommandTOL::Request &req,
 		mavros_msgs::CommandTOL::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::NAV_LAND), 1,
+			MAV_CMD_NAV_LAND, 1,
 			0, 0, 0,
 			req.yaw,
 			req.latitude, req.longitude, req.altitude,
@@ -433,9 +469,9 @@ private:
 	bool trigger_control_cb(mavros_msgs::CommandTriggerControl::Request &req,
 		mavros_msgs::CommandTriggerControl::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::DO_TRIGGER_CONTROL), 1,
+			MAV_CMD_DO_TRIGGER_CONTROL, 1,
 			(req.trigger_enable) ? 1.0 : 0.0,
 			(req.sequence_reset) ? 1.0 : 0.0,
 			(req.trigger_pause) ? 1.0 : 0.0,
@@ -446,11 +482,11 @@ private:
 	bool trigger_interval_cb(mavros_msgs::CommandTriggerInterval::Request &req,
 		mavros_msgs::CommandTriggerInterval::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 
 		// trigger interval can only be set when triggering is disabled
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::DO_SET_CAM_TRIGG_INTERVAL), 1,
+			MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL, 1,
 			req.cycle_time,
 			req.integration_time,
 			0, 0, 0, 0, 0,
@@ -460,9 +496,9 @@ private:
 	bool vtol_transition_cb(mavros_msgs::CommandVtolTransition::Request &req,
 		mavros_msgs::CommandVtolTransition::Response &res)
 	{
-		using mavlink::common::MAV_CMD;
+		// using mavlink::common::MAV_CMD;
 		return send_command_long_and_wait(false,
-			enum_value(MAV_CMD::DO_VTOL_TRANSITION), false,
+			MAV_CMD_DO_VTOL_TRANSITION, false,
 			req.state,
 			0, 0, 0, 0, 0, 0,
 			res.success, res.result);

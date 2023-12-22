@@ -450,6 +450,9 @@ MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
 
 	// handle_message_command_both(msg, cmd_mavlink, vcmd);
 	_cmd_pub.publish(vcmd); // modified by Peixuan Shu
+
+	// std::cout << "[mavlink_receiver] receive command long" << std::endl;
+
 }
 
 void
@@ -497,6 +500,8 @@ MavlinkReceiver::handle_message_command_int(mavlink_message_t *msg)
 
 	// handle_message_command_both(msg, cmd_mavlink, vcmd);
 	_cmd_pub.publish(vcmd); // modified by Peixuan Shu
+
+	// std::cout << "[mavlink_receiver] receive command int" << std::endl;
 
 }
 

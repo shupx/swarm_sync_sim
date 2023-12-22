@@ -844,7 +844,7 @@ private:
 		}
 
 		// mavlink::common::msg::SET_MODE sm = {};
-		mavlink_set_mode_t sm {};
+		mavlink_set_mode_t sm {}; // modified to mavlink c headers by Peixuan Shu
 		sm.target_system = m_uas->get_tgt_system();
 		sm.base_mode = base_mode;
 		sm.custom_mode = custom_mode;

@@ -34,7 +34,7 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_);
     imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_);
     sys_status_plugin_ = std::make_unique<std_plugins::SystemStatusPlugin>(uas_);
-    //@TODO plugin command.cpp for cmd/arming cmd/takeoff
+    command_plugin_ = std::make_unique<std_plugins::CommandPlugin>(uas_);
 
 }
 
@@ -53,7 +53,8 @@ void MavrosSim::PublishRosMessage()
 	}
 }
 
-//@TODO create a new thread to async handle IO messages
+
+//@TODO create a new thread to async handle IO messages (read and handle mavlink messages)
 
 /* Publish mavlink messages into ROS topics (Added by Peixuan Shu) */
 void MavrosSim::handle_message(const mavlink_message_t &msg)
@@ -116,6 +117,11 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
             sys_status_plugin_->handle_estimator_status(msg);
             break;
         
+        /* command_plugin_ */
+        case MAVLINK_MSG_ID_COMMAND_ACK:
+            // command_plugin_->handle_command_ack(msg); /* command ack machanism is banned in mavros_sim */
+            break;
+
         default:
 		    std::cout << "[MavrosSim::handle_message] Unknown mavlink message id: " << msg.msgid << std::endl;
 		    break;
