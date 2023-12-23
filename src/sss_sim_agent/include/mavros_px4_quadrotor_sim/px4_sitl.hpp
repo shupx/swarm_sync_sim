@@ -24,15 +24,16 @@
 #include <memory>  // for std::shared_ptr
 
 #include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink
-#include <parameters/px4_parameters.hpp> // store all px4 parameters
+#include <parameters/px4_parameters.hpp> // store all extern(global) px4 parameters
 #include <matrix/matrix/math.hpp> // for px4 geometry utils
-#include <uORB/uORB_sim.hpp> // for uORB publication and subscription and Messages
+#include <uORB/uORB_sim.hpp> // simulate uORB publication and subscription. Store the extern(global) simulated uORB messages
 
-#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages
 #include "px4_modules/mavlink/mavlink_receiver.h"
 #include "px4_modules/mavlink/mavlink_streamer.hpp"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
+#include "px4_modules/px4_lib/drivers/drv_hrt.h"  // time utils, store the extern(global) simulated time
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated extern(global) mavlink messages
 
 #include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
 
@@ -88,10 +89,10 @@ private:
     std::shared_ptr<Dynamics> uav_dynamics_;
 
     /**
-     * \brief Update px4 uorb states from UAV dynamical model 
+     * \brief Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model 
      * @param time_us The microseconds (us) now.
      */
-    void UpdateUorbStates(const uint64_t &time_us);
+    void UpdateDroneStates(const uint64_t &time_us);
 
 	/* Search for mavlink receiving list and handle the updated messages (transfer into PX4 uORB messages) */
 	void ReceiveMavlink();

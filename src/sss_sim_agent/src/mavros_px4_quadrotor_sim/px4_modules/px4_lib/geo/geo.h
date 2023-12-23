@@ -52,9 +52,9 @@
 #include <matrix/matrix/math.hpp>
 
 /************* Added by Peixuan Shu **********/
-#ifndef hrt_absolute_time
-# define hrt_absolute_time() (0)
-#endif
+// #ifndef hrt_absolute_time
+// # define hrt_absolute_time() (0)
+// #endif
 /********************************************/
 
 static constexpr float CONSTANTS_ONE_G = 9.80665f;						// m/s^2

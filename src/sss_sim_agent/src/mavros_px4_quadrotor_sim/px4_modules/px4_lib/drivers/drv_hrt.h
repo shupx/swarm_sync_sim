@@ -1,3 +1,14 @@
+/**
+ * Modified from https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/drivers/drv_hrt.h
+ * Modified by Peixuan Shu
+ * 
+ * Simulate the high resolution time (hrt)
+ * 
+ * 2023-12-23
+ * 
+ * @author Peixuan Shu
+ */
+
 /****************************************************************************
  *
  *   Copyright (c) 2012-2016 PX4 Development Team. All rights reserved.
@@ -131,6 +142,18 @@ typedef struct latency_boardctl {
  */
 // __EXPORT extern hrt_abstime hrt_absolute_time(void);
 
+
+
+extern hrt_abstime hrt_absolute_time_us_sim; // global time. Added by Peixuan Shu
+/**
+ * Get absolute time in [us] (does not wrap). . Added by Peixuan Shu
+ */
+extern hrt_abstime hrt_absolute_time(void)
+{
+	return hrt_absolute_time_us_sim;
+}
+
+
 /**
  * Convert a timespec to absolute time.
  */
@@ -160,10 +183,10 @@ static inline void abstime_to_ts(struct timespec *ts, hrt_abstime abstime)
  *
  * This function is not interrupt save.
  */
-// static inline hrt_abstime hrt_elapsed_time(const hrt_abstime *then)
-// {
-// 	return hrt_absolute_time() - *then;
-// }
+static inline hrt_abstime hrt_elapsed_time(const hrt_abstime *then)
+{
+	return hrt_absolute_time() - *then;
+}
 
 // /**
 //  * Store the absolute time in an interrupt-safe fashion.

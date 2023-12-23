@@ -21,6 +21,8 @@
 
 #include <uORB/topics/actuator_armed.h>
 #include <uORB/topics/autotune_attitude_control_status.h>
+#include <uORB/topics/battery_status.h>
+#include <uORB/topics/commander_state.h>
 #include <uORB/topics/home_position.h>
 #include <uORB/topics/manual_control_setpoint.h>
 #include <uORB/topics/offboard_control_mode.h>
@@ -29,9 +31,11 @@
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
 #include <uORB/topics/vehicle_command.h>
+#include <uORB/topics/vehicle_command_ack.h>
 #include <uORB/topics/vehicle_constraints.h>
 #include <uORB/topics/vehicle_control_mode.h>
 #include <uORB/topics/vehicle_global_position.h>
+#include <uORB/topics/vehicle_gps_position.h>
 #include <uORB/topics/vehicle_land_detected.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_local_position_setpoint.h>
@@ -42,6 +46,10 @@
 
 #include <iostream> // for std::cout, std::endl
 
+#ifdef ORB_ID
+    #error [uORB_sim.hpp] Wrong include order: do not include original uORB.h of PX4 as it was rewritten in uORB_sim.hpp.
+#endif
+
 #ifndef ORB_ID
 #define ORB_ID(x) uORB_sim::x 
 #endif
@@ -51,6 +59,8 @@ namespace uORB_sim {
 // store all px4 uORB messages (declaring global)
 extern actuator_armed_s actuator_armed;
 extern autotune_attitude_control_status_s autotune_attitude_control_status;
+extern battery_status_s battery_status;
+extern commander_state_s commander_state;
 extern home_position_s home_position;
 extern manual_control_setpoint_s manual_control_setpoint;
 extern takeoff_status_s takeoff_status;
@@ -59,9 +69,11 @@ extern vehicle_angular_velocity_s vehicle_angular_velocity;
 extern vehicle_attitude_s vehicle_attitude;
 extern vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
 extern vehicle_command_s vehicle_command;
+extern vehicle_command_ack_s vehicle_command_ack;
 extern vehicle_constraints_s vehicle_constraints;
 extern vehicle_control_mode_s vehicle_control_mode;
 extern vehicle_global_position_s vehicle_global_position;
+extern vehicle_gps_position_s vehicle_gps_position;
 extern vehicle_land_detected_s vehicle_land_detected;
 extern vehicle_local_position_s vehicle_local_position;
 extern vehicle_local_position_setpoint_s vehicle_local_position_setpoint; // real target setpoints
@@ -107,6 +119,41 @@ class Subscription
     private:
         T* global_uorb_msg_; // the pointer of the global uorb message in this file
 };
+
+// Subscription wrapper class with data
+template<class T>
+class SubscriptionData : public Subscription<T>
+{
+public:
+	/**
+	 * Constructor
+	 *
+	 * @param id The uORB metadata ORB_ID enum for the topic.
+	 * @param instance The instance for multi sub.
+	 */
+	SubscriptionData(T& uorb_msg) : Subscription<T>(uorb_msg)
+	{
+		copy(&_data);
+	}
+
+	~SubscriptionData() = default;
+
+	// no copy, assignment, move, move assignment
+	SubscriptionData(const SubscriptionData &) = delete;
+	SubscriptionData &operator=(const SubscriptionData &) = delete;
+	SubscriptionData(SubscriptionData &&) = delete;
+	SubscriptionData &operator=(SubscriptionData &&) = delete;
+
+	// update the embedded struct.
+	bool update() { return Subscription::update((void *)(&_data)); }
+
+	const T &get() const { return _data; }
+
+private:
+
+	T _data{};
+};
+
 
 /**
  * uORB publication wrapper class
@@ -159,5 +206,13 @@ private:
 };
 
 }
+
+/* Diverse uORB header defines */ //XXX: move to better location
+#define ORB_ID_VEHICLE_ATTITUDE_CONTROLS    ORB_ID(actuator_controls_0)
+typedef uint8_t arming_state_t;
+typedef uint8_t main_state_t;
+typedef uint8_t hil_state_t;
+typedef uint8_t navigation_state_t;
+typedef uint8_t switch_pos_t;
 
 #endif

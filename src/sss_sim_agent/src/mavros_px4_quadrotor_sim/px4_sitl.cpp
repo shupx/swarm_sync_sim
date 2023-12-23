@@ -76,8 +76,11 @@ void PX4SITL::load_px4_params_from_ros_params()
 
 void PX4SITL::Run(const uint64_t &time_us)
 {
-    /* Update px4 uorb states from UAV dynamics */
-    UpdateUorbStates(time_us);
+    /* Update the global px4 time (stored in px4_modules/px4_lib/drivers/drv_hrt.h) */
+    hrt_absolute_time_us_sim = time_us;
+
+    /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
+    UpdateDroneStates(time_us);
 
     /* Run mavlink receiver to update command uorb messages */
     ReceiveMavlink();
@@ -116,7 +119,7 @@ void PX4SITL::StreamMavlink(const uint64_t &time_us)
     mavlink_streamer_->Stream(time_us);
 }
 
-void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
+void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
 {
     /* Read true values from uav dynamic models */
     Dynamics::State state = uav_dynamics_->getState();
@@ -175,6 +178,8 @@ void PX4SITL::UpdateUorbStates(const uint64_t &time_us)
 
     //@TODO publish vehicle_status for heartbeat mavlink and battery
     //@TODO handle vehicle_command for set_mode and arming
+    //@TODO battery
+    //@TODO estimator states
 
     //@TODO: vehicle_global_position_msg
     // vehicle_global_position_s vehicle_global_position_msg{};
