@@ -88,7 +88,10 @@ template<typename T>
 class Subscription
 {
     public:
-        Subscription(T& uorb_msg): global_uorb_msg_(&uorb_msg) {}
+        Subscription(T& uorb_msg): global_uorb_msg_(&uorb_msg) 
+        {
+            last_uorb_msg_ = uorb_msg;
+        }
 
         //@TODO: check if global_uorb_msg_ is updated and not null
          // compare it with \0\0\0 is invalid actually
@@ -106,9 +109,25 @@ class Subscription
             }
         }
         /**
-         * Check if there is a new update.
+         * Check if there is a new update. (Modified by Peixuan Shu)
          */
-	    bool updated() {return valid();}
+	    bool updated() 
+        {
+            T now_uorb_msg_;
+            update(&now_uorb_msg_);
+            /* compare to decide if the uorb message is updated */
+            //@TODO Using memcmp to compare struct may cause problems due to random struct byte alignance
+            if (memcmp(&now_uorb_msg_, &last_uorb_msg_, sizeof(last_uorb_msg_)) != 0)
+            {
+                last_uorb_msg_ = now_uorb_msg_;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            // return valid();
+        }
 
         /**
          * Copy the struct
@@ -118,6 +137,7 @@ class Subscription
 
     private:
         T* global_uorb_msg_; // the pointer of the global uorb message in this file
+        T last_uorb_msg_; // to decide whether data updates
 };
 
 // Subscription wrapper class with data
@@ -133,7 +153,7 @@ public:
 	 */
 	SubscriptionData(T& uorb_msg) : Subscription<T>(uorb_msg)
 	{
-		copy(&_data);
+		Subscription<T>::copy(&_data);
 	}
 
 	~SubscriptionData() = default;
@@ -145,7 +165,7 @@ public:
 	SubscriptionData &operator=(SubscriptionData &&) = delete;
 
 	// update the embedded struct.
-	bool update() { return Subscription::update((void *)(&_data)); }
+	bool update() { return Subscription<T>::update((void *)(&_data)); }
 
 	const T &get() const { return _data; }
 

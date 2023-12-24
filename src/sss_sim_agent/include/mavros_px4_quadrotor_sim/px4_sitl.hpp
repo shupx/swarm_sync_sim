@@ -30,6 +30,7 @@
 
 #include "px4_modules/mavlink/mavlink_receiver.h"
 #include "px4_modules/mavlink/mavlink_streamer.hpp"
+#include "px4_modules/commander/Commander.hpp"
 #include "px4_modules/mc_pos_control/MulticopterPositionControl.hpp"
 #include "px4_modules/mc_att_control/mc_att_control.hpp"
 #include "px4_modules/px4_lib/drivers/drv_hrt.h"  // time utils, store the extern(global) simulated time
@@ -64,7 +65,7 @@ public:
 
     /* Get px4 params from px4::parameters */
     template <px4::params p>
-    void get_px4_param(int& output);
+    void get_px4_param(int32_t& output);
 
     /* Get px4 params from px4::parameters */
     template <px4::params p>
@@ -83,6 +84,7 @@ private:
 
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
+    std::shared_ptr<Commander> commander_;
     std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
     std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
 

@@ -137,22 +137,13 @@ typedef struct latency_boardctl {
 
 #endif
 
+extern hrt_abstime hrt_absolute_time_us_sim; // global time. Added by Peixuan Shu
+
 /**
  * Get absolute time in [us] (does not wrap).
  */
 // __EXPORT extern hrt_abstime hrt_absolute_time(void);
-
-
-
-extern hrt_abstime hrt_absolute_time_us_sim; // global time. Added by Peixuan Shu
-/**
- * Get absolute time in [us] (does not wrap). . Added by Peixuan Shu
- */
-extern hrt_abstime hrt_absolute_time(void)
-{
-	return hrt_absolute_time_us_sim;
-}
-
+extern hrt_abstime hrt_absolute_time(void); // modified by Peixuan Shu
 
 /**
  * Convert a timespec to absolute time.

@@ -1,3 +1,14 @@
+/**
+ * Modified from https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/commander
+ * Modified by Peixuan Shu
+ * 
+ * Simulate the command handle and mode switching process
+ * 
+ * 2023-12-24
+ * 
+ * @author Peixuan Shu
+ */
+
 /****************************************************************************
  *
  *   Copyright (c) 2013, 2014 PX4 Development Team. All rights reserved.
@@ -116,7 +127,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		      const vehicle_status_flags_s &status_flags, commander_state_s &internal_state);
 
 bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_state_s &internal_state,
-		   orb_advert_t *mavlink_log_pub, const link_loss_actions_t data_link_loss_act, const bool mission_finished,
+		   /* orb_advert_t *mavlink_log_pub, */ const link_loss_actions_t data_link_loss_act, const bool mission_finished,
 		   const bool stay_in_failsafe, const vehicle_status_flags_s &status_flags, bool landed,
 		   const link_loss_actions_t rc_loss_act, const offboard_loss_actions_t offb_loss_act,
 		   const quadchute_actions_t quadchute_act,
@@ -124,12 +135,12 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 		   const position_nav_loss_actions_t posctl_nav_loss_act,
 		   const float param_com_rcl_act_t, const int param_com_rcl_except);
 
-/*
- * Checks the validty of position data against the requirements of the current navigation
- * mode and switches mode if position data required is not available.
- */
-bool check_invalid_pos_nav_state(vehicle_status_s &status, bool old_failsafe, orb_advert_t *mavlink_log_pub,
-				 const vehicle_status_flags_s &status_flags, const bool use_rc, const bool using_global_pos);
+// /*
+//  * Checks the validty of position data against the requirements of the current navigation
+//  * mode and switches mode if position data required is not available.
+//  */
+// bool check_invalid_pos_nav_state(vehicle_status_s &status, bool old_failsafe, orb_advert_t *mavlink_log_pub,
+// 				 const vehicle_status_flags_s &status_flags, const bool use_rc, const bool using_global_pos);
 
 
 // COM_LOW_BAT_ACT parameter values
@@ -140,11 +151,11 @@ typedef enum LOW_BAT_ACTION {
 	RETURN_OR_LAND = 3	// Return mode at critically low level, Land mode at current position if reaching dangerously low levels
 } low_battery_action_t;
 
-void warn_user_about_battery(orb_advert_t *mavlink_log_pub, const uint8_t battery_warning,
-			     const uint8_t failsafe_action, const float param_com_bat_act_t,
-			     const char *failsafe_action_string, const events::px4::enums::navigation_mode_t failsafe_action_navigation_mode);
-uint8_t get_battery_failsafe_action(const commander_state_s &internal_state, const uint8_t battery_warning,
-				    const low_battery_action_t param_com_low_bat_act);
+// void warn_user_about_battery(orb_advert_t *mavlink_log_pub, const uint8_t battery_warning,
+// 			     const uint8_t failsafe_action, const float param_com_bat_act_t,
+// 			     const char *failsafe_action_string, const events::px4::enums::navigation_mode_t failsafe_action_navigation_mode);
+// uint8_t get_battery_failsafe_action(const commander_state_s &internal_state, const uint8_t battery_warning,
+// 				    const low_battery_action_t param_com_low_bat_act);
 
 // COM_IMB_PROP_ACT parameter values
 enum class imbalanced_propeller_action_t {
@@ -154,8 +165,8 @@ enum class imbalanced_propeller_action_t {
 	LAND = 2
 };
 
-void imbalanced_prop_failsafe(orb_advert_t *mavlink_log_pub, const vehicle_status_s &status,
-			      const vehicle_status_flags_s &status_flags, commander_state_s *internal_state,
-			      const imbalanced_propeller_action_t failsafe_action);
+// void imbalanced_prop_failsafe(orb_advert_t *mavlink_log_pub, const vehicle_status_s &status,
+			    //   const vehicle_status_flags_s &status_flags, commander_state_s *internal_state,
+			    //   const imbalanced_propeller_action_t failsafe_action);
 
 #endif /* STATE_MACHINE_HELPER_H_ */

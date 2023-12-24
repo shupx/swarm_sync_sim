@@ -55,6 +55,7 @@
 // #ifndef hrt_absolute_time
 // # define hrt_absolute_time() (0)
 // #endif
+#include <drivers/drv_hrt.h>
 /********************************************/
 
 static constexpr float CONSTANTS_ONE_G = 9.80665f;						// m/s^2

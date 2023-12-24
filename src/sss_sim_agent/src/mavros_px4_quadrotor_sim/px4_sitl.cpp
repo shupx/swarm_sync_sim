@@ -30,6 +30,7 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
     /* Load px4 modules */
     mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
     mavlink_streamer_ = std::make_shared<MavlinkStreamer>();
+    commander_ = std::make_shared<Commander>();
     mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
     mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
 
@@ -85,8 +86,8 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Run mavlink receiver to update command uorb messages */
     ReceiveMavlink();
 
-    /* Run commander module to handle vehicle_command uorb messages */
-    //@TODO
+    /* Run commander module to handle vehicle_command and switch/publish vehicle mode uorb messages */
+    commander_->run();
 
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
@@ -103,13 +104,11 @@ void PX4SITL::ReceiveMavlink()
 {
 	/* Search for mavlink receiving list and handle the updated messages */
 	for (int i=0; i<MAVLINK_RECEIVE_NUM; ++i)
-	{
-		mavlink_info_s mavlink_info = px4::mavlink_receive_list[i];
-		
-		if (mavlink_info.updated)
+	{		
+		if (px4::mavlink_receive_list[i].updated)
 		{
-			mavlink_receiver_->handle_message(&mavlink_info.msg);
-			mavlink_info.updated = false; // waiting for the next update
+			mavlink_receiver_->handle_message(&px4::mavlink_receive_list[i].msg);
+			px4::mavlink_receive_list[i].updated = false; // waiting for the next update
 		}
 	}
 }

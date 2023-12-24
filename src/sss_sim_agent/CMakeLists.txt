@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp  # already installed with ros-noetic-desktop
   rospy  # already installed with ros-noetic-desktop
   std_msgs  # already installed with ros-noetic-desktop
-  mavlink # for px4_sitl mavlink messages (already installed with ros-noetic-mavlink by mavros)
+  # mavlink # for px4_sitl mavlink messages (already installed with ros-noetic-mavlink by mavros) (mavlink c/c++ header files already downloaded in include/ folder)
   mavros # for mavros_sim mavros::ftf::
   mavros_msgs
   eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
@@ -38,6 +38,7 @@ catkin_package(
 add_library(quadrotor_dynamics src/mavros_px4_quadrotor_sim/quadrotor_dynamics.cpp)
 
 add_library(px4_lib
+              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/drivers/drv_hrt.cpp
               src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/hysteresis/hysteresis.cpp
               src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp
               src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/parameters/px4_parameters.cpp
@@ -72,6 +73,20 @@ target_include_directories(mc_att_control PUBLIC
             src/mavros_px4_quadrotor_sim)
 
 
+add_library(commander
+            src/mavros_px4_quadrotor_sim/px4_modules/commander/Commander.cpp
+            src/mavros_px4_quadrotor_sim/px4_modules/commander/state_machine_helper.cpp
+            )
+
+# link libraries for this lib
+target_link_libraries(commander 
+                px4_lib)
+
+# add *.hpp header path for which use this lib
+target_include_directories(commander PUBLIC
+          src/mavros_px4_quadrotor_sim)
+
+
 add_library(px4_mavlink
               src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_msg_list.cpp
               src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
@@ -100,6 +115,7 @@ target_link_libraries(px4_sitl
     ${catkin_LIBRARIES}
     mc_att_control
     mc_pos_control
+    commander
     px4_mavlink
 )
 
