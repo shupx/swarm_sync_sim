@@ -120,6 +120,13 @@ void Dynamics::step(const double& start_time, const double& end_time)
   state_.R = R;
 
   //@TODO: simulate floor, wall and obstacles that can not be passed through.
+  /* simulate the floor */
+  if (state_.pos[2] < 0.0)
+  {
+    state_.pos[2] = 0.0;
+    state_.vel[2] = 0.0;
+    acc_[2] = 0.0;
+  }
 }
 
 void Dynamics::setState(const Dynamics::State &state)

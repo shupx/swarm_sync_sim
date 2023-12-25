@@ -26,6 +26,8 @@
 #include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink
 #include <parameters/px4_parameters.hpp> // store all extern(global) px4 parameters
 #include <matrix/matrix/math.hpp> // for px4 geometry utils
+#include <geo/geo.h> // for px4 geo utils (gps to ENU)
+#include <mavros/frame_tf.h> // for mavros::ftf frame conversion
 #include <uORB/uORB_sim.hpp> // simulate uORB publication and subscription. Store the extern(global) simulated uORB messages
 
 #include "px4_modules/mavlink/mavlink_receiver.h"
@@ -74,6 +76,20 @@ public:
 private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
+
+    enum class position_mode : uint32_t {
+        MOCAP,
+        GPS
+    };
+    position_mode local_pos_source_;
+
+    float init_x_East_metre_;
+    float init_y_North_metre_;
+    float init_z_Up_metre_;
+
+    double world_origin_lat_; // Reference point latitude (degrees). The world (0,0,0) point
+    double world_origin_lon_; // Reference point longitude (degrees). The world (0,0,0) point
+    float world_origin_asml_alt_; // Reference altitude AMSL (metres). The world (0,0,0) point
 
 	// publications with topic
 	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};

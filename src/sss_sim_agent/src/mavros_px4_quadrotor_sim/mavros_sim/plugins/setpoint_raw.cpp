@@ -94,8 +94,9 @@ class SetpointRawPlugin :
             // Set Thrust scaling in px4_config.yaml, setpoint_raw block.
             if (!sp_nh_private.getParam("thrust_scaling", thrust_scaling))  //sp_nh_private modified by Peixuan Shu
             {   
-                ROS_WARN_THROTTLE_NAMED(5, "setpoint_raw", "thrust_scaling parameter is unset. Attitude (and angular rate/thrust) setpoints will be ignored.");
+                // ROS_WARN_THROTTLE_NAMED(5, "setpoint_raw", "thrust_scaling parameter is unset. Attitude (and angular rate/thrust) setpoints will be ignored.");
                 // thrust_scaling = -1.0;
+                
                 thrust_scaling = 1.0; // modified by Peixuan Shu (default value in px4_config.yaml)
             }
         }

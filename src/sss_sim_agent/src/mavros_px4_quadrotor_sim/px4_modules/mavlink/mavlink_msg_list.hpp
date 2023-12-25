@@ -37,6 +37,7 @@ enum class mavlink_stream_handle : uint16_t {
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
 	SYS_STATUS,
+	//@TODO GLOBAL_POSITION
 	//@TODO COMMAND_ACK for vehicle_command_ack
 	ENUM_NUM  // number of mavlink_stream
 };

@@ -51,6 +51,7 @@ class MavrosSim
         std::unique_ptr<std_plugins::IMUPlugin> imu_plugin_;
         std::unique_ptr<std_plugins::SystemStatusPlugin> sys_status_plugin_;
         std::unique_ptr<std_plugins::CommandPlugin> command_plugin_;
+        //@TODO global position
 
         /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
         void handle_message(const mavlink_message_t &msg);

@@ -734,7 +734,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 			/* added by Peixuan Shu  */
 			if (nav_state_old != status.nav_state)
 			{
-				std::cout << "[PX4 state_machine_helper.cpp] Warn! Offboard control signal losts (<2Hz). Switch to HOLD mode by failsafe." << std::endl;
+				std::cout << "[PX4 state_machine_helper.cpp] Warn! Offboard control signal losts (<2Hz). Switch to POSCTL mode by failsafe." << std::endl;
 			}
 
 		// } else if (status.rc_signal_lost && !(param_com_rcl_except & RCLossExceptionBits::RCL_EXCEPT_OFFBOARD)) {

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id" default="1"/>
+    <arg name="use_sim_time" default="false"/>
+
+    <arg name="local_pos_source" default="0"/> <!-- 0 is vision/mocap/uwb, 1 is GPS -->
+    <arg name="init_x_East_metre" default="0.0"/>
+    <arg name="init_y_North_metre" default="0.0"/>
+    <arg name="init_z_Up_metre" default="0.0"/>
+    
+    <arg name="mavros_sim_plugin_config_yaml" default="$(find sss_sim_agent)/launch/mavros_px4_config.yaml"/>
+    <arg name="px4_param_yaml" default="$(find sss_sim_agent)/launch/px4_param.yaml"/>
+    
+
+    <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+
+    <node pkg="sss_sim_agent" type="mavros_px4_quadrotor_sim_node" name="mavros_px4_quadrotor_sim_node_$(arg id)" output="screen">
+    	<!-- load local position source -->
+        <param name="local_pos_source" value="$(arg local_pos_source)"/>
+        
+        <!-- load init position -->
+        <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
+        <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
+        <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+        
+	    <!-- load mavros plugin config (Not mandatory ) -->
+	    <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /-->   
+	
+	    <!-- load px4 param -->
+	    <rosparam command="load" file="$(arg px4_param_yaml)" />     
+    </node>
+
+
+</launch>
