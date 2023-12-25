@@ -23,6 +23,7 @@ actuator_armed_s actuator_armed{};
 autotune_attitude_control_status_s autotune_attitude_control_status{};
 battery_status_s battery_status{};
 commander_state_s commander_state{};
+cpuload_s cpuload{};
 home_position_s home_position{};
 manual_control_setpoint_s manual_control_setpoint{};
 takeoff_status_s takeoff_status{};

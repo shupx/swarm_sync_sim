@@ -154,6 +154,12 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     vehicle_local_position_msg.ax = acc[0];
     vehicle_local_position_msg.ay = acc[1];
     vehicle_local_position_msg.az = acc[2]; 
+		lpos.ref_timestamp = _ekf.global_origin().getProjectionReferenceTimestamp();
+		lpos.ref_lat = _ekf.global_origin().getProjectionReferenceLat(); // Reference point latitude in degrees
+		lpos.ref_lon = _ekf.global_origin().getProjectionReferenceLon(); // Reference point longitude in degrees
+		lpos.ref_alt = _ekf.getEkfGlobalOriginAltitude();           // Reference point in MSL altitude meters
+		lpos.xy_global = true;
+		lpos.z_global = true;
     // vehicle_local_position_msg.heading = q.toRotationMatrix().eulerAngles(2,1,0);
     /* Instance is set from a quaternion representing transformation
 	 * from frame 2 to frame 1.
@@ -161,7 +167,7 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
 	 * Tait-Bryan rotation sequence from frame 1 to frame 2.
      */
     double q_vec[] = {q.w(),q.x(),q.y(),q.z()};
-    vehicle_local_position_msg.heading = matrix::Eulerd{matrix::Quatd{q_vec}}(2); 
+    vehicle_local_position_msg.heading = matrix::Eulerd{matrix::Quatd{q_vec}}.psi(); 
     vehicle_local_position_msg.heading_good_for_control = true;
     _local_position_pub.publish(vehicle_local_position_msg);
 
@@ -174,10 +180,15 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     vehicle_angular_velocity_msg.xyz[2] = omega[2];
     _vehicle_angular_velocity_pub.publish(vehicle_angular_velocity_msg);
 
+    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/battery_status.msg
+    battery_status_s battery_status_msg{};
+    battery_status_msg.timestamp = time_us;
+    battery_status_msg.connected = true;
+    battery_status_msg.voltage_filtered_v = 7.6; //V
+    battery_status_msg.current_filtered_a = 7.0; // A
+    battery_status_msg.remaining = 0.99; // %
+    _battery_status_pub.publish(battery_status_msg);
 
-    //@TODO publish vehicle_status for heartbeat mavlink and battery
-    //@TODO handle vehicle_command for set_mode and arming
-    //@TODO battery
     //@TODO estimator states
 
     //@TODO: vehicle_global_position_msg

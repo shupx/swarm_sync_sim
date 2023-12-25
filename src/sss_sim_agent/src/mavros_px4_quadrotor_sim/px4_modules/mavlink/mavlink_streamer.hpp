@@ -25,6 +25,7 @@
 #include "streams/HEARTBEAT.hpp"
 #include "streams/LOCAL_POSITION_NED.hpp"
 #include "streams/POSITION_TARGET_LOCAL_NED.hpp"
+#include "streams/SYS_STATUS.hpp"
 
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
 
@@ -69,6 +70,7 @@ public:
 	STREAM_PTR(MavlinkStreamAttitudeTarget) mavlink_stream3_;
 	STREAM_PTR(MavlinkStreamPositionTargetLocalNed) mavlink_stream4_;
 	STREAM_PTR(MavlinkStreamHeartbeat) mavlink_stream5_;
+	STREAM_PTR(MavlinkStreamSysStatus) mavlink_stream6_;
 
 	MavlinkStreamer();
 

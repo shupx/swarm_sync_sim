@@ -23,6 +23,7 @@
 #include <uORB/topics/autotune_attitude_control_status.h>
 #include <uORB/topics/battery_status.h>
 #include <uORB/topics/commander_state.h>
+#include <uORB/topics/cpuload.h>
 #include <uORB/topics/home_position.h>
 #include <uORB/topics/manual_control_setpoint.h>
 #include <uORB/topics/offboard_control_mode.h>
@@ -61,6 +62,7 @@ extern actuator_armed_s actuator_armed;
 extern autotune_attitude_control_status_s autotune_attitude_control_status;
 extern battery_status_s battery_status;
 extern commander_state_s commander_state;
+extern cpuload_s cpuload;
 extern home_position_s home_position;
 extern manual_control_setpoint_s manual_control_setpoint;
 extern takeoff_status_s takeoff_status;

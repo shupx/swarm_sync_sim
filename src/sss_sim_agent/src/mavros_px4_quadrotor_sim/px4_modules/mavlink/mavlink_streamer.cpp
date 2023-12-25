@@ -23,6 +23,7 @@ MavlinkStreamer::MavlinkStreamer()
     mavlink_stream3_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeTarget)(50, this); // set streaming rate
     mavlink_stream4_ = STREAM_MAKE_PTR(MavlinkStreamPositionTargetLocalNed)(30, this); // set streaming rate
     mavlink_stream5_ = STREAM_MAKE_PTR(MavlinkStreamHeartbeat)(10, this); // set streaming rate
+    mavlink_stream6_ = STREAM_MAKE_PTR(MavlinkStreamSysStatus)(2, this); // set streaming rate
 
     //@TODO SysStatus for battery
     //@TODO extended_sys_state for extended_state

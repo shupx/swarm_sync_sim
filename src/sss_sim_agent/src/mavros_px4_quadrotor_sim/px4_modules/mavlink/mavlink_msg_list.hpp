@@ -36,7 +36,7 @@ enum class mavlink_stream_handle : uint16_t {
 	HEARTBEAT,
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
-	//@TODO SYS_STATUS for battery
+	SYS_STATUS,
 	//@TODO COMMAND_ACK for vehicle_command_ack
 	ENUM_NUM  // number of mavlink_stream
 };
