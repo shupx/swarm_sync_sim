@@ -9,6 +9,7 @@ mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) alti
 
 # PX4 parameters
 
+THR_MDL_FAC: 0.4
 MPC_THR_HOVER: 0.5
 MPC_THR_MIN: 0.12
 MPC_THR_MAX: 1.0

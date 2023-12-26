@@ -103,6 +103,7 @@ private:
 	uORB_sim::Publication<vehicle_odometry_s>           _odometry_pub{ORB_ID(vehicle_odometry)};
 
     uORB_sim::Subscription<vehicle_command_s>           _vehicle_command_sub{ORB_ID(vehicle_command)};
+    uORB_sim::Subscription<vehicle_rates_setpoint_s>           _vehicle_rates_setpoint_sub{ORB_ID(vehicle_rates_setpoint)};
 
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
@@ -124,7 +125,8 @@ private:
     /* Stream mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" at a given frequency */
     void StreamMavlink(const uint64_t &time_us);
 
-    void SendControlInput(){}
+    /* Send control input calculated by the controller to the quadrotor dynamics */
+    void SendControlInput();
 
 };
 

@@ -112,7 +112,7 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Stream mavlink messages */
     StreamMavlink(time_us);
 
-    /* @TODO Send control inputs to UAV dynamics */
+    /* Send control input calculated by the controller to the quadrotor dynamics */
     SendControlInput();
 }
 
@@ -132,6 +132,38 @@ void PX4SITL::ReceiveMavlink()
 void PX4SITL::StreamMavlink(const uint64_t &time_us)
 {
     mavlink_streamer_->Stream(time_us);
+}
+
+void PX4SITL::SendControlInput()
+{
+    /* get rate/throttle calculated by the px4 controllers */
+    vehicle_rates_setpoint_s vehicle_rates_setpoint_msg {};
+    _vehicle_rates_setpoint_sub.update(&vehicle_rates_setpoint_msg);
+
+    Eigen::Vector3d body_rate_frd {vehicle_rates_setpoint_msg.roll, vehicle_rates_setpoint_msg.pitch, vehicle_rates_setpoint_msg.yaw}; // angular rates in FRD body frame
+    float throttle =  matrix::Vector3f(vehicle_rates_setpoint_msg.thrust_body).norm(); // throttle [0,1]
+
+    /* throttle - thrust model */
+    /* <1> thrust_force = K1 * Voltage^K2 * ( K3*throttle^2 + (1-K3)*throttle ) */
+    /* <2> thrust_force = K1 * ( K3*throttle^2 + (1-K3)*throttle ) */  // here we use <2>
+    float hover_throttle, K1, K2, K3;
+    get_px4_param<px4::params::MPC_THR_HOVER>(hover_throttle); // set by px4_parameters.cpp or ROS params
+    get_px4_param<px4::params::THR_MDL_FAC>(K3); // set by px4_parameters.cpp or ROS params 
+    /** Refer to https://docs.px4.io/main/en/config_mc/pid_tuning_guide_multicopter.html#thrust-curve
+     *  Typical values of THR_MDL_FAC are between 0.3 and 0.5.
+     */
+    double mass = uav_dynamics_->getMass();
+    double g = uav_dynamics_->getGravityAcc();
+    K1 = mass*g / ( K3*hover_throttle*hover_throttle + (1-K3)*hover_throttle );
+
+    Dynamics::Input input;
+    input.omega = mavros::ftf::transform_frame_aircraft_baselink(body_rate_frd); //Transform data expressed in Aircraft(FRD) frame to Baselink(FLU) frame.
+    input.thrust = K1 * ( K3*throttle*throttle + (1-K3)*throttle );
+
+    std::cout << "throttle: " << throttle << std::endl;
+    std::cout << "input.thrust(N) " << input.thrust << std::endl;
+    
+    uav_dynamics_->setInput(input);
 }
 
 void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
