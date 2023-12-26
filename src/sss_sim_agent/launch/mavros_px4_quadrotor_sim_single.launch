@@ -4,6 +4,9 @@
     <arg name="use_sim_time" default="false"/>
 
     <arg name="local_pos_source" default="0"/> <!-- 0 is vision/mocap/uwb, 1 is GPS -->
+    <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
+    <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
+    
     <arg name="init_x_East_metre" default="0.0"/>
     <arg name="init_y_North_metre" default="0.0"/>
     <arg name="init_z_Up_metre" default="0.0"/>

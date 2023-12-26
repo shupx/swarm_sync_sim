@@ -37,7 +37,8 @@ enum class mavlink_stream_handle : uint16_t {
 	LOCAL_POSITION_NED,
 	POSITION_TARGET_LOCAL_NED,
 	SYS_STATUS,
-	//@TODO GLOBAL_POSITION
+	GLOBAL_POSITION_INT,
+	GPS_GLOBAL_ORIGIN,
 	//@TODO COMMAND_ACK for vehicle_command_ack
 	ENUM_NUM  // number of mavlink_stream
 };
@@ -53,6 +54,7 @@ enum class mavlink_receive_handle : uint16_t {
 	SET_MODE,
 	COMMAND_LONG,
 	COMMAND_INT,
+	SET_GPS_GLOBAL_ORIGIN,
 	ENUM_NUM // number of mavlink_receive
 };
 #define MAVLINK_RECEIVE_NUM (int)px4::mavlink_receive_handle::ENUM_NUM // number of mavlink_receive

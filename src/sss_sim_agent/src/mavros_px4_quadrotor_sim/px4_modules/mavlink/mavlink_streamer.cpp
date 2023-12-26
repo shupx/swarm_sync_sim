@@ -24,6 +24,8 @@ MavlinkStreamer::MavlinkStreamer()
     mavlink_stream4_ = STREAM_MAKE_PTR(MavlinkStreamPositionTargetLocalNed)(30, this); // set streaming rate
     mavlink_stream5_ = STREAM_MAKE_PTR(MavlinkStreamHeartbeat)(10, this); // set streaming rate
     mavlink_stream6_ = STREAM_MAKE_PTR(MavlinkStreamSysStatus)(2, this); // set streaming rate
+    mavlink_stream7_ = STREAM_MAKE_PTR(MavlinkStreamGlobalPositionInt)(30, this); // set streaming rate
+    mavlink_stream7_ = STREAM_MAKE_PTR(MavlinkStreamGpsGlobalOrigin)(100, this); // set streaming rate (Actually it will only send the mavlink stream when the gps origin is updated. Refer to streams/GPS_GLOBAL_ORIGIN.hpp)
 
     //@TODO SysStatus for battery
     //@TODO extended_sys_state for extended_state

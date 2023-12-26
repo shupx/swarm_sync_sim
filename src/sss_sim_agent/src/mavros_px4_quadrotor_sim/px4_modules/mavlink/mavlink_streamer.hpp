@@ -26,6 +26,8 @@
 #include "streams/LOCAL_POSITION_NED.hpp"
 #include "streams/POSITION_TARGET_LOCAL_NED.hpp"
 #include "streams/SYS_STATUS.hpp"
+#include "streams/GLOBAL_POSITION_INT.hpp"
+#include "streams/GPS_GLOBAL_ORIGIN.hpp"
 
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
 
@@ -71,6 +73,8 @@ public:
 	STREAM_PTR(MavlinkStreamPositionTargetLocalNed) mavlink_stream4_;
 	STREAM_PTR(MavlinkStreamHeartbeat) mavlink_stream5_;
 	STREAM_PTR(MavlinkStreamSysStatus) mavlink_stream6_;
+	STREAM_PTR(MavlinkStreamGlobalPositionInt) mavlink_stream7_;
+	STREAM_PTR(MavlinkStreamGpsGlobalOrigin) mavlink_stream8_;
 
 	MavlinkStreamer();
 

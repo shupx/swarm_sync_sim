@@ -28,6 +28,7 @@
 #include <uORB/topics/manual_control_setpoint.h>
 #include <uORB/topics/offboard_control_mode.h>
 #include <uORB/topics/takeoff_status.h>
+#include <uORB/topics/vehicle_air_data.h>
 #include <uORB/topics/vehicle_angular_velocity.h>
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
@@ -65,8 +66,9 @@ extern commander_state_s commander_state;
 extern cpuload_s cpuload;
 extern home_position_s home_position;
 extern manual_control_setpoint_s manual_control_setpoint;
-extern takeoff_status_s takeoff_status;
 extern offboard_control_mode_s offboard_control_mode;
+extern takeoff_status_s takeoff_status;
+extern vehicle_air_data_s vehicle_air_data;
 extern vehicle_angular_velocity_s vehicle_angular_velocity;
 extern vehicle_attitude_s vehicle_attitude;
 extern vehicle_attitude_setpoint_s vehicle_attitude_setpoint;

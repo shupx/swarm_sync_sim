@@ -52,6 +52,12 @@ void PX4SITL::load_px4_params_from_ros_params()
     nh_private_.param<float>("init_y_North_metre", init_y_North_metre_, 0.0);
     nh_private_.param<float>("init_z_Up_metre", init_z_Up_metre_, 0.0);
 
+    /* calculate the lat/lon of the initial position */
+    double init_lat_, init_lon_;
+    MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, 0}; // Init MapProjection from PX4 geo.h
+    global_local_proj_ref.reproject(init_y_North_metre_, init_x_East_metre_, init_lat_, init_lon_);
+
+
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
     {
@@ -157,11 +163,25 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     _attitude_pub.publish(vehicle_attitude_msg);
 
 
+    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_global_position.msg
+    vehicle_global_position_s vehicle_global_position_msg{};
+    vehicle_global_position_msg.timestamp = time_us;
+    vehicle_global_position_msg.timestamp_sample = time_us;
+    /* Calculate lat/lon according to x(North), y(East) and origin lat/lon */
+    double lat, lon;
+    MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, time_us}; // MapProjection from PX4 geo.h
+    global_local_proj_ref.reproject(pos_ned[0], pos_ned[1], lat, lon);
+    vehicle_global_position_msg.lat = lat;
+    vehicle_global_position_msg.lon = lon;
+    vehicle_global_position_msg.alt = world_origin_asml_alt_ - pos_ned[2]; // Altitude AMSL, (meters) .Note that positive local.z is Down, but positive AMSL alt is UP.
+    vehicle_global_position_msg.alt_ellipsoid = vehicle_global_position_msg.alt; // Altitude above ellipsoid, (meters) //@TODO conversion between Geoid(MSL) and Ellipsoid(WGS84) altitude based on EGM96 or EGM2008?
+    _global_position_pub.publish(vehicle_global_position_msg);
+
+
     // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_local_position.msg
     vehicle_local_position_s vehicle_local_position_msg{};
     vehicle_local_position_msg.timestamp = time_us;
     vehicle_local_position_msg.timestamp_sample = time_us;
-    vehicle_local_position_msg.ref_timestamp = time_us; // Time when reference position was set since system start, (microseconds)
     vehicle_local_position_msg.xy_global = true; // true if position (x, y) has a valid global reference (ref_lat, ref_lon)
     vehicle_local_position_msg.z_global = true; // true if z has a valid global reference (ref_alt)
     vehicle_local_position_msg.xy_valid = true; // true if x and y are valid
@@ -171,28 +191,50 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     switch (local_pos_source_)
     {
         case position_mode::MOCAP: { // local position origin at world origin
-            vehicle_local_position_msg.x = pos_ned[0];
-            vehicle_local_position_msg.y = pos_ned[1];
-            vehicle_local_position_msg.z = pos_ned[2];
+            static float init_ref_timestamp = time_us;
+            vehicle_local_position_msg.ref_timestamp = init_ref_timestamp; // Time when reference position was set since system start, (microseconds)
             vehicle_local_position_msg.ref_lat = world_origin_lat_; // (degrees) lat at local position(0,0)
             vehicle_local_position_msg.ref_lon = world_origin_lon_; // (degrees) lon at local position(0,0)
             vehicle_local_position_msg.ref_alt = world_origin_asml_alt_; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
+            vehicle_local_position_msg.x = pos_ned[0];
+            vehicle_local_position_msg.y = pos_ned[1];
+            vehicle_local_position_msg.z = pos_ned[2];
             break;
         }
-        case position_mode::GPS: { // local position origin at init position
-            //@TODO: local position origin may change with arming and landing
-            vehicle_local_position_msg.x = pos_ned[0] - init_y_North_metre_;
-            vehicle_local_position_msg.y = pos_ned[1] - init_x_East_metre_;
+        case position_mode::GPS: { // local position origin at init position or set by mavros/global_position/set_gp_origin
+            static float last_ref_timestamp = time_us;
+            static double last_ref_lat = init_lat_;
+            static double last_ref_lon = init_lon_;
+            static float last_ref_alt = world_origin_asml_alt_;
+            if (_vehicle_command_sub.updated())
+            {
+                vehicle_command_s vehicle_command;
+                if (_vehicle_command_sub.update(&vehicle_command)) {
+                    if (vehicle_command.command == vehicle_command_s::VEHICLE_CMD_SET_GPS_GLOBAL_ORIGIN) {
+                        if (-pos_ned[2] < 0.01) {
+                            last_ref_timestamp = time_us;
+                            last_ref_lat = vehicle_command.param5;
+                            last_ref_lon = vehicle_command.param6;
+                            last_ref_alt = vehicle_command.param7;
+                            std::cout << "[PX4SITL] New NED origin (LLA): " << last_ref_lat << ", " << last_ref_lon << ", " << last_ref_alt << std::endl;
+                        }
+                        else{
+                            std::cout << "[PX4SITL] Error! Set new NED origin in air is not allowed!" << std::endl;
+                        }
+                    }
+                }    
+            }
+            vehicle_local_position_msg.ref_timestamp = last_ref_timestamp; // Time when reference position was set since system start, (microseconds)
+            vehicle_local_position_msg.ref_lat = last_ref_lat; // (degrees) lat at local position(0,0)
+            vehicle_local_position_msg.ref_lon = last_ref_lon; // (degrees) lon at local position(0,0)
+            vehicle_local_position_msg.ref_alt = last_ref_alt; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
+            /* Calculate the local x(North), y(East) according to ref lat/lon */
+            float north, east;
+            MapProjection global_local_proj_ref{vehicle_local_position_msg.ref_lat, vehicle_local_position_msg.ref_lon, time_us}; // MapProjection from PX4 geo.h
+            global_local_proj_ref.project(vehicle_global_position_msg.lat, vehicle_global_position_msg.lon, north, east);
+            vehicle_local_position_msg.x = north;
+            vehicle_local_position_msg.y = east;
             vehicle_local_position_msg.z = pos_ned[2];
-
-            // get the lat/lon of the init position
-            double lat, lon;
-            MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, time_us}; // Init MapProjection from PX4 geo.h
-            global_local_proj_ref.reproject(init_y_North_metre_, init_x_East_metre_, lat, lon);
-
-            vehicle_local_position_msg.ref_lat = lat; // (degrees) lat at local position(0,0)
-            vehicle_local_position_msg.ref_lon = lon; // (degrees) lon at local position(0,0)
-            vehicle_local_position_msg.ref_alt = world_origin_asml_alt_; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
             break;
         }
         default: {
@@ -207,7 +249,6 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     vehicle_local_position_msg.ax = acc_ned[0];
     vehicle_local_position_msg.ay = acc_ned[1];
     vehicle_local_position_msg.az = acc_ned[2]; 
-
     // vehicle_local_position_msg.heading = q.toRotationMatrix().eulerAngles(2,1,0);
     /* Instance is set from a quaternion representing transformation
 	 * from frame 2 to frame 1.
@@ -229,6 +270,7 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     vehicle_angular_velocity_msg.xyz[2] = omega_frd[2];
     _vehicle_angular_velocity_pub.publish(vehicle_angular_velocity_msg);
 
+
     // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/battery_status.msg
     battery_status_s battery_status_msg{};
     battery_status_msg.timestamp = time_us;
@@ -239,22 +281,6 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     _battery_status_pub.publish(battery_status_msg);
 
     //@TODO estimator states
-
-
-    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_global_position.msg
-    vehicle_global_position_s vehicle_global_position_msg{};
-    vehicle_global_position_msg.timestamp = time_us;
-    vehicle_global_position_msg.timestamp_sample = time_us;
-    /* Calculate lat/lon according to local x(North), y(East) and ref lat/lon */
-    double lat, lon;
-    MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, time_us}; // MapProjection from PX4 geo.h
-    global_local_proj_ref.reproject(pos_ned[0], pos_ned[1], lat, lon);
-    vehicle_global_position_msg.lat = lat;
-    vehicle_global_position_msg.lon = lon;
-    vehicle_global_position_msg.alt = vehicle_local_position_msg.ref_alt - vehicle_local_position_msg.z; // Altitude AMSL, (meters) .Note that positive local.z is Down, but positive AMSL alt is UP.
-    vehicle_global_position_msg.alt_ellipsoid = vehicle_global_position_msg.alt; // Altitude above ellipsoid, (meters) //@TODO conversion between Geoid(MSL) and Ellipsoid(WGS84) altitude based on EGM96 or EGM2008?
-    _global_position_pub.publish(vehicle_global_position_msg);
-
 
     // // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_odometry.msg
     // vehicle_odometry_s vehicle_odometry_msg{};

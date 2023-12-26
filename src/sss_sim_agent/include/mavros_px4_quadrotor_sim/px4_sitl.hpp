@@ -91,6 +91,8 @@ private:
     double world_origin_lon_; // Reference point longitude (degrees). The world (0,0,0) point
     float world_origin_asml_alt_; // Reference altitude AMSL (metres). The world (0,0,0) point
 
+    double init_lat_, init_lon_; // latitude and longitude at initial point
+
 	// publications with topic
 	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};
 	uORB_sim::Publication<vehicle_local_position_s>     _local_position_pub{ORB_ID(vehicle_local_position)};
@@ -98,6 +100,8 @@ private:
     uORB_sim::Publication<battery_status_s> _battery_status_pub{ORB_ID(battery_status)};
 	uORB_sim::Publication<vehicle_global_position_s>    _global_position_pub{ORB_ID(vehicle_global_position)};
 	uORB_sim::Publication<vehicle_odometry_s>           _odometry_pub{ORB_ID(vehicle_odometry)};
+
+    uORB_sim::Subscription<vehicle_command_s>           _vehicle_command_sub{ORB_ID(vehicle_command)};
 
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
