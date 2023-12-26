@@ -35,6 +35,7 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_);
     sys_status_plugin_ = std::make_unique<std_plugins::SystemStatusPlugin>(uas_);
     command_plugin_ = std::make_unique<std_plugins::CommandPlugin>(uas_);
+    global_position_plugin_ = std::make_unique<std_plugins::GlobalPositionPlugin>(uas_);
 
 }
 
@@ -120,6 +121,20 @@ void MavrosSim::handle_message(const mavlink_message_t &msg)
         /* command_plugin_ */
         case MAVLINK_MSG_ID_COMMAND_ACK:
             // command_plugin_->handle_command_ack(msg); /* command ack machanism is banned in mavros_sim */
+            break;
+        
+        /* global_position_plugin_ */
+        case MAVLINK_MSG_ID_GPS_RAW_INT:
+            global_position_plugin_->handle_gps_raw_int(msg);
+            break;
+        case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:
+            global_position_plugin_->handle_gps_global_origin(msg);
+            break;
+        case MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
+            global_position_plugin_->handle_global_position_int(msg);
+            break;
+        case MAVLINK_MSG_ID_LOCAL_POSITION_NED_SYSTEM_GLOBAL_OFFSET:
+            global_position_plugin_->handle_lpned_system_global_offset(msg);
             break;
 
         default:

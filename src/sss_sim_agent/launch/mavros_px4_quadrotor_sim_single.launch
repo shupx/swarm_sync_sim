@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="id" default="1"/>
-    <arg name="use_sim_time" default="false"/>
+    <arg name="use_sim_time" default="false"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
 
-    <arg name="local_pos_source" default="0"/> <!-- 0 is vision/mocap/uwb, 1 is GPS -->
+    <arg name="local_pos_source" default="1"/> <!-- 0 is vision/mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
     
@@ -26,11 +26,11 @@
         <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
         <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
         
-	    <!-- load mavros plugin config (Not mandatory ) -->
-	    <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /-->   
+        <!-- load mavros plugin config (Not mandatory ) -->
+        <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /-->   
 	
-	    <!-- load px4 param -->
-	    <rosparam command="load" file="$(arg px4_param_yaml)" />     
+        <!-- load px4 param -->
+        <rosparam command="load" file="$(arg px4_param_yaml)" />     
     </node>
 
 

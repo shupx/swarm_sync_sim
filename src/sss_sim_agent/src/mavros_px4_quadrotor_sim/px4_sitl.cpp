@@ -45,15 +45,14 @@ void PX4SITL::load_px4_params_from_ros_params()
     nh_private_.param<int>("local_pos_source", source, 0);
     local_pos_source_ = (enum position_mode)source;
 
-    nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.980104);
-    nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.345922);
-    nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 0.0);
+    nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.978861);
+    nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
+    nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 53.0);
     nh_private_.param<float>("init_x_East_metre", init_x_East_metre_, 0.0);
     nh_private_.param<float>("init_y_North_metre", init_y_North_metre_, 0.0);
     nh_private_.param<float>("init_z_Up_metre", init_z_Up_metre_, 0.0);
 
     /* calculate the lat/lon of the initial position */
-    double init_lat_, init_lon_;
     MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, 0}; // Init MapProjection from PX4 geo.h
     global_local_proj_ref.reproject(init_y_North_metre_, init_x_East_metre_, init_lat_, init_lon_);
 
@@ -174,7 +173,14 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     vehicle_global_position_msg.lat = lat;
     vehicle_global_position_msg.lon = lon;
     vehicle_global_position_msg.alt = world_origin_asml_alt_ - pos_ned[2]; // Altitude AMSL, (meters) .Note that positive local.z is Down, but positive AMSL alt is UP.
-    vehicle_global_position_msg.alt_ellipsoid = vehicle_global_position_msg.alt; // Altitude above ellipsoid, (meters) //@TODO conversion between Geoid(MSL) and Ellipsoid(WGS84) altitude based on EGM96 or EGM2008?
+    vehicle_global_position_msg.alt_ellipsoid = vehicle_global_position_msg.alt; // Altitude above ellipsoid, (meters) 
+    //@TODO conversion from Geoid(MSL) to Ellipsoid(WGS84) altitude based on GeographicLib::Geoid of <GeographicLib/Geoid.hpp> as mavros does. But in fact alt_ellipsoid is not used by mavros at all.
+    /***********************************************************************/
+    // #include <GeographicLib/Geoid.hpp>
+    // std::shared_ptr<GeographicLib::Geoid> egm96_5; // This class loads egm96_5 dataset to RAM, it is about 24 MiB.
+    // egm96_5 = std::make_shared<GeographicLib::Geoid>("egm96-5", "", true, true); // Using smallest dataset with 5' grid, // From default location, // Use cubic interpolation, Thread safe
+    // vehicle_global_position_msg.alt_ellipsoid = vehicle_global_position_msg.alt + GeographicLib::Geoid::GEOIDTOELLIPSOID * (*egm96_5)(lat, lon); // AMSL TO WGS84 altitude
+    /************************************************************************/
     _global_position_pub.publish(vehicle_global_position_msg);
 
 
@@ -216,7 +222,7 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
                             last_ref_lat = vehicle_command.param5;
                             last_ref_lon = vehicle_command.param6;
                             last_ref_alt = vehicle_command.param7;
-                            std::cout << "[PX4SITL] New NED origin (LLA): " << last_ref_lat << ", " << last_ref_lon << ", " << last_ref_alt << std::endl;
+                            std::cout << std::setprecision(12) << "[PX4SITL] New NED origin (LLA): " << last_ref_lat << ", " << last_ref_lon << ", " << last_ref_alt << std::endl;
                         }
                         else{
                             std::cout << "[PX4SITL] Error! Set new NED origin in air is not allowed!" << std::endl;

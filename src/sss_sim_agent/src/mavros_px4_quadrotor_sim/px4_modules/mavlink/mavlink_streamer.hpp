@@ -67,14 +67,14 @@ public:
 			uint64_t period_us_; // us
 	};
 
-	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream1_;
-	STREAM_PTR(MavlinkStreamLocalPositionNED) mavlink_stream2_;
-	STREAM_PTR(MavlinkStreamAttitudeTarget) mavlink_stream3_;
-	STREAM_PTR(MavlinkStreamPositionTargetLocalNed) mavlink_stream4_;
-	STREAM_PTR(MavlinkStreamHeartbeat) mavlink_stream5_;
-	STREAM_PTR(MavlinkStreamSysStatus) mavlink_stream6_;
-	STREAM_PTR(MavlinkStreamGlobalPositionInt) mavlink_stream7_;
-	STREAM_PTR(MavlinkStreamGpsGlobalOrigin) mavlink_stream8_;
+	STREAM_PTR(MavlinkStreamAttitudeQuaternion) mavlink_stream_AttitudeQuaternion_;
+	STREAM_PTR(MavlinkStreamLocalPositionNED) mavlink_stream_LocalPositionNED_;
+	STREAM_PTR(MavlinkStreamAttitudeTarget) mavlink_stream_AttitudeTarget_;
+	STREAM_PTR(MavlinkStreamPositionTargetLocalNed) mavlink_stream_PositionTargetLocalNed_;
+	STREAM_PTR(MavlinkStreamHeartbeat) mavlink_stream_Heartbeat_;
+	STREAM_PTR(MavlinkStreamSysStatus) mavlink_stream_SysStatus_;
+	STREAM_PTR(MavlinkStreamGlobalPositionInt) mavlink_stream_GlobalPositionInt_;
+	STREAM_PTR(MavlinkStreamGpsGlobalOrigin) mavlink_stream_GpsGlobalOrigin_;
 
 	MavlinkStreamer();
 

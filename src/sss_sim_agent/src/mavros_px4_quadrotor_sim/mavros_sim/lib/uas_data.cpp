@@ -61,18 +61,25 @@ UAS::UAS() :
 	fcu_caps_known(false),
 	fcu_capabilities(0)
 {
-	// try {
-	// 	// Using smallest dataset with 5' grid,
-	// 	// From default location,
-	// 	// Use cubic interpolation, Thread safe
-	// 	egm96_5 = std::make_shared<GeographicLib::Geoid>("egm96-5", "", true, true);
-	// }
-	// catch (const std::exception &e) {
-	// 	// catch exception and shutdown node
-	// 	ROS_FATAL_STREAM("UAS: GeographicLib exception: " << e.what() <<
-	// 			" | Run install_geographiclib_dataset.sh script in order to install Geoid Model dataset!");
-	// 	ros::shutdown();
-	// }
+	try {
+		bool use_egm96 = false;
+		ros::NodeHandle nh_private("~"); // added by Peixuan Shu
+		nh_private.getParam("mavros_use_egm96", use_egm96); // added by Peixuan Shu
+		if (use_egm96)  // added by Peixuan Shu
+		{
+			// Using smallest dataset with 5' grid,
+			// From default location,
+			// Use cubic interpolation, Thread safe
+			egm96_5 = std::make_shared<GeographicLib::Geoid>("egm96-5", "", true, true);
+		}
+
+	}
+	catch (const std::exception &e) {
+		// catch exception and shutdown node
+		ROS_FATAL_STREAM("UAS: GeographicLib exception: " << e.what() <<
+				" | Run install_geographiclib_dataset.sh script in order to install Geoid Model dataset!");
+		ros::shutdown();
+	}
 
 	// Publish helper TFs used for frame transformation in the odometry plugin
 	std::vector<geometry_msgs::TransformStamped> transform_vector;

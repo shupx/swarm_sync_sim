@@ -387,6 +387,10 @@ Commander::handle_command(const vehicle_command_s &cmd)
 		}
 		break;
 
+	case vehicle_command_s::VEHICLE_CMD_SET_GPS_GLOBAL_ORIGIN:
+		/* ignore commands that are handled by other parts of the system */
+		break;
+
 	/* Delete some useless commands by Peixuan Shu */
 
 	default:

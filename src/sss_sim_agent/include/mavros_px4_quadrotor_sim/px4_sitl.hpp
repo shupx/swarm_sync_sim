@@ -91,7 +91,8 @@ private:
     double world_origin_lon_; // Reference point longitude (degrees). The world (0,0,0) point
     float world_origin_asml_alt_; // Reference altitude AMSL (metres). The world (0,0,0) point
 
-    double init_lat_, init_lon_; // latitude and longitude at initial point
+    double init_lat_; // latitude at initial point
+    double init_lon_; // longitude at initial point
 
 	// publications with topic
 	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};
