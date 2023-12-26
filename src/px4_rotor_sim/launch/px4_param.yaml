@@ -3,10 +3,8 @@ world_origin_latitude_deg: 39.978861  # degree
 world_origin_longitude_deg: 116.339803  # degree
 world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level)
 
-
 # mavros_sim settings
 mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) altitude of mavros/global_position/global using egm96 lib. Loading egm96_5 library needs extra 18MB RAM!
-
 
 
 # PX4 parameters

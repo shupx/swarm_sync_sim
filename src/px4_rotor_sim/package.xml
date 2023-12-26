@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>sss_sim_agent</name>
+  <name>px4_rotor_sim</name>
   <version>0.0.0</version>
-  <description>The sss_sim_agent package</description>
+  <description>A tailered mavros + PX4_SITL + drone_dynamics package for px4 rotor drone simulation </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

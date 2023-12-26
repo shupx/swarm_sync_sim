@@ -2,22 +2,19 @@
 <launch>
     <arg name="id" default="1"/>
     <arg name="use_sim_time" default="false"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
-
-    <arg name="local_pos_source" default="1"/> <!-- 0 is vision/mocap/uwb, 1 is GPS -->
+    <arg name="local_pos_source" default="1"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
-    
     <arg name="init_x_East_metre" default="0.0"/>
     <arg name="init_y_North_metre" default="0.0"/>
     <arg name="init_z_Up_metre" default="0.0"/>
-    
-    <arg name="mavros_sim_plugin_config_yaml" default="$(find sss_sim_agent)/launch/mavros_px4_config.yaml"/>
-    <arg name="px4_param_yaml" default="$(find sss_sim_agent)/launch/px4_param.yaml"/>
+    <arg name="mavros_sim_plugin_config_yaml" default="$(find px4_rotor_sim)/launch/mavros_px4_config.yaml"/>
+    <arg name="px4_param_yaml" default="$(find px4_rotor_sim)/launch/px4_param.yaml"/>
     
 
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
 
-    <node pkg="sss_sim_agent" type="mavros_px4_quadrotor_sim_node" name="mavros_px4_quadrotor_sim_node_$(arg id)" output="screen">
+    <node pkg="px4_rotor_sim" type="mavros_px4_quadrotor_sim_node" name="mavros_px4_quadrotor_sim_node_$(arg id)" output="screen">
     	<!-- load local position source -->
         <param name="local_pos_source" value="$(arg local_pos_source)"/>
         

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+	<!-- vim: set ft=xml noet : -->
+	<!-- base node launch file-->
+
+	<arg name="mavros_sim_plugin_config_yaml" default="$(find px4_rotor_sim)/src/mavros_px4_quadrotor_sim/mavros_sim/launch/px4_config.yaml"/>
+
+	<node pkg="px4_rotor_sim" type="mavros_px4_quadrotor_sim_node" name="mavros_px4_quadrotor_sim_node000"  output="screen">
+		<!-- load plugin config -->
+		<rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" />
+	</node>
+</launch>
