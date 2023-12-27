@@ -434,6 +434,11 @@ void MulticopterPositionControl::Run()
 			_takeoff.updateTakeoffState(_vehicle_control_mode.flag_armed, _vehicle_land_detected.landed,
 						    _vehicle_constraints.want_takeoff,
 						    _vehicle_constraints.speed_up, false, time_stamp_now);
+			
+			// std::cout << "_vehicle_control_mode.flag_armed: " << _vehicle_control_mode.flag_armed << std::endl;
+			// std::cout << "_vehicle_land_detected.landed: " << _vehicle_land_detected.landed << std::endl;
+			// std::cout << "_vehicle_constraints.want_takeoff: " << _vehicle_constraints.want_takeoff << std::endl;
+			// std::cout << "_takeoff.getTakeoffState(): " << (int)_takeoff.getTakeoffState() << std::endl;
 
 			const bool flying = (_takeoff.getTakeoffState() >= TakeoffState::flight);
 
@@ -505,7 +510,10 @@ void MulticopterPositionControl::Run()
 				const bool warn_failsafe = ((time_stamp_now - _last_warn) > 2_s) && _vehicle_control_mode.flag_armed;
 
 				if (warn_failsafe) {
-					PX4_WARN("invalid setpoints");
+					
+					/* (Peixuan Shu comment) When offboard is just activated, the _setpoint from the _trajectory_setpoint_sub may not have been updated especially when the trajectory setpoint is at a low frequency. In this short interval, the _setpoint may be all NAN and be reset to all zero as failsafe_setpoint{}, which may cause the 0 yaw setpoint(north) at a short moment. */
+
+					// PX4_WARN("invalid setpoints"); // commented out by Peixuan Shu
 					_last_warn = time_stamp_now;
 				}
 

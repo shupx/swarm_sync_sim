@@ -4,13 +4,16 @@ world_origin_longitude_deg: 116.339803  # degree
 world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level)
 
 # mavros_sim settings
-mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) altitude of mavros/global_position/global using egm96 lib. Loading egm96_5 library needs extra 18MB RAM!
+mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) altitude of mavros/global_position/global using egm96 lib. Loading egm96_5 library needs extra 18MB RAM per node!
 
 
-# PX4 parameters
+# PX4 parameters 
+# Refer to https://docs.px4.io/main/en/advanced_config/parameter_reference.html
 
-THR_MDL_FAC: 0.4
+#@TODO
+
 MPC_THR_HOVER: 0.5
+THR_MDL_FAC: 0.4
 MPC_THR_MIN: 0.12
 MPC_THR_MAX: 1.0
 
@@ -19,3 +22,7 @@ MPC_Z_VEL_P_ACC: 4.0
 MPC_Z_VEL_I_ACC: 2.0
 
 MC_YAWRATE_MAX: 50 # deg/s
+
+
+MPC_TKO_RAMP_T: 3.0 # s
+LNDMC_TRIG_TIME: 1.0 # s

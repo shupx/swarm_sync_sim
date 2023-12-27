@@ -85,5 +85,6 @@
         "/home/spx/spx_ws/tellogc/devel/lib/python3/dist-packages",
         "/home/spx/UAVros/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }

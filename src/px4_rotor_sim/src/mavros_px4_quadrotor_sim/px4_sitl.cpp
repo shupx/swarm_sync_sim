@@ -99,6 +99,9 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
     UpdateDroneStates(time_us);
 
+    /* Update vehicle_land_detected uORB message*/
+    DectectLand(time_us);
+
     /* Run commander module to handle vehicle_command and switch/publish vehicle mode/status uorb messages */
     commander_->run();
 
@@ -166,6 +169,51 @@ void PX4SITL::SendControlInput()
     
     uav_dynamics_->setInput(input);
 }
+
+void PX4SITL::DectectLand(const uint64_t &time_us)
+{
+    /* Land detector module. Update vehicle_land_detected uORB message*/
+    // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/land_detector/LandDetector.cpp#L141
+
+    /* init landed detector hysteresis */
+    static systemlib::Hysteresis _landed_hysteresis{true};
+    static systemlib::Hysteresis _maybe_landed_hysteresis{true};
+    static systemlib::Hysteresis _ground_contact_hysteresis{true};
+    static systemlib::Hysteresis _freefall_hysteresis{false};
+
+    float trigger_landed_time;  // confirm landed after <trigger_landed_time> seconds
+    get_px4_param<px4::params::LNDMC_TRIG_TIME>(trigger_landed_time);
+    _landed_hysteresis.set_hysteresis_time_from(false, trigger_landed_time * 1_s);
+    _maybe_landed_hysteresis.set_hysteresis_time_from(false, trigger_landed_time * 1_s);
+    _ground_contact_hysteresis.set_hysteresis_time_from(false, trigger_landed_time * 1_s);
+    _freefall_hysteresis.set_hysteresis_time_from(false, 300_ms);
+
+    /* subscribe to local height and arm state */
+    vehicle_local_position_s vehicle_local_position_msg{};
+    vehicle_control_mode_s vehicle_control_mode_msg{};
+    if(_vehicle_local_position_sub.update(&vehicle_local_position_msg)
+        &&_vehicle_control_mode_sub.update(&vehicle_control_mode_msg)) // has new state
+    {
+        float height  = -vehicle_local_position_msg.z; // NED frame
+        bool armed = vehicle_control_mode_msg.flag_armed;
+        matrix::Vector3f _acceleration {vehicle_local_position_msg.ax, 
+            vehicle_local_position_msg.ay, vehicle_local_position_msg.az - CONSTANTS_ONE_G}; // Specific force (non-gravitational force acc)
+
+        _landed_hysteresis.set_state_and_update(height<=0.02 || !armed, time_us);
+        _maybe_landed_hysteresis.set_state_and_update(height<=0.02 || !armed, time_us);
+        _ground_contact_hysteresis.set_state_and_update(height<=0.02, time_us);
+        _freefall_hysteresis.set_state_and_update(_acceleration.norm() < 2.f, time_us); // norm of specific force. Should be close to 9.8 m/s^2 when landed.
+
+        vehicle_land_detected_s vehicle_land_detected_msg{};
+        vehicle_land_detected_msg.timestamp = time_us;
+        vehicle_land_detected_msg.landed = _landed_hysteresis.get_state();
+        vehicle_land_detected_msg.maybe_landed = _ground_contact_hysteresis.get_state();
+        vehicle_land_detected_msg.ground_contact = _ground_contact_hysteresis.get_state();
+        vehicle_land_detected_msg.freefall = _freefall_hysteresis.get_state();
+        _vehicle_land_detected_pub.publish(vehicle_land_detected_msg);
+    }
+}
+
 
 void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
 {
@@ -321,6 +369,7 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
 
     //@TODO estimator states
 
+    //@TODO vehicle_odometry_s (mocap/vision input position)
     // // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/msg/vehicle_odometry.msg
     // vehicle_odometry_s vehicle_odometry_msg{};
     // vehicle_odometry_msg.timestamp = time_us;

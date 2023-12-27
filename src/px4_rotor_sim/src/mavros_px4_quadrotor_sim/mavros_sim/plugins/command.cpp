@@ -212,7 +212,7 @@ private:
 		 * which leads to the block of the mainloop timer!
 		 */ 
 		is_ack_required = false; // added by Peixuan Shu 
-		ROS_INFO("[mavros_sim::CommandPlugin] Caution! Vehicle command ack is not simulated by mavros_sim, so the service response is always true!");
+		std::cout << "[mavros_sim::CommandPlugin] Caution! Vehicle command ack is not simulated by mavros_sim, so the service response is always true!" << std::endl;
 
 		if (is_ack_required)
 			ack_it = ack_waiting_list.emplace(ack_waiting_list.end(), command);

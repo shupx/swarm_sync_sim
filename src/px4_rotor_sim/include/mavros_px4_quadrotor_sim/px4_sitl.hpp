@@ -23,10 +23,12 @@
 #include <iostream> // for std::cout, std::endl
 #include <memory>  // for std::shared_ptr
 
-#include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink
+#include <mavlink/v2.0/common/mavlink.h> // from ros-noetic-mavlink or include/ folder
+
 #include <parameters/px4_parameters.hpp> // store all extern(global) px4 parameters
 #include <matrix/matrix/math.hpp> // for px4 geometry utils
 #include <geo/geo.h> // for px4 geo utils (gps to ENU)
+#include <hysteresis/hysteresis.h> // for px4 hysteresis utils
 #include <mavros/frame_tf.h> // for mavros::ftf frame conversion
 #include <uORB/uORB_sim.hpp> // simulate uORB publication and subscription. Store the extern(global) simulated uORB messages
 
@@ -39,6 +41,7 @@
 #include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated extern(global) mavlink messages
 
 #include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
+
 
 namespace MavrosQuadSimulator
 {
@@ -101,9 +104,13 @@ private:
     uORB_sim::Publication<battery_status_s> _battery_status_pub{ORB_ID(battery_status)};
 	uORB_sim::Publication<vehicle_global_position_s>    _global_position_pub{ORB_ID(vehicle_global_position)};
 	uORB_sim::Publication<vehicle_odometry_s>           _odometry_pub{ORB_ID(vehicle_odometry)};
+    uORB_sim::Publication<vehicle_land_detected_s>      _vehicle_land_detected_pub{ORB_ID(vehicle_land_detected)};
 
     uORB_sim::Subscription<vehicle_command_s>           _vehicle_command_sub{ORB_ID(vehicle_command)};
     uORB_sim::Subscription<vehicle_rates_setpoint_s>           _vehicle_rates_setpoint_sub{ORB_ID(vehicle_rates_setpoint)};
+    uORB_sim::Subscription<vehicle_local_position_s>           _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
+    uORB_sim::Subscription<vehicle_control_mode_s>           _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
+    
 
     std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
     std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
@@ -119,6 +126,9 @@ private:
      */
     void UpdateDroneStates(const uint64_t &time_us);
 
+    /* Land detector module. Update vehicle_land_detected uORB message*/
+    void DectectLand(const uint64_t &time_us);
+
 	/* Search for mavlink receiving list and handle the updated messages (transfer into PX4 uORB messages) */
 	void ReceiveMavlink();
 
@@ -127,6 +137,7 @@ private:
 
     /* Send control input calculated by the controller to the quadrotor dynamics */
     void SendControlInput();
+
 
 };
 
