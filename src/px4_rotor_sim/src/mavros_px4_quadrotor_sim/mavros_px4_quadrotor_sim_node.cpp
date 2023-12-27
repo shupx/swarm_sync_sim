@@ -78,7 +78,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
     }
 
     /* Run PX4 SITL for one loop */
-    uint64_t time_us = ros::Time::now().toNSec() / uint64_t(1e3); // do not use 1e3 along as it is double type!
+    uint64_t time_us = ros::Time::now().toNSec() / uint64_t(1e3); // do not use 1e3 alone as it is double type!
     px4sitl_->Run(time_us);
 
     /* Dynamics step forward (ode integrate the numerical model) */

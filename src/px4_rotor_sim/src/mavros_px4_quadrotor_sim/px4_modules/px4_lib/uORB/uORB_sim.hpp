@@ -101,10 +101,15 @@ class Subscription
          // compare it with \0\0\0 is invalid actually
         bool valid() {return !(memcmp(global_uorb_msg_, "\0\0\0", sizeof(*global_uorb_msg_)) == 0);}
 
-	    bool update(void *dst)
+        /**
+         * Copy the struct
+         * @param dst The uORB message struct we are updating.
+         */
+	    bool copy(void *dst)
         {
             if (valid()){
                 memcpy(dst, global_uorb_msg_, sizeof(*global_uorb_msg_));
+                last_uorb_msg_ = *global_uorb_msg_;
                 return true;
             }
             else{
@@ -117,13 +122,11 @@ class Subscription
          */
 	    bool updated() 
         {
-            T now_uorb_msg_;
-            update(&now_uorb_msg_);
             /* compare to decide if the uorb message is updated */
             //@TODO Using memcmp to compare struct may cause problems due to random struct byte alignance
-            if (memcmp(&now_uorb_msg_, &last_uorb_msg_, sizeof(last_uorb_msg_)) != 0)
+            if (memcmp(global_uorb_msg_, &last_uorb_msg_, sizeof(last_uorb_msg_)) != 0)
             {
-                last_uorb_msg_ = now_uorb_msg_;
+                // last_uorb_msg_ = now_uorb_msg_;
                 return true;
             }
             else
@@ -134,10 +137,17 @@ class Subscription
         }
 
         /**
-         * Copy the struct
+         * Update the struct
          * @param dst The uORB message struct we are updating.
          */
-        bool copy(void *dst) { return update(dst);}
+        bool update(void *dst) 
+        {
+            if (updated())
+            {
+                return copy(dst);
+            }
+            return false;
+        }
 
     private:
         T* global_uorb_msg_; // the pointer of the global uorb message in this file

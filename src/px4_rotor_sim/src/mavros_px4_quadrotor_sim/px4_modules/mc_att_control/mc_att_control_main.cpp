@@ -50,10 +50,6 @@
 #include <mathlib/math/Functions.hpp>
 
 /************* Added by Peixuan Shu **********/
-#ifndef hrt_absolute_time
-# define hrt_absolute_time() (0)
-#endif
-
 #ifndef PX4_WARN
 #include <iostream> // added by Peixuan Shu
 #define PX4_WARN(x) std::cout << #x << std::endl

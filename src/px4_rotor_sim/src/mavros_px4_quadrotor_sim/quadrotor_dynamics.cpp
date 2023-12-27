@@ -143,7 +143,7 @@ void Dynamics::setPos(const double& pos_x, const double& pos_y, const double& po
 
 void Dynamics::setInput(const Dynamics::Input &input)
 {
-    omega_ = input.omega;
+    omega_ = input.omega; //@TODO the yaw rate setpoint can not be responsed immediately
     thrust_ = input.thrust;
 }
 

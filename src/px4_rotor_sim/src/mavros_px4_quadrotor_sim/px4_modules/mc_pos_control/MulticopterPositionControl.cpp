@@ -46,10 +46,6 @@
 #include "PositionControl/ControlMath.hpp"
 
 /************* Added by Peixuan Shu **********/
-#ifndef hrt_absolute_time
-# define hrt_absolute_time() (0)
-#endif
-
 #ifndef PX4_WARN
 #include <iostream> // added by Peixuan Shu
 #define PX4_WARN(x) std::cout << #x << std::endl
@@ -408,7 +404,7 @@ void MulticopterPositionControl::Run()
 			if (_vehicle_control_mode.flag_control_offboard_enabled) {
 
 				bool want_takeoff = _vehicle_control_mode.flag_armed && _vehicle_land_detected.landed
-						    /*&& hrt_elapsed_time(&_setpoint.timestamp) < 1_s*/;
+						    && hrt_elapsed_time(&_setpoint.timestamp) < 1_s;
 
 				if (want_takeoff && PX4_ISFINITE(_setpoint.z)
 				    && (_setpoint.z < states.position(2))) {
@@ -513,8 +509,10 @@ void MulticopterPositionControl::Run()
 					_last_warn = time_stamp_now;
 				}
 
+				// (Peixuan Shu comment) All zero failsafe setpoints. It is unsafe!
 				vehicle_local_position_setpoint_s failsafe_setpoint{};
 
+				// (Peixuan Shu comment)  failsafe() makes the vehicle descend after LOITER_TIME_BEFORE_DESCEND(0.2s). But before 0.2s, the failsafe setpoints are all zero, which is unsafe.
 				failsafe(time_stamp_now, failsafe_setpoint, states, warn_failsafe);
 
 				// reset constraints

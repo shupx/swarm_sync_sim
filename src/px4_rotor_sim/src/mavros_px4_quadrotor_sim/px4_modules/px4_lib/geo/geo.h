@@ -52,9 +52,6 @@
 #include <matrix/matrix/math.hpp>
 
 /************* Added by Peixuan Shu **********/
-// #ifndef hrt_absolute_time
-// # define hrt_absolute_time() (0)
-// #endif
 #include <drivers/drv_hrt.h>
 /********************************************/
 

@@ -99,15 +99,16 @@ void PX4SITL::Run(const uint64_t &time_us)
     /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
     UpdateDroneStates(time_us);
 
-    /* Run mavlink receiver to update command uorb messages */
-    ReceiveMavlink();
-
     /* Run commander module to handle vehicle_command and switch/publish vehicle mode/status uorb messages */
     commander_->run();
+
+    /* Run mavlink receiver to update command uorb messages */
+    ReceiveMavlink();
 
     /* Run pos and att controller to calculate control output */
     mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
     mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
+    //@TODO re-takeoff after land and armed
 
     /* Stream mavlink messages */
     StreamMavlink(time_us);
@@ -160,8 +161,8 @@ void PX4SITL::SendControlInput()
     input.omega = mavros::ftf::transform_frame_aircraft_baselink(body_rate_frd); //Transform data expressed in Aircraft(FRD) frame to Baselink(FLU) frame.
     input.thrust = K1 * ( K3*throttle*throttle + (1-K3)*throttle );
 
-    std::cout << "throttle: " << throttle << std::endl;
-    std::cout << "input.thrust(N) " << input.thrust << std::endl;
+    // std::cout << "throttle: " << throttle << std::endl;
+    // std::cout << "input.thrust(N) " << input.thrust << std::endl;
     
     uav_dynamics_->setInput(input);
 }
