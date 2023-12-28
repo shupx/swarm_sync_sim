@@ -30,5 +30,8 @@
         <rosparam command="load" file="$(arg px4_param_yaml)" />     
     </node>
 
+    <!-- for visualization -->
+    <param name="robot_description" textfile="$(find px4_rotor_sim)/model/iris.urdf" />
+
 
 </launch>
