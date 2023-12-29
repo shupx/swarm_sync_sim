@@ -22,7 +22,7 @@ namespace MavrosQuadSimulator
 {
 
 PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
-    : nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics)
+    : nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     load_px4_params_from_ros_params(); // Before loading px4 modules!
@@ -41,22 +41,6 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
 
 void PX4SITL::load_px4_params_from_ros_params()
 {
-    int source;
-    nh_private_.param<int>("local_pos_source", source, 0);
-    local_pos_source_ = (enum position_mode)source;
-
-    nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.978861);
-    nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
-    nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 53.0);
-    nh_private_.param<float>("init_x_East_metre", init_x_East_metre_, 0.0);
-    nh_private_.param<float>("init_y_North_metre", init_y_North_metre_, 0.0);
-    nh_private_.param<float>("init_z_Up_metre", init_z_Up_metre_, 0.0);
-
-    /* calculate the lat/lon of the initial position */
-    MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, 0}; // Init MapProjection from PX4 geo.h
-    global_local_proj_ref.reproject(init_y_North_metre_, init_x_East_metre_, init_lat_, init_lon_);
-
-
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
     {
@@ -91,33 +75,65 @@ void PX4SITL::load_px4_params_from_ros_params()
     }
 }
 
+void PX4SITL::update_init_pos_from_dynamics()
+{
+    /* load initial position and local_pos_source */
+    int source;
+    nh_private_.param<int>("local_pos_source", source, 0);
+    local_pos_source_ = (enum position_mode)source;
+
+    nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.978861);
+    nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
+    nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 53.0);
+
+    Dynamics::State init_state = uav_dynamics_->getState();
+    init_x_East_metre_ = init_state.pos[0];
+    init_y_North_metre_ = init_state.pos[1];
+    init_z_Up_metre_ = init_state.pos[2];
+
+    /* calculate the lat/lon of the initial position */
+    MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, 0}; // Init MapProjection from PX4 geo.h
+    global_local_proj_ref.reproject(init_y_North_metre_, init_x_East_metre_, init_lat_, init_lon_);
+
+    pos_inited_ = true;
+}
+
 void PX4SITL::Run(const uint64_t &time_us)
 {
-    /* Update the global px4 time (stored in px4_modules/px4_lib/drivers/drv_hrt.h) */
-    hrt_absolute_time_us_sim = time_us;
+    if (!pos_inited_)
+    {
+        ROS_ERROR("[PX4SITL::Run] px4_sitl pos does not inited! pos must be inited after dynamics inits.");
+    }
+    else
+    {
+        /* Update the global px4 time (stored in px4_modules/px4_lib/drivers/drv_hrt.h) */
+        hrt_absolute_time_us_sim = time_us;
 
-    /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
-    UpdateDroneStates(time_us);
+        /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
+        UpdateDroneStates(time_us);
 
-    /* Update vehicle_land_detected uORB message*/
-    DectectLand(time_us);
+        /* Update vehicle_land_detected uORB message*/
+        DectectLand(time_us);
 
-    /* Run commander module to handle vehicle_command and switch/publish vehicle mode/status uorb messages */
-    commander_->run();
+        /* Run commander module to handle vehicle_command and switch/publish vehicle mode/status uorb messages */
+        commander_->run();
 
-    /* Run mavlink receiver to update command uorb messages */
-    ReceiveMavlink();
+        /* Run mavlink receiver to update command uorb messages */
+        ReceiveMavlink();
 
-    /* Run pos and att controller to calculate control output */
-    mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
-    mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
-    //@TODO re-takeoff after land and armed
+        /* Run pos and att controller to calculate control output */
+        mc_pos_control_->Run(); // calling period should between [0.002f, 0.04f] 25Hz-500Hz
+        mc_att_control_->Run(); // calling should between [0.0002f, 0.02f] 50Hz-5000Hz
+        //@TODO re-takeoff after land and armed
 
-    /* Stream mavlink messages */
-    StreamMavlink(time_us);
+        /* Stream mavlink messages */
+        StreamMavlink(time_us);
 
-    /* Send control input calculated by the controller to the quadrotor dynamics */
-    SendControlInput();
+        /* Send control input calculated by the controller to the quadrotor dynamics */
+        SendControlInput();
+    }
+
+
 }
 
 void PX4SITL::ReceiveMavlink()

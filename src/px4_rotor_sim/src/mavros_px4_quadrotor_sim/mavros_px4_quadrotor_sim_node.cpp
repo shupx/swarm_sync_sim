@@ -48,16 +48,23 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
         ROS_WARN("[Agent] /use_sim_time is false! Maybe real time is used.");
     }
 
+    float init_x, init_y, init_z;
+    nh_private_.param<float>("init_x_East_metre", init_x, 0.0);
+    nh_private_.param<float>("init_y_North_metre", init_y, 0.0);
+    nh_private_.param<float>("init_z_Up_metre", init_z, 0.0);
 
     /* init sim modules */
 
     dynamics_ = std::make_shared<Dynamics>();
     dynamics_->setSimStep(0.01); // set odeint integration step
+    dynamics_->setPos(init_x, init_y, init_z);
 
     px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
+    px4sitl_->update_init_pos_from_dynamics();
 
     mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
 
+    visualizer_ = std::make_shared<Visualizer>(nh_, nh_private_);
 
     /* Set main loop */
 
@@ -86,6 +93,10 @@ void Agent::mainloop(const ros::TimerEvent &event)
 
     /* Mavros publishing mavlink messages to ROS topics */
     mavros_sim_->PublishRosMessage();
+
+    /* Publish rotor propeller joint positions and base_link tf for the robot model visualization in rviz */
+    visualizer_->PublishRotorJointState();
+    visualizer_->PublishTF();
 
     last_time = next_time;
 }

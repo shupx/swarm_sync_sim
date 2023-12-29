@@ -24,7 +24,7 @@
 #include "mavros_sim/MavrosSim.hpp"
 #include "mavros_px4_quadrotor_sim/px4_sitl.hpp"
 #include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
-
+#include "mavros_px4_quadrotor_sim/drone_visualizer.hpp"
 
 
 namespace MavrosQuadSimulator
@@ -44,6 +44,7 @@ class Agent
         std::shared_ptr<Dynamics> dynamics_;
         std::shared_ptr<PX4SITL> px4sitl_;
         std::shared_ptr<mavros_sim::MavrosSim> mavros_sim_;
+        std::shared_ptr<Visualizer> visualizer_;
 
         double mainloop_period_;
         sss_utils::Timer mainloop_timer_;

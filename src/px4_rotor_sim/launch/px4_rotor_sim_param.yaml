@@ -1,0 +1,69 @@
+# mavros_sim settings
+
+mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) altitude of mavros/global_position/global using egm96 lib. Loading egm96_5 library needs extra 18MB RAM per node!
+
+
+
+# Dynamics parameters
+
+## initial position in the world
+
+# init_x_East_metre: 0.0
+# init_y_North_metre: 0.0
+# init_z_Up_metre: 0.0
+
+
+
+# PX4_SITL parameters 
+
+## 0 (mocap/uwb): mavros/local_position/pose will output the world coordinates of the drone
+## 1 (gps): mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin
+
+# local_pos_source: 0  # simulated local_position/pose source
+
+## world origin gps values as the ref of calculting the simulated gps coordinates
+world_origin_latitude_deg: 39.978861  # degree
+world_origin_longitude_deg: 116.339803  # degree
+world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS)
+
+## Refer to https://docs.px4.io/main/en/advanced_config/parameter_reference.html
+MPC_THR_HOVER: 0.5
+THR_MDL_FAC: 0.4
+MPC_THR_MIN: 0.12
+MPC_THR_MAX: 1.0
+
+MPC_Z_P: 1.0
+MPC_Z_VEL_P_ACC: 4.0
+MPC_Z_VEL_I_ACC: 2.0
+
+MC_YAWRATE_MAX: 50 # deg/s
+
+MPC_TKO_RAMP_T: 3.0 # s
+LNDMC_TRIG_TIME: 1.0 # s
+
+
+
+# Visualizer parameters
+
+visualize_max_freq: 20 # (Hz) Maximum  Maximum base_link tf publishing rate 
+visualize_tf_frame: map # tf world frame name
+base_link_name: base_link # base link name in the robot urdf
+rotor_0_joint_name: rotor_0_joint # rotor revolute joint name in the robot urdf
+rotor_1_joint_name: rotor_1_joint # rotor revolute joint name in the robot urdf
+rotor_2_joint_name: rotor_2_joint # rotor revolute joint name in the robot urdf
+rotor_3_joint_name: rotor_3_joint # rotor revolute joint name in the robot urdf
+
+
+## 0 for mocap (use local_position/pose for visualization directly)
+## 1 for GPS (use global_position/global relative to the world_origin_gps for x,y visualization, use local_position/pose for z and attitude visualization)
+
+# local_pos_source: 0  # mavros/local_position/pose source
+
+
+## world origin gps values as the ref of visualizing the local position if local_pos_source = 1
+
+# world_origin_latitude_deg: 39.978861  # degree
+# world_origin_longitude_deg: 116.339803  # degree
+# world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS)
+
+    

@@ -5,11 +5,11 @@
     <arg name="local_pos_source" default="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
-    <arg name="init_x_East_metre" default="0.0"/>
+    <arg name="init_x_East_metre" default="1.0"/>
     <arg name="init_y_North_metre" default="0.0"/>
     <arg name="init_z_Up_metre" default="0.0"/>
     <arg name="mavros_sim_plugin_config_yaml" default="$(find px4_rotor_sim)/launch/mavros_px4_config.yaml"/>
-    <arg name="px4_param_yaml" default="$(find px4_rotor_sim)/launch/px4_param.yaml"/>
+    <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     
 
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
@@ -27,11 +27,14 @@
         <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /-->   
 	
         <!-- load px4 param -->
-        <rosparam command="load" file="$(arg px4_param_yaml)" />     
+        <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />     
     </node>
 
     <!-- for visualization -->
     <param name="robot_description" textfile="$(find px4_rotor_sim)/model/iris.urdf" />
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/single_px4_rotor.rviz" required="true" />
 
 
 </launch>

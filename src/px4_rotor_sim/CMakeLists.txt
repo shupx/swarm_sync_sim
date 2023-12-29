@@ -147,6 +147,16 @@ target_link_libraries(MavrosSim
 target_compile_options(MavrosSim PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
 
 
+add_library(drone_visualizer
+            src/mavros_px4_quadrotor_sim/drone_visualizer.cpp)
+
+# link libraries for this lib
+target_link_libraries(drone_visualizer
+  ${catkin_LIBRARIES}
+  px4_lib # for geo.cpp
+)
+
+
 add_executable(mavros_px4_quadrotor_sim_node
                   src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
 
@@ -156,6 +166,7 @@ target_link_libraries(mavros_px4_quadrotor_sim_node
    quadrotor_dynamics
    px4_sitl
    MavrosSim
+   drone_visualizer
 )
 
 ## System dependencies are found with CMake's conventions
