@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- For visualization in real experiments -->
+
+<launch>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav1"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav2"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav3"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/multi_px4_rotor.rviz" required="true" />
+
+</launch>

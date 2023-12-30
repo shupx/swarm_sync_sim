@@ -4,7 +4,7 @@
     <arg name="local_pos_source" value="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
-    <arg name="open_rviz" value="false"/> <!-- open rviz for each single node -->>
+    <arg name="open_rviz" value="false"/> <!-- open rviz for each single node -->
 
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
