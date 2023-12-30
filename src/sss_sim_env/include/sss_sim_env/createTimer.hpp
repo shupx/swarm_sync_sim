@@ -42,6 +42,7 @@ namespace sss_utils
 Timer createTimer(Duration period, const TimerCallback& callback, bool oneshot = false,
                 bool autostart = true)
 {
+    //@TODO specify nodehandle
     Timer sss_timer(period, callback, oneshot, autostart);
     return sss_timer;
 }

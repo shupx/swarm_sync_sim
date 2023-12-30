@@ -43,7 +43,7 @@ class TimeServer
 
         int next_client_id_;
         double speed_regulator_period_;
-        double max_speed_ratio_;
+        float max_speed_ratio_;
 
         class TimeClient
         {

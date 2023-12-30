@@ -28,7 +28,7 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
         nh_.setParam("/use_sim_time", true);
     }
 
-    nh_private_.param<double>("max_speed_ratio", max_speed_ratio_, 10);
+    nh_private_.param<float>("max_speed_ratio", max_speed_ratio_, 100);
     nh_private_.param<bool>("auto_start", auto_start_, false);
 
     if (max_speed_ratio_ <= 0)

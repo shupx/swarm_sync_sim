@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
+  nodelet
 )
 
 
@@ -38,13 +39,32 @@ catkin_package(
    LIBRARIES ClockUpdater sss_timer
 )
 
-add_executable(sim_clock src/sim_clock/sim_clock.cpp
-                         src/sim_clock/TimeServer.cpp 
-                        )
+# add_executable(sim_clock src/sim_clock/sim_clock.cpp
+#                          src/sim_clock/TimeServer.cpp 
+#                         )
+
+# target_link_libraries(sim_clock
+#    ${catkin_LIBRARIES}
+# )
+
+############## sim_clock nodelet plugin lib ################
+
+add_library(sim_clock 
+                src/sim_clock/sim_clock.cpp
+                src/sim_clock/TimeServer.cpp)
 
 target_link_libraries(sim_clock
-   ${catkin_LIBRARIES}
-)
+                      ${catkin_LIBRARIES}
+                   )
+
+# add_dependencies(sim_clock 
+#                       ${sim_clock_EXPORTED_TARGETS} 
+#                       ${catkin_EXPORTED_TARGETS} )
+
+
+
+
+##################### sss_utils lib #######################
 
 add_library(ClockUpdater
               src/sss_utils/ClockUpdater.cpp

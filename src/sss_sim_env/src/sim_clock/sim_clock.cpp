@@ -14,24 +14,56 @@
  * 
  */
 
-#include "ros/ros.h"
+#include <ros/ros.h>
+#include <nodelet/nodelet.h>
+
 #include "sss_sim_env/TimeServer.hpp"
 
 
-int main(int argc, char **argv)
+class SimClock :public nodelet::Nodelet
 {
-    ros::init(argc, argv, "sim_clock");
-    ros::NodeHandle nh_private("~");
-    ros::NodeHandle nh;
+public:
+    SimClock(){}
 
-    // TimeServer time_server(nh, nh_private);
+public:
+    void onInit()
+    {
+        ros::NodeHandle nh = getNodeHandle();
+        ros::NodeHandle nh_private = getPrivateNodeHandle();
+        // ros::NodeHandle nh = getMTNodeHandle();
+        // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
-    // //create an object named time_server in heap rather than stack
-    // TimeServer* time_server = new TimeServer(nh, nh_private); 
+        time_server = std::make_unique<TimeServer>(nh, nh_private);
 
-    //Use unique_ptr to auto-destory the object when exiting.
-    std::unique_ptr<TimeServer> time_server(new TimeServer(nh, nh_private));
+        // NODELET_DEBUG("My debug statement")
+        // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)
+        // NODELET_DEBUG_COND( 1 == 1, "my debug_statement")
+        // NODELET_DEBUG_STREAM_COND( 1 == 1, "my debug statement " << (double) 1.0)
+    }
 
-    ros::spin();
-    return 0;
-}
+private:
+    std::unique_ptr<TimeServer> time_server;
+};
+
+#include <pluginlib/class_list_macros.h>
+PLUGINLIB_EXPORT_CLASS(SimClock, nodelet::Nodelet);
+
+
+
+// int main(int argc, char **argv)
+// {
+//     ros::init(argc, argv, "sim_clock");
+//     ros::NodeHandle nh_private("~");
+//     ros::NodeHandle nh;
+
+//     // TimeServer time_server(nh, nh_private);
+
+//     // //create an object named time_server in heap rather than stack
+//     // TimeServer* time_server = new TimeServer(nh, nh_private); 
+
+//     //Use unique_ptr to auto-destory the object when exiting.
+//     std::unique_ptr<TimeServer> time_server(new TimeServer(nh, nh_private));
+
+//     ros::spin();
+//     return 0;
+// }

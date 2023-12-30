@@ -1,0 +1,18 @@
+<!--这里的path="",修改成path="lib/lib{包名}",
+    包名就是CMakeLists.txt里面定义的add_library(包名 ）
+    我这里就是path="lib/libsim_clock"
+-->
+ 
+<library path="lib/libsim_clock" >
+  <!-- name: launch文件里面 load 后面接着的插件名
+       type: c++文件定义的类名
+       如 name="aaa/nodeletclass1",那么，launch文件对应启动如下：
+       <node pkg="nodelet" type="nodelet" name="nodeletclass1"
+       args="load aaa/nodeletclass1 nodelet_manager" output="screen">
+  -->
+  <class name="sss_sim_env/sim_clock_nodelet" type="SimClock" base_class_type="nodelet::Nodelet">
+    <description>
+        Simulation clock that determines the simulation time process.
+    </description>
+  </class>
+</library>
