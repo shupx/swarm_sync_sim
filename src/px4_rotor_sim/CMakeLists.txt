@@ -169,6 +169,15 @@ target_link_libraries(mavros_px4_quadrotor_sim_node
    drone_visualizer
 )
 
+add_executable(drone_visualizer_node
+                  src/mavros_px4_quadrotor_sim/drone_visualizer_node.cpp)
+
+# link libraries for this lib
+target_link_libraries(drone_visualizer_node
+   ${catkin_LIBRARIES}
+   drone_visualizer
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

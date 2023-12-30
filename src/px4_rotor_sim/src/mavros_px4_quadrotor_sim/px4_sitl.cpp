@@ -27,6 +27,9 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     load_px4_params_from_ros_params(); // Before loading px4 modules!
 
+    /* update_init_pos_from_dynamics */
+    update_init_pos_from_dynamics();
+
     /* Load px4 modules */
     mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
     mavlink_streamer_ = std::make_shared<MavlinkStreamer>();

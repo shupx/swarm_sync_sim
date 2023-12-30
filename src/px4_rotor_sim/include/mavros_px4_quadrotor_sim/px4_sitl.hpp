@@ -55,9 +55,6 @@ class PX4SITL
 public:
     PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
 
-    /* load initial position and local_pos_source */
-    void update_init_pos_from_dynamics();
-
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/    
     void load_px4_params_from_ros_params();
 
@@ -125,6 +122,8 @@ private:
 
     std::shared_ptr<Dynamics> uav_dynamics_;
 
+    /* load initial position and local_pos_source */
+    void update_init_pos_from_dynamics();
 
     /**
      * \brief Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model 

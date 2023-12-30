@@ -3,7 +3,7 @@
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Publish rotor propeller joint position and base_link tf states for the robot model visualization in rviz
  * 
- * Note: This program relies on mavlink, px4_modules
+ * Note: This program relies on mavros, px4 geo.h
  * 
  * @version 1.0
  * @date 2023-12-29
@@ -26,6 +26,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     armed_(false)
 {
     nh_private_.param<float>("visualize_max_freq", max_freq_, 0);
+    nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
     nh_private_.param<std::string>("visualize_tf_frame", tf_frame_, "map");
     nh_private_.param<std::string>("base_link_name", tf_child_frame_, "base_link");
     nh_private_.param<std::string>("rotor_0_joint_name", rotor_joints_name_[0], "rotor_0_joint");
@@ -46,6 +47,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     mavros_global_pose_sub_ = nh_.subscribe("mavros/global_position/global", 1, &Visualizer::cb_mavros_global_pose, this);
 
     joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1);
+    path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1);
 
     quat_.w = 1.0;
     quat_.x = 0.0;
@@ -84,7 +86,7 @@ void Visualizer::PublishRotorJointState()
     }
 }
 
-void Visualizer::PublishTF()
+void Visualizer::PublishBaseLinkTF()
 {
     static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
@@ -99,6 +101,37 @@ void Visualizer::PublishTF()
         odom_trans.transform.translation.z = pos_z_;
         odom_trans.transform.rotation = quat_;
         tf2_broadcaster.sendTransform(odom_trans);
+
+        last_time = time_now;
+    }
+}
+
+void Visualizer::PublishPath()
+{
+    static double last_time = 0.0;
+    double time_now = ros::Time::now().toSec();
+    if (time_now - last_time > 1.0 / max_freq_)
+    {
+        geometry_msgs::PoseStamped TrajPose_;
+        TrajPose_.header.stamp = ros::Time::now();
+        TrajPose_.header.frame_id = tf_frame_;
+        TrajPose_.pose.position.x = pos_x_;
+        TrajPose_.pose.position.y = pos_y_;
+        TrajPose_.pose.position.z = pos_z_;          
+        TrajPose_.pose.orientation = quat_;
+
+        static std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector;
+        TrajPoseHistory_vector.insert(TrajPoseHistory_vector.begin(), TrajPose_);
+        if (TrajPoseHistory_vector.size() > history_path_time_ * max_freq_)
+        {
+            TrajPoseHistory_vector.pop_back();
+        }
+
+        nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
+        path_msg->header.stamp = ros::Time::now();
+        path_msg->header.frame_id = tf_frame_;
+        path_msg->poses = TrajPoseHistory_vector;
+        path_pub_.publish(path_msg);
 
         last_time = time_now;
     }

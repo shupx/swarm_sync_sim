@@ -3,7 +3,7 @@
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Publish rotor propeller joint position and base_link tf states for the robot model visualization in rviz
  * 
- * Note: This program relies on mavlink, px4_modules
+ * Note: This program relies on mavros, px4 geo.h
  * 
  * @version 1.0
  * @date 2023-12-29
@@ -22,6 +22,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <nav_msgs/Path.h>
 #include <tf2_ros/transform_broadcaster.h>
 
 #include <geo/geo.h> // for px4 gps->NED utils
@@ -48,9 +49,22 @@ public:
      */ 
     Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
+    /* Publish rotor joint states, base link TF and history path for displaying in rviz */
+    void Run()
+    {
+        PublishRotorJointState();
+        PublishBaseLinkTF();
+        PublishPath();
+    }
+
+    /* Publish rotor/propeller joint states according to the arming state */
     void PublishRotorJointState();
-    void PublishTF();
-    //@ TODO add path
+
+    /* Publish the robot base link TF for displaying in the rviz */
+    void PublishBaseLinkTF();
+
+    /* Publish the robot base link history path for displaying in rviz */
+    void PublishPath();
 
 private:
     ros::NodeHandle nh_;
@@ -61,6 +75,7 @@ private:
     ros::Subscriber mavros_global_pose_sub_;
 
     ros::Publisher joint_pub_;
+    ros::Publisher path_pub_;
 
     tf2_ros::TransformBroadcaster tf2_broadcaster;
 
@@ -76,6 +91,7 @@ private:
     float world_origin_asml_alt_; // Reference altitude AMSL (metres). The world (0,0,0) point
 
     float max_freq_; /* default 10Hz. Maximum base_link tf publishing rate */
+    float history_path_time_; /* (s) displaying history path time */
     bool armed_;
     float pos_x_, pos_y_, pos_z_;
     geometry_msgs::Quaternion quat_;

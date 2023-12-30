@@ -46,6 +46,7 @@ LNDMC_TRIG_TIME: 1.0 # s
 # Visualizer parameters
 
 visualize_max_freq: 20 # (Hz) Maximum  Maximum base_link tf publishing rate 
+visualize_path_time: 25 # (s) displaying history path time
 visualize_tf_frame: map # tf world frame name
 base_link_name: base_link # base link name in the robot urdf
 rotor_0_joint_name: rotor_0_joint # rotor revolute joint name in the robot urdf

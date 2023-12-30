@@ -60,7 +60,6 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     dynamics_->setPos(init_x, init_y, init_z);
 
     px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
-    px4sitl_->update_init_pos_from_dynamics();
 
     mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
 
@@ -94,9 +93,8 @@ void Agent::mainloop(const ros::TimerEvent &event)
     /* Mavros publishing mavlink messages to ROS topics */
     mavros_sim_->PublishRosMessage();
 
-    /* Publish rotor propeller joint positions and base_link tf for the robot model visualization in rviz */
-    visualizer_->PublishRotorJointState();
-    visualizer_->PublishTF();
+    /* Publish rotor propeller joint positions, base_link tf and history path for the robot model visualization in rviz */
+    visualizer_->Run();
 
     last_time = next_time;
 }
