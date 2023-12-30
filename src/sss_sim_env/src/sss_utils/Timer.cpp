@@ -63,8 +63,8 @@ Timer::Impl::~Impl()
 void Timer::Impl::AccelerateTimerThreadFunc()
 {
     /**
-     * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) 
-     * to release timers_cond_ in timer_manager.h for faster loop speed.
+     * \brief Open a new thread to check if /clock updates, call timer_.setPeriod(period) 
+     * to release the condition variable "timers_cond_" in timer_manager.h for faster loop speed.
      * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
      * , where if use_sim_time is true, the timmer manager will block at least 
      * for 1 ms even if the loop can be faster. This bug limits the timer loop 
@@ -123,7 +123,7 @@ void Timer::Impl::start()
             clock_updater_ = std::make_shared<ClockUpdater>();
 
             /* request the first clock update to start the first loop */
-            // TODO: repeat request clock update if sim_clock has not received it ?
+            // @TODO: repeat request clock update if sim_clock has not received it ?
             ros::Time start_time = ros::Time::now();
             ros::WallDuration(0.5).sleep();
             clock_updater_->request_clock_update(start_time + period_);

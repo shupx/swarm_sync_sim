@@ -37,6 +37,13 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     int source;
     nh_private_.param<int>("local_pos_source", source, 0);
     local_pos_source_ = (enum position_mode)source;
+
+    std::string tf_prefix;
+    if (nh_private_.getParam("base_link_tf_prefix", tf_prefix))
+    {
+        tf_child_frame_ = tf_prefix + "/" + tf_child_frame_;
+    }
+
     
     nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.978861);
     nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);

@@ -6,7 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /uav11
-      Splitter Ratio: 0.8183632493019104
+        - /uav21
+        - /uav31
+      Splitter Ratio: 0.7305389046669006
     Tree Height: 1049
   - Class: rviz/Selection
     Name: Selection
@@ -135,59 +137,162 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
-        - Angle Tolerance: 0.10000000149011612
-          Class: rviz/Odometry
-          Covariance:
-            Orientation:
-              Alpha: 0.5
-              Color: 255; 255; 127
-              Color Style: Unique
-              Frame: Local
-              Offset: 1
-              Scale: 1
-              Value: true
-            Position:
-              Alpha: 0.30000001192092896
-              Color: 204; 51; 204
-              Scale: 1
-              Value: true
-            Value: true
-          Enabled: false
-          Keep: 50
-          Name: MavrosLocalOdometry
-          Position Tolerance: 0.10000000149011612
-          Queue Size: 50
-          Shape:
-            Alpha: 0.6000000238418579
-            Axes Length: 0.20000000298023224
-            Axes Radius: 0.019999999552965164
-            Color: 255; 25; 0
-            Head Length: 0.029999999329447746
-            Head Radius: 0.029999999329447746
-            Shaft Length: 0.15000000596046448
-            Shaft Radius: 0.009999999776482582
-            Value: Arrow
-          Topic: /uav1/mavros/local_position/odom
-          Unreliable: false
-          Value: false
-        - Alpha: 1
-          Axes Length: 0.20000000298023224
-          Axes Radius: 0.019999999552965164
-          Class: rviz/Pose
-          Color: 255; 25; 0
-          Enabled: false
-          Head Length: 0.30000001192092896
-          Head Radius: 0.10000000149011612
-          Name: MavrosLocalPose
-          Queue Size: 10
-          Shaft Length: 1
-          Shaft Radius: 0.05000000074505806
-          Shape: Axes
-          Topic: /uav1/mavros/local_position/pose
-          Unreliable: false
-          Value: false
       Enabled: true
       Name: uav1
+    - Class: rviz/Group
+      Displays:
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz/Path
+          Color: 239; 41; 41
+          Enabled: true
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
+          Line Style: Billboards
+          Line Width: 0.009999999776482582
+          Name: HistoryPath
+          Offset:
+            X: 0
+            Y: 0
+            Z: 0
+          Pose Color: 255; 85; 255
+          Pose Style: None
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
+          Topic: /uav2/history_path
+          Unreliable: false
+          Value: true
+        - Alpha: 1
+          Class: rviz/RobotModel
+          Collision Enabled: false
+          Enabled: true
+          Links:
+            All Links Enabled: true
+            Expand Joint Details: false
+            Expand Link Details: false
+            Expand Tree: false
+            Link Tree Style: Links in Alphabetic Order
+            base_link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            gps0__link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+            imu_link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+            rotor_0:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_1:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_2:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_3:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+          Name: RobotModel
+          Robot Description: uav2/robot_description
+          TF Prefix: uav2
+          Update Interval: 0
+          Value: true
+          Visual Enabled: true
+      Enabled: true
+      Name: uav2
+    - Class: rviz/Group
+      Displays:
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz/Path
+          Color: 239; 41; 41
+          Enabled: true
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
+          Line Style: Billboards
+          Line Width: 0.009999999776482582
+          Name: HistoryPath
+          Offset:
+            X: 0
+            Y: 0
+            Z: 0
+          Pose Color: 255; 85; 255
+          Pose Style: None
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
+          Topic: /uav3/history_path
+          Unreliable: false
+          Value: true
+        - Alpha: 1
+          Class: rviz/RobotModel
+          Collision Enabled: false
+          Enabled: true
+          Links:
+            All Links Enabled: true
+            Expand Joint Details: false
+            Expand Link Details: false
+            Expand Tree: false
+            Link Tree Style: Links in Alphabetic Order
+            base_link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            gps0__link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+            imu_link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+            rotor_0:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_1:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_2:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_3:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+          Name: RobotModel
+          Robot Description: uav3/robot_description
+          TF Prefix: uav3
+          Update Interval: 0
+          Value: true
+          Visual Enabled: true
+      Enabled: true
+      Name: uav3
   Enabled: true
   Global Options:
     Background Color: 211; 215; 207
@@ -216,7 +321,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.248876571655273
+      Distance: 6.509137153625488
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -224,17 +329,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.5069828033447266
-        Y: 1.3044203519821167
-        Z: -0.3397539556026459
+        X: 1.1165043115615845
+        Y: 1.3508787155151367
+        Z: -0.5614507794380188
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7697972655296326
+      Pitch: 0.9397971034049988
       Target Frame: <Fixed Frame>
-      Yaw: 4.335422515869141
+      Yaw: 4.580427646636963
     Saved: ~
 Window Geometry:
   Displays:
@@ -253,4 +358,4 @@ Window Geometry:
     collapsed: true
   Width: 2366
   X: 6735
-  Y: 379
+  Y: 231
