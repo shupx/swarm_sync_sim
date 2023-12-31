@@ -6,7 +6,6 @@
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
     <arg name="open_rviz" value="false"/> <!-- open rviz for each single node -->
 
-
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
         <arg name="namespace" value="uav1"/>
         <arg name="init_x_East_metre" value="1.0"/>

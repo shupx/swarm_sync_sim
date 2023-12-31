@@ -20,13 +20,15 @@
 namespace sss_utils
 {
 
-ClockUpdater::ClockUpdater()
+ClockUpdater::ClockUpdater(const ros::NodeHandle &nh)
+    : nh_(nh), inited_(false)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time, false);
 
     if (use_sim_time){
         ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for service /sss_timeclient_register");
         init();
+        inited_ = true;
     }
     else{
         ROS_INFO("[ClockUpdater] use_sim_time == false. Skip!");
@@ -45,12 +47,13 @@ void ClockUpdater::init()
     register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
     unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
 
-    //register a time client
-    // block until registered successfully
+    /* register a time client */
+    //@TODO do not block the thread!
     sss_sim_env::ClientRegister srv;
-    while(!register_client_.call(srv))
+    while(!register_client_.call(srv))  // block until registered successfully
     {
         ros::WallDuration(0.5).sleep();
+        ROS_INFO("[ClockUpdater] Waiting for service /sss_timeclient_register...");
     }
 
     time_client_id_ = srv.response.client_id;
@@ -63,10 +66,17 @@ void ClockUpdater::init()
 void ClockUpdater::request_clock_update(ros::Time new_time)
 {
     if (use_sim_time){
-        rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
-        msg->clock = new_time;
-        update_clock_pub_.publish(msg);
-        // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
+        if (inited_)
+        {
+            rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
+            msg->clock = new_time;
+            update_clock_pub_.publish(msg);
+            // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
+        }
+        else
+        {
+            ROS_ERROR("[ClockUpdater%s] Not inited.", std::to_string(time_client_id_).c_str());
+        }
     }
 }
 

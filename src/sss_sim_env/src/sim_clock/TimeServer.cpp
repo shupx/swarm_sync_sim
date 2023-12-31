@@ -146,7 +146,7 @@ void TimeServer::try_update_clock()
         if (clients_vector_[i]->has_new_request == false){
             all_client_has_new_request = false;
 
-            ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because clients_vector_[%s] has no new request", std::to_string(i).c_str());
+            // ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because clients_vector_[%s] has no new request", std::to_string(i).c_str());
             break;
         }
         else{
@@ -163,7 +163,7 @@ void TimeServer::try_update_clock()
             msg->clock = min_time_request;
             sim_clock_pub_.publish(msg);
 
-            ROS_INFO("[TimeServer] try_update_clock() publish %ss to /clock", std::to_string(sim_time_.toSec()).c_str());
+            // ROS_INFO("[TimeServer] try_update_clock() publish %ss to /clock", std::to_string(sim_time_.toSec()).c_str());
         }
         // set has_new_request = false for clients whose request_time is satisfied.
         for (int i=0; i<clients_vector_.size(); ++i)
@@ -190,7 +190,7 @@ TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::No
 
 void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
 {
-    ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
+    // ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
 
     ros::Time new_request_time = msg->clock;
     if (new_request_time > request_time)

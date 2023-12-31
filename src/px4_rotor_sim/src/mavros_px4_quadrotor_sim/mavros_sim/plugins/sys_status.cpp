@@ -103,9 +103,9 @@ namespace std_plugins {
 class SystemStatusPlugin
 {
 public:
-	SystemStatusPlugin(const std::shared_ptr<UAS> &uas) : // uas added by Peixuan Shu
-		nh("mavros"),  // nodehandle modified by Peixuan Shu
-		nh_private("~"),  // nodehandle modified by Peixuan Shu
+	SystemStatusPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh_input, const ros::NodeHandle &nh_private_input) : // uas added by Peixuan Shu
+		nh(nh_input, "mavros"),  // nodehandle modified by Peixuan Shu
+		nh_private(nh_private_input),  // nodehandle modified by Peixuan Shu
 		// hb_diag("Heartbeat", 10),
 		// mem_diag("APM Memory"),
 		// hwst_diag("APM Hardware"),

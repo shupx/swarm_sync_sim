@@ -43,7 +43,7 @@ class Timer
             /* If use_sim_time is true, it creates a ros::Timer with request_clock_update every loop.
             * If use_sim_time is false, it just creates a normal ros::Timer.
             */
-            Impl(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart);
+            Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart);
             ~Impl();
 
             bool hasStarted() const {return timer_.hasStarted();}
@@ -112,9 +112,9 @@ class Timer
 
 
         /* constructor */
-        Timer(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
+        Timer(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
         {
-            impl_ = boost::make_shared<Impl>(period, callback, oneshot, autostart);
+            impl_ = boost::make_shared<Impl>(nh, period, callback, oneshot, autostart);
         }
 
         /* Mananul start timer if autostart is false.  Does nothing if the timer is already started.*/

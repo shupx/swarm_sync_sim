@@ -78,9 +78,9 @@ namespace std_plugins {
 class LocalPositionPlugin
 {
 public:
-	LocalPositionPlugin(const std::shared_ptr<UAS> &uas) :
-		lp_nh("mavros/local_position"),  // nodehandle modified by Peixuan Shu
-		lp_nh_private("~local_position"),   // nodehandle added by Peixuan Shu
+	LocalPositionPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+		lp_nh(nh, "mavros/local_position"),  // nodehandle modified by Peixuan Shu
+		lp_nh_private(nh_private, "local_position"),   // nodehandle added by Peixuan Shu
 		tf_send(false),
 		has_local_position_ned(false),
 		has_local_position_ned_cov(false),

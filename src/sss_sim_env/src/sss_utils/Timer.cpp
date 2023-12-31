@@ -21,8 +21,8 @@
 namespace sss_utils
 {
 
-Timer::Impl::Impl(const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false)
+Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
+    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
@@ -120,7 +120,7 @@ void Timer::Impl::start()
     {
         if (use_sim_time_)
         {
-            clock_updater_ = std::make_shared<ClockUpdater>();
+            clock_updater_ = std::make_shared<ClockUpdater>(nh_);
 
             /* request the first clock update to start the first loop */
             // @TODO: repeat request clock update if sim_clock has not received it ?

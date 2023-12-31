@@ -74,9 +74,9 @@ class IMUPlugin
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	IMUPlugin(const std::shared_ptr<UAS> &uas) : // uas added by Peixuan Shu
-		imu_nh("mavros/imu"),  // nodehandle modified by Peixuan Shu
-		imu_nh_private("~imu"),  // nodehandle modified by Peixuan Shu
+	IMUPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : // uas added by Peixuan Shu
+		imu_nh(nh, "mavros/imu"),  // nodehandle modified by Peixuan Shu
+		imu_nh_private(nh_private, "imu"),  // nodehandle modified by Peixuan Shu
 		has_hr_imu(false),
 		has_raw_imu(false),
 		has_scaled_imu(false),

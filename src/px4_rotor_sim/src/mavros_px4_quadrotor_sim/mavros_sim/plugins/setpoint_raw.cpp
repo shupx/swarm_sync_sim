@@ -77,9 +77,9 @@ class SetpointRawPlugin :
 	public plugin::SetAttitudeTargetMixin<SetpointRawPlugin>
 {
     public:
-        SetpointRawPlugin(const std::shared_ptr<UAS> &uas) : 
-            sp_nh("mavros/setpoint_raw"),
-            sp_nh_private("~setpoint_raw"), // nodehandle modified by Peixuan Shu
+        SetpointRawPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : 
+            sp_nh(nh, "mavros/setpoint_raw"),
+            sp_nh_private(nh_private, "setpoint_raw"), // nodehandle modified by Peixuan Shu
             m_uas(uas) // added by Peixuan Shu
         {
             bool tf_listen;

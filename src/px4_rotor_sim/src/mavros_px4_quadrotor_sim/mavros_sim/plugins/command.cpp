@@ -83,9 +83,9 @@ public:
 class CommandPlugin
 {
 public:
-	CommandPlugin(const std::shared_ptr<UAS> &uas) :
-		cmd_nh("mavros/cmd"),   // nodehandle modified by Peixuan Shu
-		cmd_nh_private("~cmd"),   // nodehandle added by Peixuan Shu
+	CommandPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+		cmd_nh(nh, "mavros/cmd"),   // nodehandle modified by Peixuan Shu
+		cmd_nh_private(nh_private, "cmd"),   // nodehandle added by Peixuan Shu
 		use_comp_id_system_control(false),
 		m_uas(uas) // added by Peixuan Shu
 	{

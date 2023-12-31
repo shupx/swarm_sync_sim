@@ -38,10 +38,13 @@ class ClockUpdater
 
         ros::Publisher update_clock_pub_;
 
+        bool inited_; // if ClockUpdater is inited
+
+        /* Init sim clock updater */
         void init();
     
     public:
-        ClockUpdater();
+        ClockUpdater(const ros::NodeHandle &nh);
         ~ClockUpdater();
 
         /* Publish new time request */

@@ -29,15 +29,13 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     uas_->set_timesync_mode(UAS::timesync_mode::PASSTHROUGH); // PASSTHROUGH: pass mavlink message time rather than ROS time into ROS message timestamp header
     // timesync_mode will be overwritten by the parameter "time/timesync_mode" in px4_config.yaml (default MAVLINK) if sys_time.cpp plugin is loaded!
 
-    //@TODO use parent nodehandle
-
     /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
-    setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>(uas_);
-    local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_);
-    imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_);
-    sys_status_plugin_ = std::make_unique<std_plugins::SystemStatusPlugin>(uas_);
-    command_plugin_ = std::make_unique<std_plugins::CommandPlugin>(uas_);
-    global_position_plugin_ = std::make_unique<std_plugins::GlobalPositionPlugin>(uas_);
+    setpoint_raw_plugin_ = std::make_unique<std_plugins::SetpointRawPlugin>(uas_, nh_, nh_private_);
+    local_position_plugin_ = std::make_unique<std_plugins::LocalPositionPlugin>(uas_, nh_, nh_private_);
+    imu_plugin_ = std::make_unique<std_plugins::IMUPlugin>(uas_, nh_, nh_private_);
+    sys_status_plugin_ = std::make_unique<std_plugins::SystemStatusPlugin>(uas_, nh_, nh_private_);
+    command_plugin_ = std::make_unique<std_plugins::CommandPlugin>(uas_, nh_, nh_private_);
+    global_position_plugin_ = std::make_unique<std_plugins::GlobalPositionPlugin>(uas_, nh_, nh_private_);
 
 }
 

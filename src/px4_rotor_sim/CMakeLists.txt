@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   mavros_msgs
   eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
   sss_sim_env # for sss_utils
+  nodelet # for mavros_px4_quadrotor_sim_node.cpp nodelet
 )
 
 #uncomment the following 4 lines to use the Eigen library
@@ -157,11 +158,14 @@ target_link_libraries(drone_visualizer
 )
 
 
-add_executable(mavros_px4_quadrotor_sim_node
-                  src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
+# add_executable(mavros_px4_quadrotor_sim_node
+#                   src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
+
+add_library(mavros_px4_quadrotor_sim_nodelet
+            src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
 
 # link libraries for this lib
-target_link_libraries(mavros_px4_quadrotor_sim_node
+target_link_libraries(mavros_px4_quadrotor_sim_nodelet
    ${catkin_LIBRARIES}
    quadrotor_dynamics
    px4_sitl

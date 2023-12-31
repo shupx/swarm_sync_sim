@@ -34,16 +34,17 @@ namespace sss_utils
  * When the Timer (and all copies of it) returned goes out of scope, the timer will automatically
  * be stopped, and the callback will no longer be called.
  *
+ * \param nh Nodehandle of the timer
  * \param period The period at which to call the callback
  * \param callback The function to call
  * \param oneshot If true, this timer will only fire once
  * \param autostart If true (default), return timer that is already started
  */
-Timer createTimer(Duration period, const TimerCallback& callback, bool oneshot = false,
+Timer createTimer(const ros::NodeHandle &nh, Duration period, const TimerCallback& callback, bool oneshot = false,
                 bool autostart = true)
 {
     //@TODO specify nodehandle
-    Timer sss_timer(period, callback, oneshot, autostart);
+    Timer sss_timer(nh, period, callback, oneshot, autostart);
     return sss_timer;
 }
 
@@ -54,16 +55,17 @@ Timer createTimer(Duration period, const TimerCallback& callback, bool oneshot =
  * When the Timer (and all copies of it) returned goes out of scope, the timer will automatically
  * be stopped, and the callback will no longer be called.
  *
+ * \param nh Nodehandle of the timer
  * \param r The rate at which to call the callback
- * \param callback The method to call
- * \param obj The object to call the method on
+ * \param h The method to call
+ * \param o The object to call the method on
  * \param oneshot If true, this timer will only fire once
  * \param autostart If true (default), return timer that is already started
  */
 template<class Handler, class Obj>
-Timer createTimer(Rate r, Handler h, Obj o, bool oneshot = false, bool autostart = true)
+Timer createTimer(ros::NodeHandle nh, Rate r, Handler h, Obj o, bool oneshot = false, bool autostart = true)
 {
-    return createTimer(r.expectedCycleTime(), h, o, oneshot, autostart);
+    return createTimer(nh, r.expectedCycleTime(), h, o, oneshot, autostart);
 }
 
 /**
@@ -73,6 +75,7 @@ Timer createTimer(Rate r, Handler h, Obj o, bool oneshot = false, bool autostart
  * When the Timer (and all copies of it) returned goes out of scope, the timer will automatically
  * be stopped, and the callback will no longer be called.
  *
+ * \param nh Nodehandle of the timer
  * \param period The period at which to call the callback
  * \param callback The method to call
  * \param obj The object to call the method on
@@ -80,10 +83,10 @@ Timer createTimer(Rate r, Handler h, Obj o, bool oneshot = false, bool autostart
  * \param autostart If true (default), return timer that is already started
  */
 template<class T>
-Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&) const, T* obj, 
+Timer createTimer(ros::NodeHandle nh, Duration period, void(T::*callback)(const TimerEvent&) const, T* obj, 
                 bool oneshot = false, bool autostart = true)
 {
-    return createTimer(period, boost::bind(callback, obj, boost::placeholders::_1), oneshot, autostart);
+    return createTimer(nh, period, boost::bind(callback, obj, boost::placeholders::_1), oneshot, autostart);
 }
 
 /**
@@ -93,6 +96,7 @@ Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&) const, 
  * When the Timer (and all copies of it) returned goes out of scope, the timer will automatically
  * be stopped, and the callback will no longer be called.
  *
+ * \param nh Nodehandle of the timer
  * \param period The period at which to call the callback
  * \param callback The method to call
  * \param obj The object to call the method on
@@ -100,10 +104,10 @@ Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&) const, 
  * \param autostart If true (default), return timer that is already started
  */
 template<class T>
-Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&), T* obj, 
+Timer createTimer(ros::NodeHandle nh, Duration period, void(T::*callback)(const TimerEvent&), T* obj, 
                 bool oneshot = false, bool autostart = true)
 {
-    return createTimer(period, boost::bind(callback, obj, boost::placeholders::_1), oneshot, autostart);
+    return createTimer(nh, period, boost::bind(callback, obj, boost::placeholders::_1), oneshot, autostart);
 }
 
 /**
@@ -113,6 +117,7 @@ Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&), T* obj
  * When the Timer (and all copies of it) returned goes out of scope, the timer will automatically
  * be stopped, and the callback will no longer be called.
  *
+ * \param nh Nodehandle of the timer
  * \param period The period at which to call the callback
  * \param callback The method to call
  * \param obj The object to call the method on.  Since this is a shared pointer, the object will
@@ -122,10 +127,10 @@ Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&), T* obj
  * \param autostart If true (default), return timer that is already started
  */
 template<class T>
-Timer createTimer(Duration period, void(T::*callback)(const TimerEvent&), 
+Timer createTimer(ros::NodeHandle nh, Duration period, void(T::*callback)(const TimerEvent&), 
         const boost::shared_ptr<T>& obj, bool oneshot = false, bool autostart = true)
 {
-    return createTimer(period, boost::bind(callback, obj.get(), boost::placeholders::_1), oneshot, autostart);
+    return createTimer(nh, period, boost::bind(callback, obj.get(), boost::placeholders::_1), oneshot, autostart);
 }
 
 }

@@ -53,8 +53,8 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     mavros_local_pose_sub_ = nh_.subscribe("mavros/local_position/pose", 1, &Visualizer::cb_mavros_local_pose, this);
     mavros_global_pose_sub_ = nh_.subscribe("mavros/global_position/global", 1, &Visualizer::cb_mavros_global_pose, this);
 
-    joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1);
-    path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1);
+    joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1, true);
+    path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
 
     quat_.w = 1.0;
     quat_.x = 0.0;

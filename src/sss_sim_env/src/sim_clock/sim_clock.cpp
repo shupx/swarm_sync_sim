@@ -33,9 +33,12 @@ public:
         // ros::NodeHandle nh = getMTNodeHandle();
         // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
+        ROS_INFO("SimClock Inited0");
+
         time_server = std::make_unique<TimeServer>(nh, nh_private);
 
-        // NODELET_DEBUG("My debug statement")
+        ROS_INFO("SimClock Inited");
+        // NODELET_DEBUG("My debug statement");
         // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)
         // NODELET_DEBUG_COND( 1 == 1, "my debug_statement")
         // NODELET_DEBUG_STREAM_COND( 1 == 1, "my debug statement " << (double) 1.0)

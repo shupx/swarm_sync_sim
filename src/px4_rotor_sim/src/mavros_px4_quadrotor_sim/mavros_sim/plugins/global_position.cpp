@@ -77,10 +77,10 @@ class GlobalPositionPlugin
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	GlobalPositionPlugin(const std::shared_ptr<UAS> &uas) :
-		gp_nh("mavros/global_position"), // nodehandle modified by Peixuan Shu
-		gp_nh_private("~global_position"),   // nodehandle added by Peixuan Shu
-		hp_nh("mavros/home_position"), // nodehandle modified by Peixuan Shu
+	GlobalPositionPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+		gp_nh(nh, "mavros/global_position"), // nodehandle modified by Peixuan Shu
+		gp_nh_private(nh_private, "global_position"),   // nodehandle added by Peixuan Shu
+		hp_nh(nh, "mavros/home_position"), // nodehandle modified by Peixuan Shu
 		tf_send(false),
 		use_relative_alt(true),
 		is_map_init(false),

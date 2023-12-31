@@ -14,23 +14,55 @@
  * 
  */
 
-
+#include <nodelet/nodelet.h>
 #include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
-using namespace MavrosQuadSimulator;
+// using namespace MavrosQuadSimulator;
 
-int main(int argc, char **argv)
+// int main(int argc, char **argv)
+// {
+//     ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
+//     ros::NodeHandle nh;
+//     ros::NodeHandle nh_private("~");
+
+//     //Use unique_ptr to auto-destory the object when exiting.
+//     std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
+
+//     ros::spin();
+//     return 0;
+// }
+
+
+namespace MavrosQuadSimulator
 {
-    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
-    ros::NodeHandle nh;
-    ros::NodeHandle nh_private("~");
+class SimAgent :public nodelet::Nodelet
+{
+public:
+    SimAgent(){}
+public:
+    void onInit()
+    {
+        ros::NodeHandle nh = getNodeHandle(); // get the seperate nodehandle of this node
+        ros::NodeHandle nh_private = getPrivateNodeHandle(); // get the seperate private nodehandle of this node
+        // ros::NodeHandle nh = getMTNodeHandle();
+        // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
-    //Use unique_ptr to auto-destory the object when exiting.
-    std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
+        agent_ = std::make_unique<Agent>(nh, nh_private);
 
-    ros::spin();
-    return 0;
+        // NODELET_DEBUG("My debug statement")
+        // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)
+        // NODELET_DEBUG_COND( 1 == 1, "my debug_statement")
+        // NODELET_DEBUG_STREAM_COND( 1 == 1, "my debug statement " << (double) 1.0)
+    }
+private:
+    std::unique_ptr<Agent> agent_;
+};
 }
+
+#include <pluginlib/class_list_macros.h>
+PLUGINLIB_EXPORT_CLASS(MavrosQuadSimulator::SimAgent, nodelet::Nodelet);
+
+
 
 namespace MavrosQuadSimulator
 {
@@ -70,7 +102,7 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     mainloop_period_ = 0.01; // should be multiples of the dynamics_->getSimStep()
     float times = mainloop_period_ / dynamics_->getSimStep();
     ROS_ASSERT_MSG(times >= 1 && times == int(times), "[MavrosQuadSimulator::Agent] mainloop_period_ should be multiples of dynamic sim step!");
-    mainloop_timer_ = sss_utils::createTimer(ros::Duration(mainloop_period_), &Agent::mainloop, this);
+    mainloop_timer_ = sss_utils::createTimer(nh_, ros::Duration(mainloop_period_), &Agent::mainloop, this);
 }
 
 void Agent::mainloop(const ros::TimerEvent &event)
