@@ -18,6 +18,7 @@
 #define __CLOCK_UPDATER__
 #include <ros/ros.h>
 #include <rosgraph_msgs/Clock.h>
+#include <std_msgs/Bool.h>
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
@@ -31,6 +32,7 @@ class ClockUpdater
 
         ros::NodeHandle nh_;
 
+        ros::Subscriber simclock_online_sub_;
         ros::ServiceClient register_client_;
         ros::ServiceClient unregister_client_;
 
@@ -47,8 +49,11 @@ class ClockUpdater
         ClockUpdater(const ros::NodeHandle &nh);
         ~ClockUpdater();
 
+        /* Register when sim clock is online */
+        void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
+
         /* Publish new time request */
-        void request_clock_update(ros::Time new_time);
+        bool request_clock_update(ros::Time new_time);
 
         /* unregister from time server. Stop time request in the future */
         bool unregister();

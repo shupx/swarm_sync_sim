@@ -36,6 +36,7 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     is_paused_ = !auto_start_;
 
     sim_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/clock", 10);
+    online_pub_ = nh_.advertise<std_msgs::Bool>("/sss_clock_is_online", 10, true); // latched
     clock_control_service_ = nh_.advertiseService("/sss_clock_control", &TimeServer::cb_clock_control, this);
     timeclient_register_service_ = nh_.advertiseService("/sss_timeclient_register",  &TimeServer::cb_timeclient_register, this);
     timeclient_unregister_service_ = nh_.advertiseService("/sss_timeclient_unregister",  &TimeServer::cb_timeclient_unregister, this);
@@ -53,6 +54,11 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
 
     ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
+
+    /* Publish true to /sss_clock_is_online */
+    std_msgs::Bool::Ptr msg(new std_msgs::Bool);
+    msg->data = true;
+    online_pub_.publish(msg);
 }
 
 void TimeServer::cb_speed_regulator_timer(const ros::WallTimerEvent &event)

@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 // #include <std_msgs/Time.h>
 #include <rosgraph_msgs/Clock.h>
+#include <std_msgs/Bool.h>
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 #include "sss_sim_env/SimClockControl.h"
@@ -36,6 +37,7 @@ class TimeServer
         ros::NodeHandle nh_private_;
 
         ros::Publisher sim_clock_pub_;
+        ros::Publisher online_pub_;
         ros::ServiceServer clock_control_service_;
         ros::ServiceServer timeclient_register_service_;
         ros::ServiceServer timeclient_unregister_service_;

@@ -122,11 +122,13 @@ void Timer::Impl::start()
         {
             clock_updater_ = std::make_shared<ClockUpdater>(nh_);
 
-            /* request the first clock update to start the first loop */
-            // @TODO: repeat request clock update if sim_clock has not received it ?
-            ros::Time start_time = ros::Time::now();
-            ros::WallDuration(0.5).sleep();
-            clock_updater_->request_clock_update(start_time + period_);
+            simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
+
+            // /* request the first clock update to start the first loop */
+            // // @TODO: repeat request clock update if sim_clock has not received it ?
+            // ros::Time start_time = ros::Time::now();
+            // ros::WallDuration(0.5).sleep();
+            // clock_updater_->request_clock_update(start_time + period_);
 
             // while (ros::Time::now() < start_time + period_)
             // {
@@ -142,6 +144,23 @@ void Timer::Impl::start()
         timer_.start();
     }
     started_ = true;
+}
+
+/* Publish the first loop time request when sim clock is online */
+void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
+{
+    if (msg->data == true)
+    {
+        /* request the first clock update to start the first loop */
+        // @TODO: repeat request clock update if sim_clock has not received it ?
+        ros::Time start_time = ros::Time::now();
+        ros::WallDuration(0.5).sleep();
+        while(!clock_updater_->request_clock_update(start_time + period_))  // block until publishing successfully
+        {
+            ros::WallDuration(0.5).sleep();
+            ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
+        }
+    }
 }
 
 void Timer::Impl::stop()

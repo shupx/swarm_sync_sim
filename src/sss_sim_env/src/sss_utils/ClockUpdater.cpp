@@ -26,9 +26,11 @@ ClockUpdater::ClockUpdater(const ros::NodeHandle &nh)
     nh_.param<bool>("/use_sim_time", use_sim_time, false);
 
     if (use_sim_time){
-        ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for service /sss_timeclient_register");
-        init();
-        inited_ = true;
+        // ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for sim_clock online.");
+        simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &ClockUpdater::cb_simclock_online, this);
+        register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
+        unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
+        // init();
     }
     else{
         ROS_INFO("[ClockUpdater] use_sim_time == false. Skip!");
@@ -41,12 +43,30 @@ ClockUpdater::~ClockUpdater()
     unregister();
 }
 
+/* Register when sim clock is online */
+void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
+{
+    if (msg->data == true)
+    {
+        sss_sim_env::ClientRegister srv;
+        while(!register_client_.call(srv))  // block until registered successfully
+        {
+            ros::WallDuration(0.5).sleep();
+            ROS_INFO("[ClockUpdater] Waiting for service /sss_timeclient_register...");
+        }
+
+        time_client_id_ = srv.response.client_id;
+        ROS_INFO("[ClockUpdater] register to /sss_timeclient_register with response id = %s", std::to_string(time_client_id_).c_str());
+        
+        update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10);
+
+        inited_ = true;
+    }
+}
+
 /* Init sim clock updater */
 void ClockUpdater::init()
 {
-    register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
-    unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
-
     /* register a time client */
     //@TODO do not block the thread!
     sss_sim_env::ClientRegister srv;
@@ -63,7 +83,7 @@ void ClockUpdater::init()
 }
 
 /* Publish new time request */
-void ClockUpdater::request_clock_update(ros::Time new_time)
+bool ClockUpdater::request_clock_update(ros::Time new_time)
 {
     if (use_sim_time){
         if (inited_)
@@ -72,12 +92,15 @@ void ClockUpdater::request_clock_update(ros::Time new_time)
             msg->clock = new_time;
             update_clock_pub_.publish(msg);
             // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
+            return true;
         }
         else
         {
             ROS_ERROR("[ClockUpdater%s] Not inited.", std::to_string(time_client_id_).c_str());
+            return false;
         }
     }
+    return true;
 }
 
 /* unregister from time server. Stop time request in the future */

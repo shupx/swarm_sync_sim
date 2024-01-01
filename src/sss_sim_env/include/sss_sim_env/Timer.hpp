@@ -17,6 +17,7 @@
 #ifndef __SSSTIMER__
 #define __SSSTIMER__
 #include <ros/ros.h>
+#include <std_msgs/Bool.h>
 #include <boost/thread.hpp>
 #include "sss_sim_env/ClockUpdater.hpp"
 
@@ -61,6 +62,7 @@ class Timer
             bool use_sim_time_;
             ros::NodeHandle nh_;
             ros::Timer timer_;
+            ros::Subscriber simclock_online_sub_;
 
             std::shared_ptr<ClockUpdater> clock_updater_;
 
@@ -76,6 +78,8 @@ class Timer
              */
             void sim_timer_callback(const ros::TimerEvent &event);
 
+            /* Publish the first loop time request when sim clock is online */
+            void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
 
             bool kill_thread_;
             boost::thread accelerate_timer_thread_;
