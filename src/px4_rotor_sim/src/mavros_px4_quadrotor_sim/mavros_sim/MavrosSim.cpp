@@ -37,6 +37,7 @@ MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_privat
     command_plugin_ = std::make_unique<std_plugins::CommandPlugin>(uas_, nh_, nh_private_);
     global_position_plugin_ = std::make_unique<std_plugins::GlobalPositionPlugin>(uas_, nh_, nh_private_);
 
+    // std::cout << "nh_: " << nh_.getNamespace() << "  nh_private_: " << nh_private_.getNamespace() << std::endl;
 }
 
 /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */

@@ -196,7 +196,7 @@ TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::No
 
 void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
 {
-    // ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
+    ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
 
     ros::Time new_request_time = msg->clock;
     if (new_request_time > request_time)

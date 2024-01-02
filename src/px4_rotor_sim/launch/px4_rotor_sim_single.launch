@@ -9,7 +9,7 @@
 
     <!-- Same arguments for each vehicle that needs set -->
 
-    <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
+    <arg name="use_sim_time" default="false"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
     <arg name="local_pos_source" default="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
@@ -21,8 +21,8 @@
     <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     
 
-<!-- <arg name="use_nodelet_manager" value="$(arg use_sim_time)"/> -->
-<arg name="use_nodelet_manager" value="false"/>
+<arg name="use_nodelet_manager" value="$(arg use_sim_time)"/>
+<!-- <arg name="use_nodelet_manager" value="false"/> -->
 <param name="/use_sim_time" value="$(arg use_sim_time)"/>
 
 <group ns="$(arg namespace)">
