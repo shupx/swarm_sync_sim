@@ -35,7 +35,7 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
         { ROS_ERROR("[TimeServer] Invalid max_speed_ratio. It shoule be positive!");}
     is_paused_ = !auto_start_;
 
-    sim_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/clock", 10);
+    sim_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/clock", 10, true); // latched
     online_pub_ = nh_.advertise<std_msgs::Bool>("/sss_clock_is_online", 10, true); // latched
     clock_control_service_ = nh_.advertiseService("/sss_clock_control", &TimeServer::cb_clock_control, this);
     timeclient_register_service_ = nh_.advertiseService("/sss_timeclient_register",  &TimeServer::cb_timeclient_register, this);
@@ -151,9 +151,9 @@ void TimeServer::try_update_clock()
     {
         if (clients_vector_[i]->has_new_request == false){
             all_client_has_new_request = false;
+            break;
 
             // ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because clients_vector_[%s] has no new request", std::to_string(i).c_str());
-            break;
         }
         else{
             if (min_time_request == ros::Time(0.0) || clients_vector_[i]->request_time < min_time_request){

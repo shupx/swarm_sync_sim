@@ -33,8 +33,6 @@ public:
         // ros::NodeHandle nh = getMTNodeHandle();
         // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
-        ROS_INFO("SimClock Inited0");
-
         time_server = std::make_unique<TimeServer>(nh, nh_private);
 
         ROS_INFO("SimClock Inited");

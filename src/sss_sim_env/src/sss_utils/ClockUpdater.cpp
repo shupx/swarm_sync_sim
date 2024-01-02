@@ -58,28 +58,10 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
         time_client_id_ = srv.response.client_id;
         ROS_INFO("[ClockUpdater] register to /sss_timeclient_register with response id = %s", std::to_string(time_client_id_).c_str());
         
-        update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10);
+        update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10, true); //latched
 
         inited_ = true;
     }
-}
-
-/* Init sim clock updater */
-void ClockUpdater::init()
-{
-    /* register a time client */
-    //@TODO do not block the thread!
-    sss_sim_env::ClientRegister srv;
-    while(!register_client_.call(srv))  // block until registered successfully
-    {
-        ros::WallDuration(0.5).sleep();
-        ROS_INFO("[ClockUpdater] Waiting for service /sss_timeclient_register...");
-    }
-
-    time_client_id_ = srv.response.client_id;
-    ROS_INFO("[ClockUpdater] register to /sss_timeclient_register with response id = %s", std::to_string(time_client_id_).c_str());
-
-    update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10);
 }
 
 /* Publish new time request */

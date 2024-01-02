@@ -22,7 +22,7 @@ namespace sss_utils
 {
 
 Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false)
+    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false), inited_(false)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
@@ -97,21 +97,25 @@ void Timer::Impl::AccelerateTimerThreadFunc()
 /* callback_ + clock update in every loop */
 void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
 {
-    // record the last loop real time
-    static double last_time = 0.0;
+    if (inited_)
+    {
+        // record the last loop real time
+        static double last_time = 0.0;
 
-    /* call the main callback function */
-    callback_(event);
+        /* call the main callback function */
+        callback_(event);
 
-    /* request /clock to update for the next period*/
-    // TODO: repeat requesting in case of lose?
-    clock_updater_->request_clock_update(event.current_expected + period_);
+        /* request /clock to update for the next period*/
+        // TODO: repeat requesting in case of lose?
+        clock_updater_->request_clock_update(event.current_expected + period_);
 
-    // print the real loop rate
-    double time_now = ros::WallTime::now().toSec();
-    double rate = 1.0 / (time_now - last_time);
-    last_time = time_now;
-    // ROS_INFO("[sss_utils::Timer] timer_callback rate: %s Hz", std::to_string(rate).c_str());    
+        // print the real loop rate
+        double time_now = ros::WallTime::now().toSec();
+        double rate = 1.0 / (time_now - last_time);
+        last_time = time_now;
+        // ROS_INFO("[sss_utils::Timer] timer_callback rate: %s Hz", std::to_string(rate).c_str()); 
+    }
+   
 }
 
 void Timer::Impl::start()
@@ -123,18 +127,6 @@ void Timer::Impl::start()
             clock_updater_ = std::make_shared<ClockUpdater>(nh_);
 
             simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
-
-            // /* request the first clock update to start the first loop */
-            // // @TODO: repeat request clock update if sim_clock has not received it ?
-            // ros::Time start_time = ros::Time::now();
-            // ros::WallDuration(0.5).sleep();
-            // clock_updater_->request_clock_update(start_time + period_);
-
-            // while (ros::Time::now() < start_time + period_)
-            // {
-            //     clock_updater_->request_clock_update(start_time + period_);
-            //     ros::WallDuration(0.5).sleep();
-            // }
 
             /* Launch a new thread to check /clock and update timer faster */
             kill_thread_ = false;
@@ -152,14 +144,14 @@ void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
     if (msg->data == true)
     {
         /* request the first clock update to start the first loop */
-        // @TODO: repeat request clock update if sim_clock has not received it ?
-        ros::Time start_time = ros::Time::now();
-        ros::WallDuration(0.5).sleep();
-        while(!clock_updater_->request_clock_update(start_time + period_))  // block until publishing successfully
+        while(!clock_updater_->request_clock_update(ros::Time::now() + period_)) 
         {
-            ros::WallDuration(0.5).sleep();
+            // block until publishing successfully
+            ros::WallDuration(0.2).sleep();
             ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
         }
+        inited_ = true;
+        // ROS_INFO("[sss_timer] inited_ = true");
     }
 }
 
@@ -178,6 +170,5 @@ void Timer::Impl::stop()
     }
     started_ = false;
 }
-
 
 }

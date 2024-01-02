@@ -58,7 +58,7 @@ target_link_libraries(sim_clock
                    )
 
 add_dependencies(sim_clock 
-                      ${sss_sim_env_EXPORTED_TARGETS} 
+                      ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                       ${catkin_EXPORTED_TARGETS} )
 
 
@@ -71,7 +71,7 @@ add_library(ClockUpdater
           )
 
 add_dependencies(ClockUpdater 
-                       ${sss_sim_env_EXPORTED_TARGETS} 
+                       ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                        ${catkin_EXPORTED_TARGETS} )
 
 # add ClockUpdater.hpp header path for which use this lib
@@ -82,7 +82,7 @@ add_library(sss_timer
           )
 
 add_dependencies(sss_timer 
-                       ${sss_sim_env_EXPORTED_TARGETS} 
+                       ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                        ${catkin_EXPORTED_TARGETS} )
 
 target_link_libraries(sss_timer

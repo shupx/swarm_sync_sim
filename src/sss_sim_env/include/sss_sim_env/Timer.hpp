@@ -73,6 +73,8 @@ class Timer
 
             bool started_;
 
+            bool inited_;
+
             /**
              * \brief callback_ + clock update in every loop 
              */

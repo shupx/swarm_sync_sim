@@ -42,15 +42,14 @@ class ClockUpdater
 
         bool inited_; // if ClockUpdater is inited
 
-        /* Init sim clock updater */
-        void init();
-    
+        /* Register when sim clock is online */
+        void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
+        
     public:
         ClockUpdater(const ros::NodeHandle &nh);
         ~ClockUpdater();
 
-        /* Register when sim clock is online */
-        void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
+
 
         /* Publish new time request */
         bool request_clock_update(ros::Time new_time);
