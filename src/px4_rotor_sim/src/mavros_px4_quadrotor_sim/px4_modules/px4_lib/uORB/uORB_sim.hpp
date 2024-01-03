@@ -92,7 +92,7 @@ template<typename T>
 class Subscription
 {
     public:
-        Subscription(T& uorb_msg): global_uorb_msg_(&uorb_msg) 
+        Subscription(const T& uorb_msg): global_uorb_msg_(&uorb_msg) 
         {
             last_uorb_msg_ = uorb_msg;
         }
@@ -150,7 +150,7 @@ class Subscription
         }
 
     private:
-        T* global_uorb_msg_; // the pointer of the global uorb message in this file
+        const T *global_uorb_msg_; // the pointer of the global uorb message in this file
         T last_uorb_msg_; // to decide whether data updates
 };
 

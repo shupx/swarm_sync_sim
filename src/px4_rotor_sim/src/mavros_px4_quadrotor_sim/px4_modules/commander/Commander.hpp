@@ -438,7 +438,7 @@ private:
 	uORB_sim::Subscription<vehicle_angular_velocity_s> _vehicle_angular_velocity_sub{ORB_ID(vehicle_angular_velocity)};
 	uORB_sim::Subscription<vehicle_attitude_s> _vehicle_attitude_sub{ORB_ID(vehicle_attitude)};
 	uORB_sim::Subscription<vehicle_command_s> _vehicle_command_sub{ORB_ID(vehicle_command)};
-	uORB_sim::Subscription<vehicle_gps_position_s>					_vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
+	uORB_sim::Subscription<vehicle_gps_position_s> _vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
 	// uORB_sim::Subscription					_vtol_vehicle_status_sub{ORB_ID(vtol_vehicle_status)};
 	// uORB_sim::Subscription					_wind_sub{ORB_ID(wind)};
 
