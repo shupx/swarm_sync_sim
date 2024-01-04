@@ -54,7 +54,8 @@
 
 using namespace matrix;
 
-MulticopterPositionControl::MulticopterPositionControl(bool vtol) :
+template <int N>  /* seperate static messages for UAV N */
+MulticopterPositionControl<N>::MulticopterPositionControl(bool vtol) :
 	// SuperBlock(nullptr, "MPC"),
 	ModuleParams(nullptr)/*,
 	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
@@ -70,12 +71,14 @@ MulticopterPositionControl::MulticopterPositionControl(bool vtol) :
 	_takeoff_status_pub.advertise();
 }
 
-MulticopterPositionControl::~MulticopterPositionControl()
+template <int N>  /* seperate static messages for UAV N */
+MulticopterPositionControl<N>::~MulticopterPositionControl()
 {
 	// perf_free(_cycle_perf);
 }
 
-bool MulticopterPositionControl::init()
+template <int N>  /* seperate static messages for UAV N */
+bool MulticopterPositionControl<N>::init()
 {
 	// if (!_local_pos_sub.registerCallback()) {
 	// 	PX4_ERR("callback registration failed");
@@ -88,7 +91,8 @@ bool MulticopterPositionControl::init()
 	return true;
 }
 
-void MulticopterPositionControl::parameters_update(bool force)
+template <int N>  /* seperate static messages for UAV N */
+void MulticopterPositionControl<N>::parameters_update(bool force)
 {
 	// check for parameter updates
 	// if (_parameter_update_sub.updated() || force) {
@@ -255,7 +259,8 @@ void MulticopterPositionControl::parameters_update(bool force)
 	}
 }
 
-PositionControlStates MulticopterPositionControl::set_vehicle_states(const vehicle_local_position_s &local_pos)
+template <int N>  /* seperate static messages for UAV N */
+PositionControlStates MulticopterPositionControl<N>::set_vehicle_states(const vehicle_local_position_s &local_pos)
 {
 	PositionControlStates states;
 
@@ -310,7 +315,8 @@ PositionControlStates MulticopterPositionControl::set_vehicle_states(const vehic
 	return states;
 }
 
-void MulticopterPositionControl::Run()
+template <int N>  /* seperate static messages for UAV N */
+void MulticopterPositionControl<N>::Run()
 {
 	// if (should_exit()) {
 	// 	_local_pos_sub.unregisterCallback();
@@ -573,7 +579,8 @@ void MulticopterPositionControl::Run()
 	// perf_end(_cycle_perf);
 }
 
-void MulticopterPositionControl::failsafe(const hrt_abstime &now, vehicle_local_position_setpoint_s &setpoint,
+template <int N>  /* seperate static messages for UAV N */
+void MulticopterPositionControl<N>::failsafe(const hrt_abstime &now, vehicle_local_position_setpoint_s &setpoint,
 		const PositionControlStates &states, bool warn)
 {
 	// Only react after a short delay
@@ -620,7 +627,8 @@ void MulticopterPositionControl::failsafe(const hrt_abstime &now, vehicle_local_
 	}
 }
 
-void MulticopterPositionControl::reset_setpoint_to_nan(vehicle_local_position_setpoint_s &setpoint)
+template <int N>  /* seperate static messages for UAV N */
+void MulticopterPositionControl<N>::reset_setpoint_to_nan(vehicle_local_position_setpoint_s &setpoint)
 {
 	setpoint.x = setpoint.y = setpoint.z = NAN;
 	setpoint.vx = setpoint.vy = setpoint.vz = NAN;
@@ -697,3 +705,41 @@ extern "C" __EXPORT int mc_pos_control_main(int argc, char *argv[])
 	return MulticopterPositionControl::main(argc, argv);
 }
  */
+
+template class MulticopterPositionControl<1>; template class MulticopterPositionControl<2>; template class MulticopterPositionControl<3>; template class MulticopterPositionControl<4>; template class MulticopterPositionControl<5>; template class MulticopterPositionControl<6>; template class MulticopterPositionControl<7>; template class MulticopterPositionControl<8>; template class MulticopterPositionControl<9>; template class MulticopterPositionControl<10>; 
+template class MulticopterPositionControl<11>; template class MulticopterPositionControl<12>; template class MulticopterPositionControl<13>; template class MulticopterPositionControl<14>; template class MulticopterPositionControl<15>; template class MulticopterPositionControl<16>; template class MulticopterPositionControl<17>; template class MulticopterPositionControl<18>; template class MulticopterPositionControl<19>; template class MulticopterPositionControl<20>; 
+template class MulticopterPositionControl<21>; template class MulticopterPositionControl<22>; template class MulticopterPositionControl<23>; template class MulticopterPositionControl<24>; template class MulticopterPositionControl<25>; template class MulticopterPositionControl<26>; template class MulticopterPositionControl<27>; template class MulticopterPositionControl<28>; template class MulticopterPositionControl<29>; template class MulticopterPositionControl<30>; 
+template class MulticopterPositionControl<31>; template class MulticopterPositionControl<32>; template class MulticopterPositionControl<33>; template class MulticopterPositionControl<34>; template class MulticopterPositionControl<35>; template class MulticopterPositionControl<36>; template class MulticopterPositionControl<37>; template class MulticopterPositionControl<38>; template class MulticopterPositionControl<39>; template class MulticopterPositionControl<40>; 
+template class MulticopterPositionControl<41>; template class MulticopterPositionControl<42>; template class MulticopterPositionControl<43>; template class MulticopterPositionControl<44>; template class MulticopterPositionControl<45>; template class MulticopterPositionControl<46>; template class MulticopterPositionControl<47>; template class MulticopterPositionControl<48>; template class MulticopterPositionControl<49>; template class MulticopterPositionControl<50>; 
+template class MulticopterPositionControl<51>; template class MulticopterPositionControl<52>; template class MulticopterPositionControl<53>; template class MulticopterPositionControl<54>; template class MulticopterPositionControl<55>; template class MulticopterPositionControl<56>; template class MulticopterPositionControl<57>; template class MulticopterPositionControl<58>; template class MulticopterPositionControl<59>; template class MulticopterPositionControl<60>; 
+template class MulticopterPositionControl<61>; template class MulticopterPositionControl<62>; template class MulticopterPositionControl<63>; template class MulticopterPositionControl<64>; template class MulticopterPositionControl<65>; template class MulticopterPositionControl<66>; template class MulticopterPositionControl<67>; template class MulticopterPositionControl<68>; template class MulticopterPositionControl<69>; template class MulticopterPositionControl<70>; 
+template class MulticopterPositionControl<71>; template class MulticopterPositionControl<72>; template class MulticopterPositionControl<73>; template class MulticopterPositionControl<74>; template class MulticopterPositionControl<75>; template class MulticopterPositionControl<76>; template class MulticopterPositionControl<77>; template class MulticopterPositionControl<78>; template class MulticopterPositionControl<79>; template class MulticopterPositionControl<80>; 
+template class MulticopterPositionControl<81>; template class MulticopterPositionControl<82>; template class MulticopterPositionControl<83>; template class MulticopterPositionControl<84>; template class MulticopterPositionControl<85>; template class MulticopterPositionControl<86>; template class MulticopterPositionControl<87>; template class MulticopterPositionControl<88>; template class MulticopterPositionControl<89>; template class MulticopterPositionControl<90>; 
+template class MulticopterPositionControl<91>; template class MulticopterPositionControl<92>; template class MulticopterPositionControl<93>; template class MulticopterPositionControl<94>; template class MulticopterPositionControl<95>; template class MulticopterPositionControl<96>; template class MulticopterPositionControl<97>; template class MulticopterPositionControl<98>; template class MulticopterPositionControl<99>; template class MulticopterPositionControl<100>; 
+
+/* The above explicit template instantiation declartions are 
+ * auto-generated by the following python script:
+
+#! /bin/python
+import sys
+# generate explicit template instantiation declartions
+
+def output(s):
+    sys.stdout.write(s)
+
+def main(class_name, count):
+    for i in range(int(count)):
+        num = i+1
+        output("template class {}<{}>; ".format(class_name, num))
+        if num%10 == 0:
+            output("\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("[Error] Please input your class name and count after python xxx.py. For example: python xxx.py class_name 10")
+
+# python generate_template.py class_name 100
+
+*/

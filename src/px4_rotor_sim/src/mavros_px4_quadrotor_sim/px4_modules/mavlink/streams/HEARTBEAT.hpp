@@ -147,6 +147,7 @@ union px4_custom_mode get_px4_custom_mode(uint8_t nav_state)
 #endif //MAVLINK_MESSAGES_H_
 
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkStreamHeartbeat
 {
 private:

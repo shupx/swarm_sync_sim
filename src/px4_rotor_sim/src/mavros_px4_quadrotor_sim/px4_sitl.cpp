@@ -21,7 +21,8 @@
 namespace MavrosQuadSimulator
 {
 
-PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
+template <int N>  /* seperate static messages for UAV N */
+PX4SITL<N>::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
     : nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
@@ -31,18 +32,19 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
     update_init_pos_from_dynamics();
 
     /* Load px4 modules */
-    mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
-    mavlink_streamer_ = std::make_shared<MavlinkStreamer>();
-    commander_ = std::make_shared<Commander>();
-    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
-    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
+    mavlink_receiver_ = std::make_shared<MavlinkReceiver<N> >();
+    mavlink_streamer_ = std::make_shared<MavlinkStreamer<N> >();
+    commander_ = std::make_shared<Commander<N> >();
+    mc_pos_control_ = std::make_shared<MulticopterPositionControl<N> >(false);
+    mc_att_control_ = std::make_shared<MulticopterAttitudeControl<N> >(false);
 
     /* Init px4 modules */
     mc_pos_control_->init();
     mc_att_control_->init();
 }
 
-void PX4SITL::load_px4_params_from_ros_params()
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::load_px4_params_from_ros_params()
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
@@ -78,7 +80,8 @@ void PX4SITL::load_px4_params_from_ros_params()
     }
 }
 
-void PX4SITL::update_init_pos_from_dynamics()
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::update_init_pos_from_dynamics()
 {
     /* load initial position and local_pos_source */
     int source;
@@ -101,7 +104,8 @@ void PX4SITL::update_init_pos_from_dynamics()
     pos_inited_ = true;
 }
 
-void PX4SITL::Run(const uint64_t &time_us)
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::Run(const uint64_t &time_us)
 {
     if (!pos_inited_)
     {
@@ -139,7 +143,8 @@ void PX4SITL::Run(const uint64_t &time_us)
 
 }
 
-void PX4SITL::ReceiveMavlink()
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::ReceiveMavlink()
 {
 	/* Search for mavlink receiving list and handle the updated messages */
 	for (int i=0; i<MAVLINK_RECEIVE_NUM; ++i)
@@ -152,12 +157,14 @@ void PX4SITL::ReceiveMavlink()
 	}
 }
 
-void PX4SITL::StreamMavlink(const uint64_t &time_us)
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::StreamMavlink(const uint64_t &time_us)
 {
     mavlink_streamer_->Stream(time_us);
 }
 
-void PX4SITL::SendControlInput()
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::SendControlInput()
 {
     /* get rate/throttle calculated by the px4 controllers */
     vehicle_rates_setpoint_s vehicle_rates_setpoint_msg {};
@@ -189,7 +196,8 @@ void PX4SITL::SendControlInput()
     uav_dynamics_->setInput(input);
 }
 
-void PX4SITL::DectectLand(const uint64_t &time_us)
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::DectectLand(const uint64_t &time_us)
 {
     /* Land detector module. Update vehicle_land_detected uORB message*/
     // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/land_detector/LandDetector.cpp#L141
@@ -233,8 +241,8 @@ void PX4SITL::DectectLand(const uint64_t &time_us)
     }
 }
 
-
-void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
+template <int N>  /* seperate static messages for UAV N */
+void PX4SITL<N>::UpdateDroneStates(const uint64_t &time_us)
 {
     /* Read true values from uav dynamic models (world ENU, body FLU) */
     Dynamics::State state = uav_dynamics_->getState(); // in world ENU frame
@@ -415,9 +423,9 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     // _odometry_pub.publish(vehicle_odometry_msg);
 }
 
-
+template <int N>  /* seperate static messages for UAV N */
 template <px4::params p>
-void PX4SITL::get_px4_param(float& output)
+void PX4SITL<N>::get_px4_param(float& output)
 {
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
@@ -425,8 +433,9 @@ void PX4SITL::get_px4_param(float& output)
         output = px4::parameters[(int) p].val.f;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 template <px4::params p>
-void PX4SITL::get_px4_param(int32_t& output)
+void PX4SITL<N>::get_px4_param(int32_t& output)
 {
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
@@ -434,8 +443,9 @@ void PX4SITL::get_px4_param(int32_t& output)
         output = px4::parameters[(int) p].val.i;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 template <px4::params p>
-void PX4SITL::get_px4_param(bool& output)
+void PX4SITL<N>::get_px4_param(bool& output)
 {
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
@@ -443,5 +453,43 @@ void PX4SITL::get_px4_param(bool& output)
         output = px4::parameters[(int) p].val.i != 0;
 }
 
+
+template class PX4SITL<1>; template class PX4SITL<2>; template class PX4SITL<3>; template class PX4SITL<4>; template class PX4SITL<5>; template class PX4SITL<6>; template class PX4SITL<7>; template class PX4SITL<8>; template class PX4SITL<9>; template class PX4SITL<10>; 
+template class PX4SITL<11>; template class PX4SITL<12>; template class PX4SITL<13>; template class PX4SITL<14>; template class PX4SITL<15>; template class PX4SITL<16>; template class PX4SITL<17>; template class PX4SITL<18>; template class PX4SITL<19>; template class PX4SITL<20>; 
+template class PX4SITL<21>; template class PX4SITL<22>; template class PX4SITL<23>; template class PX4SITL<24>; template class PX4SITL<25>; template class PX4SITL<26>; template class PX4SITL<27>; template class PX4SITL<28>; template class PX4SITL<29>; template class PX4SITL<30>; 
+template class PX4SITL<31>; template class PX4SITL<32>; template class PX4SITL<33>; template class PX4SITL<34>; template class PX4SITL<35>; template class PX4SITL<36>; template class PX4SITL<37>; template class PX4SITL<38>; template class PX4SITL<39>; template class PX4SITL<40>; 
+template class PX4SITL<41>; template class PX4SITL<42>; template class PX4SITL<43>; template class PX4SITL<44>; template class PX4SITL<45>; template class PX4SITL<46>; template class PX4SITL<47>; template class PX4SITL<48>; template class PX4SITL<49>; template class PX4SITL<50>; 
+template class PX4SITL<51>; template class PX4SITL<52>; template class PX4SITL<53>; template class PX4SITL<54>; template class PX4SITL<55>; template class PX4SITL<56>; template class PX4SITL<57>; template class PX4SITL<58>; template class PX4SITL<59>; template class PX4SITL<60>; 
+template class PX4SITL<61>; template class PX4SITL<62>; template class PX4SITL<63>; template class PX4SITL<64>; template class PX4SITL<65>; template class PX4SITL<66>; template class PX4SITL<67>; template class PX4SITL<68>; template class PX4SITL<69>; template class PX4SITL<70>; 
+template class PX4SITL<71>; template class PX4SITL<72>; template class PX4SITL<73>; template class PX4SITL<74>; template class PX4SITL<75>; template class PX4SITL<76>; template class PX4SITL<77>; template class PX4SITL<78>; template class PX4SITL<79>; template class PX4SITL<80>; 
+template class PX4SITL<81>; template class PX4SITL<82>; template class PX4SITL<83>; template class PX4SITL<84>; template class PX4SITL<85>; template class PX4SITL<86>; template class PX4SITL<87>; template class PX4SITL<88>; template class PX4SITL<89>; template class PX4SITL<90>; 
+template class PX4SITL<91>; template class PX4SITL<92>; template class PX4SITL<93>; template class PX4SITL<94>; template class PX4SITL<95>; template class PX4SITL<96>; template class PX4SITL<97>; template class PX4SITL<98>; template class PX4SITL<99>; template class PX4SITL<100>;
+
+/* The above explicit template instantiation declartions are 
+ * auto-generated by the following python script:
+
+#! /bin/python
+import sys
+# generate explicit template instantiation declartions
+
+def output(s):
+    sys.stdout.write(s)
+
+def main(class_name, count):
+    for i in range(int(count)):
+        num = i+1
+        output("template class {}<{}>; ".format(class_name, num))
+        if num%10 == 0:
+            output("\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("[Error] Please input your class name and count after python xxx.py. For example: python xxx.py class_name 10")
+
+# python generate_template.py class_name 100
+
+*/
 
 }

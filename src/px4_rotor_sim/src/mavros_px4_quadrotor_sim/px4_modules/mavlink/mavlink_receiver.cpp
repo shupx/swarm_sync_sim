@@ -78,7 +78,8 @@
 #define MAVLINK_RECEIVER_NET_ADDED_STACK 0
 #endif
 
-MavlinkReceiver::~MavlinkReceiver()
+template <int N>  /* seperate static messages for UAV N */
+MavlinkReceiver<N>::~MavlinkReceiver()
 {
 // 	delete _tune_publisher;
 // 	delete _px4_accel;
@@ -90,7 +91,8 @@ MavlinkReceiver::~MavlinkReceiver()
 }
 
 // Added by Peixuan Shu
-MavlinkReceiver::MavlinkReceiver() :
+template <int N>  /* seperate static messages for UAV N */
+MavlinkReceiver<N>::MavlinkReceiver() :
 	ModuleParams(nullptr)
 {
 	_handle_sens_flow_maxhgt = param_find("SENS_FLOW_MAXHGT");
@@ -101,8 +103,8 @@ MavlinkReceiver::MavlinkReceiver() :
 	_handle_ekf2_rng_a_hmax = param_find("EKF2_RNG_A_HMAX");
 }
 
-
-MavlinkReceiver::MavlinkReceiver(Mavlink *parent) :
+template <int N>  /* seperate static messages for UAV N */
+MavlinkReceiver<N>::MavlinkReceiver(Mavlink *parent) :
 	ModuleParams(nullptr)/*,
 	_mavlink(parent),
 	_mavlink_ftp(parent),
@@ -138,8 +140,9 @@ MavlinkReceiver::MavlinkReceiver(Mavlink *parent) :
  * \brief handle mavlink messages and publish as uorb messages
  * explained by Peixuan Shu
  */ 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message(mavlink_message_t *msg)
 {
 	switch (msg->msgid) {
 	case MAVLINK_MSG_ID_COMMAND_LONG:
@@ -408,8 +411,9 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 // 	return target_ok;
 // }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_command_long(mavlink_message_t *msg)
 {
 	/* command */
 	mavlink_command_long_t cmd_mavlink;
@@ -455,8 +459,9 @@ MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
 
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_command_int(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_command_int(mavlink_message_t *msg)
 {
 	/* command */
 	mavlink_command_int_t cmd_mavlink;
@@ -799,9 +804,9 @@ MavlinkReceiver::handle_message_command_int(mavlink_message_t *msg)
 	// return (message_sent ? vehicle_command_ack_s::VEHICLE_RESULT_ACCEPTED : vehicle_command_ack_s::VEHICLE_RESULT_DENIED);
 // }
 
-
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_command_ack(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_command_ack(mavlink_message_t *msg)
 {
 	// mavlink_command_ack_t ack;
 	// mavlink_msg_command_ack_decode(msg, &ack);
@@ -829,8 +834,9 @@ MavlinkReceiver::handle_message_command_ack(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_optical_flow_rad(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_optical_flow_rad(mavlink_message_t *msg)
 {
 	// /* optical flow */
 	// mavlink_optical_flow_rad_t flow;
@@ -888,8 +894,9 @@ MavlinkReceiver::handle_message_optical_flow_rad(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_hil_optical_flow(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_hil_optical_flow(mavlink_message_t *msg)
 {
 	// /* optical flow */
 	// mavlink_hil_optical_flow_t flow;
@@ -933,8 +940,9 @@ MavlinkReceiver::handle_message_hil_optical_flow(mavlink_message_t *msg)
 	// _flow_distance_sensor_pub.publish(d);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_mode(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_mode(mavlink_message_t *msg)
 {
 	mavlink_set_mode_t new_mode;
 	mavlink_msg_set_mode_decode(msg, &new_mode);
@@ -962,8 +970,9 @@ MavlinkReceiver::handle_message_set_mode(mavlink_message_t *msg)
 	_cmd_pub.publish(vcmd);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_distance_sensor(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_distance_sensor(mavlink_message_t *msg)
 {
 	// mavlink_distance_sensor_t dist_sensor;
 	// mavlink_msg_distance_sensor_decode(msg, &dist_sensor);
@@ -998,8 +1007,9 @@ MavlinkReceiver::handle_message_distance_sensor(mavlink_message_t *msg)
 	// _distance_sensor_pub.publish(ds);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_att_pos_mocap(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_att_pos_mocap(mavlink_message_t *msg)
 {
 	// mavlink_att_pos_mocap_t mocap;
 	// mavlink_msg_att_pos_mocap_decode(msg, &mocap);
@@ -1037,8 +1047,9 @@ MavlinkReceiver::handle_message_att_pos_mocap(mavlink_message_t *msg)
 	// _mocap_odometry_pub.publish(mocap_odom);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_position_target_local_ned(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_position_target_local_ned(mavlink_message_t *msg)
 {
 	mavlink_set_position_target_local_ned_t target_local_ned;
 	mavlink_msg_set_position_target_local_ned_decode(msg, &target_local_ned);
@@ -1171,8 +1182,9 @@ MavlinkReceiver::handle_message_set_position_target_local_ned(mavlink_message_t 
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_position_target_global_int(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_position_target_global_int(mavlink_message_t *msg)
 {
 	mavlink_set_position_target_global_int_t target_global_int;
 	mavlink_msg_set_position_target_global_int_decode(msg, &target_global_int);
@@ -1297,8 +1309,9 @@ MavlinkReceiver::handle_message_set_position_target_global_int(mavlink_message_t
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_actuator_control_target(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_actuator_control_target(mavlink_message_t *msg)
 {
 // 	// TODO
 // #if defined(ENABLE_LOCKSTEP_SCHEDULER)
@@ -1361,8 +1374,9 @@ MavlinkReceiver::handle_message_set_actuator_control_target(mavlink_message_t *m
 // 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_gps_global_origin(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_gps_global_origin(mavlink_message_t *msg)
 {
 	mavlink_set_gps_global_origin_t gps_global_origin;
 	mavlink_msg_set_gps_global_origin_decode(msg, &gps_global_origin);
@@ -1387,8 +1401,9 @@ MavlinkReceiver::handle_message_set_gps_global_origin(mavlink_message_t *msg)
 	// handle_request_message_command(MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_vision_position_estimate(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_vision_position_estimate(mavlink_message_t *msg)
 {
 	// mavlink_vision_position_estimate_t ev;
 	// mavlink_msg_vision_position_estimate_decode(msg, &ev);
@@ -1428,8 +1443,9 @@ MavlinkReceiver::handle_message_vision_position_estimate(mavlink_message_t *msg)
 	// _visual_odometry_pub.publish(visual_odom);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_odometry(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_odometry(mavlink_message_t *msg)
 {
 	// mavlink_odometry_t odom;
 	// mavlink_msg_odometry_decode(msg, &odom);
@@ -1530,7 +1546,8 @@ MavlinkReceiver::handle_message_odometry(mavlink_message_t *msg)
 	// }
 }
 
-void MavlinkReceiver::fill_thrust(float *thrust_body_array, uint8_t vehicle_type, float thrust)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::fill_thrust(float *thrust_body_array, uint8_t vehicle_type, float thrust)
 {
 	// // Fill correct field by checking frametype
 	// // TODO: add as needed
@@ -1583,8 +1600,9 @@ void MavlinkReceiver::fill_thrust(float *thrust_body_array, uint8_t vehicle_type
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_set_attitude_target(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_set_attitude_target(mavlink_message_t *msg)
 {
 	mavlink_set_attitude_target_t attitude_target;
 	mavlink_msg_set_attitude_target_decode(msg, &attitude_target);
@@ -1675,8 +1693,9 @@ MavlinkReceiver::handle_message_set_attitude_target(mavlink_message_t *msg)
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_radio_status(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_radio_status(mavlink_message_t *msg)
 {
 	// /* telemetry status supported only on first ORB_MULTI_MAX_INSTANCES mavlink channels */
 	// if (_mavlink->get_channel() < (mavlink_channel_t)ORB_MULTI_MAX_INSTANCES) {
@@ -1700,8 +1719,9 @@ MavlinkReceiver::handle_message_radio_status(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_ping(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_ping(mavlink_message_t *msg)
 {
 	// mavlink_ping_t ping;
 	// mavlink_msg_ping_decode(msg, &ping);
@@ -1765,8 +1785,9 @@ MavlinkReceiver::handle_message_ping(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_battery_status(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_battery_status(mavlink_message_t *msg)
 {
 	// if ((msg->sysid != mavlink_system.sysid) || (msg->compid == mavlink_system.compid)) {
 	// 	// ignore battery status coming from other systems or from the autopilot itself
@@ -1814,8 +1835,9 @@ MavlinkReceiver::handle_message_battery_status(mavlink_message_t *msg)
 	// _battery_pub.publish(battery_status);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_serial_control(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_serial_control(mavlink_message_t *msg)
 {
 	// mavlink_serial_control_t serial_control_mavlink;
 	// mavlink_msg_serial_control_decode(msg, &serial_control_mavlink);
@@ -1849,8 +1871,9 @@ MavlinkReceiver::handle_message_serial_control(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_logging_ack(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_logging_ack(mavlink_message_t *msg)
 {
 	// mavlink_logging_ack_t logging_ack;
 	// mavlink_msg_logging_ack_decode(msg, &logging_ack);
@@ -1862,8 +1885,9 @@ MavlinkReceiver::handle_message_logging_ack(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_play_tune(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_play_tune(mavlink_message_t *msg)
 {
 	// mavlink_play_tune_t play_tune;
 	// mavlink_msg_play_tune_decode(msg, &play_tune);
@@ -1878,8 +1902,9 @@ MavlinkReceiver::handle_message_play_tune(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_play_tune_v2(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_play_tune_v2(mavlink_message_t *msg)
 {
 	// mavlink_play_tune_v2_t play_tune_v2;
 	// mavlink_msg_play_tune_v2_decode(msg, &play_tune_v2);
@@ -1899,7 +1924,8 @@ MavlinkReceiver::handle_message_play_tune_v2(mavlink_message_t *msg)
 	// }
 }
 
-void MavlinkReceiver::schedule_tune(const char *tune)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::schedule_tune(const char *tune)
 {
 	// // We only allocate the TunePublisher object if we ever use it but we
 	// // don't remove it to avoid fragmentation over time.
@@ -1920,8 +1946,9 @@ void MavlinkReceiver::schedule_tune(const char *tune)
 }
 
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_obstacle_distance(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_obstacle_distance(mavlink_message_t *msg)
 {
 	// mavlink_obstacle_distance_t mavlink_obstacle_distance;
 	// mavlink_msg_obstacle_distance_decode(msg, &mavlink_obstacle_distance);
@@ -1947,8 +1974,9 @@ MavlinkReceiver::handle_message_obstacle_distance(mavlink_message_t *msg)
 	// _obstacle_distance_pub.publish(obstacle_distance);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_tunnel(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_tunnel(mavlink_message_t *msg)
 {
 	// mavlink_tunnel_t mavlink_tunnel;
 	// mavlink_msg_tunnel_decode(msg, &mavlink_tunnel);
@@ -1967,8 +1995,9 @@ MavlinkReceiver::handle_message_tunnel(mavlink_message_t *msg)
 
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_trajectory_representation_bezier(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_trajectory_representation_bezier(mavlink_message_t *msg)
 {
 	// mavlink_trajectory_representation_bezier_t trajectory;
 	// mavlink_msg_trajectory_representation_bezier_decode(msg, &trajectory);
@@ -1990,8 +2019,9 @@ MavlinkReceiver::handle_message_trajectory_representation_bezier(mavlink_message
 	// _trajectory_bezier_pub.publish(trajectory_bezier);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_trajectory_representation_waypoints(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_trajectory_representation_waypoints(mavlink_message_t *msg)
 {
 	// mavlink_trajectory_representation_waypoints_t trajectory;
 	// mavlink_msg_trajectory_representation_waypoints_decode(msg, &trajectory);
@@ -2025,8 +2055,9 @@ MavlinkReceiver::handle_message_trajectory_representation_waypoints(mavlink_mess
 	// _trajectory_waypoint_pub.publish(trajectory_waypoint);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_rc_channels_override(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_rc_channels_override(mavlink_message_t *msg)
 {
 // 	mavlink_rc_channels_override_t man;
 // 	mavlink_msg_rc_channels_override_decode(msg, &man);
@@ -2109,8 +2140,9 @@ MavlinkReceiver::handle_message_rc_channels_override(mavlink_message_t *msg)
 // 	_rc_pub.publish(rc);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_manual_control(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_manual_control(mavlink_message_t *msg)
 {
 	// mavlink_manual_control_t man;
 	// mavlink_msg_manual_control_decode(msg, &man);
@@ -2130,8 +2162,9 @@ MavlinkReceiver::handle_message_manual_control(mavlink_message_t *msg)
 	// _manual_control_input_pub.publish(manual);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_heartbeat(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_heartbeat(mavlink_message_t *msg)
 {
 	// /* telemetry status supported only on first TELEMETRY_STATUS_ORB_ID_NUM mavlink channels */
 	// if (_mavlink->get_channel() < (mavlink_channel_t)ORB_MULTI_MAX_INSTANCES) {
@@ -2232,8 +2265,9 @@ MavlinkReceiver::handle_message_heartbeat(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 int
-MavlinkReceiver::set_message_interval(int msgId, float interval, int data_rate)
+MavlinkReceiver<N>::set_message_interval(int msgId, float interval, int data_rate)
 {
 	// if (msgId == MAVLINK_MSG_ID_HEARTBEAT) {
 	// 	return PX4_ERROR;
@@ -2272,8 +2306,9 @@ MavlinkReceiver::set_message_interval(int msgId, float interval, int data_rate)
 	return PX4_ERROR; //added by Peixuan Shu
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::get_message_interval(int msgId)
+MavlinkReceiver<N>::get_message_interval(int msgId)
 {
 	// unsigned interval = 0;
 
@@ -2288,8 +2323,9 @@ MavlinkReceiver::get_message_interval(int msgId)
 	// mavlink_msg_message_interval_send(_mavlink->get_channel(), msgId, interval);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_hil_sensor(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_hil_sensor(mavlink_message_t *msg)
 {
 	// mavlink_hil_sensor_t hil_sensor;
 	// mavlink_msg_hil_sensor_decode(msg, &hil_sensor);
@@ -2392,8 +2428,9 @@ MavlinkReceiver::handle_message_hil_sensor(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_hil_gps(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_hil_gps(mavlink_message_t *msg)
 {
 	// mavlink_hil_gps_t hil_gps;
 	// mavlink_msg_hil_gps_decode(msg, &hil_gps);
@@ -2447,8 +2484,9 @@ MavlinkReceiver::handle_message_hil_gps(mavlink_message_t *msg)
 	// _sensor_gps_pub.publish(gps);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_follow_target(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_follow_target(mavlink_message_t *msg)
 {
 	// mavlink_follow_target_t follow_target_msg;
 	// mavlink_msg_follow_target_decode(msg, &follow_target_msg);
@@ -2466,8 +2504,9 @@ MavlinkReceiver::handle_message_follow_target(mavlink_message_t *msg)
 	// _follow_target_pub.publish(follow_target_topic);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_landing_target(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_landing_target(mavlink_message_t *msg)
 {
 	// mavlink_landing_target_t landing_target;
 	// mavlink_msg_landing_target_decode(msg, &landing_target);
@@ -2504,8 +2543,9 @@ MavlinkReceiver::handle_message_landing_target(mavlink_message_t *msg)
 	// }
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_cellular_status(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_cellular_status(mavlink_message_t *msg)
 {
 	// mavlink_cellular_status_t status;
 	// mavlink_msg_cellular_status_decode(msg, &status);
@@ -2524,8 +2564,9 @@ MavlinkReceiver::handle_message_cellular_status(mavlink_message_t *msg)
 	// _cellular_status_pub.publish(cellular_status);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_adsb_vehicle(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_adsb_vehicle(mavlink_message_t *msg)
 {
 	// mavlink_adsb_vehicle_t adsb;
 	// mavlink_msg_adsb_vehicle_decode(msg, &adsb);
@@ -2566,8 +2607,9 @@ MavlinkReceiver::handle_message_adsb_vehicle(mavlink_message_t *msg)
 	// _transponder_report_pub.publish(t);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_utm_global_position(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_utm_global_position(mavlink_message_t *msg)
 {
 // 	mavlink_utm_global_position_t utm_pos;
 // 	mavlink_msg_utm_global_position_decode(msg, &utm_pos);
@@ -2651,8 +2693,9 @@ MavlinkReceiver::handle_message_utm_global_position(mavlink_message_t *msg)
 // 	_last_utm_global_pos_com = t.timestamp;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_collision(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_collision(mavlink_message_t *msg)
 {
 	// mavlink_collision_t collision;
 	// mavlink_msg_collision_decode(msg, &collision);
@@ -2671,8 +2714,9 @@ MavlinkReceiver::handle_message_collision(mavlink_message_t *msg)
 	// _collision_report_pub.publish(collision_report);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_gps_rtcm_data(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_gps_rtcm_data(mavlink_message_t *msg)
 {
 	// mavlink_gps_rtcm_data_t gps_rtcm_data_msg;
 	// mavlink_msg_gps_rtcm_data_decode(msg, &gps_rtcm_data_msg);
@@ -2688,8 +2732,9 @@ MavlinkReceiver::handle_message_gps_rtcm_data(mavlink_message_t *msg)
 	// _gps_inject_data_pub.publish(gps_inject_data_topic);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 {
 	// mavlink_hil_state_quaternion_t hil_state;
 	// mavlink_msg_hil_state_quaternion_decode(msg, &hil_state);
@@ -2822,8 +2867,10 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 }
 
 #if !defined(CONSTRAINED_FLASH)
+
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_named_value_float(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_named_value_float(mavlink_message_t *msg)
 {
 	// mavlink_named_value_float_t debug_msg;
 	// mavlink_msg_named_value_float_decode(msg, &debug_msg);
@@ -2838,8 +2885,9 @@ MavlinkReceiver::handle_message_named_value_float(mavlink_message_t *msg)
 	// _debug_key_value_pub.publish(debug_topic);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_debug(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_debug(mavlink_message_t *msg)
 {
 	// mavlink_debug_t debug_msg;
 	// mavlink_msg_debug_decode(msg, &debug_msg);
@@ -2853,8 +2901,9 @@ MavlinkReceiver::handle_message_debug(mavlink_message_t *msg)
 	// _debug_value_pub.publish(debug_topic);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_debug_vect(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_debug_vect(mavlink_message_t *msg)
 {
 	// mavlink_debug_vect_t debug_msg;
 	// mavlink_msg_debug_vect_decode(msg, &debug_msg);
@@ -2871,8 +2920,9 @@ MavlinkReceiver::handle_message_debug_vect(mavlink_message_t *msg)
 	// _debug_vect_pub.publish(debug_topic);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_debug_float_array(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_debug_float_array(mavlink_message_t *msg)
 {
 	// mavlink_debug_float_array_t debug_msg;
 	// mavlink_msg_debug_float_array_decode(msg, &debug_msg);
@@ -2892,8 +2942,9 @@ MavlinkReceiver::handle_message_debug_float_array(mavlink_message_t *msg)
 }
 #endif // !CONSTRAINED_FLASH
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_onboard_computer_status(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_onboard_computer_status(mavlink_message_t *msg)
 {
 	// mavlink_onboard_computer_status_t status_msg;
 	// mavlink_msg_onboard_computer_status_decode(msg, &status_msg);
@@ -2927,7 +2978,8 @@ MavlinkReceiver::handle_message_onboard_computer_status(mavlink_message_t *msg)
 	// _onboard_computer_status_pub.publish(onboard_computer_status_topic);
 }
 
-void MavlinkReceiver::handle_message_generator_status(mavlink_message_t *msg)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::handle_message_generator_status(mavlink_message_t *msg)
 {
 	// mavlink_generator_status_t status_msg;
 	// mavlink_msg_generator_status_decode(msg, &status_msg);
@@ -2949,7 +3001,8 @@ void MavlinkReceiver::handle_message_generator_status(mavlink_message_t *msg)
 	// _generator_status_pub.publish(generator_status);
 }
 
-void MavlinkReceiver::handle_message_statustext(mavlink_message_t *msg)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::handle_message_statustext(mavlink_message_t *msg)
 {
 	// if (msg->sysid == mavlink_system.sysid) {
 	// 	// log message from the same system
@@ -2967,7 +3020,8 @@ void MavlinkReceiver::handle_message_statustext(mavlink_message_t *msg)
 	// }
 }
 
-void MavlinkReceiver::CheckHeartbeats(const hrt_abstime &t, bool force)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::CheckHeartbeats(const hrt_abstime &t, bool force)
 {
 	// // check HEARTBEATs for timeout
 	// static constexpr uint64_t TIMEOUT = telemetry_status_s::HEARTBEAT_TIMEOUT_US;
@@ -3001,13 +3055,15 @@ void MavlinkReceiver::CheckHeartbeats(const hrt_abstime &t, bool force)
 	// }
 }
 
-void MavlinkReceiver::handle_message_request_event(mavlink_message_t *msg)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::handle_message_request_event(mavlink_message_t *msg)
 {
 	// _mavlink->get_events_protocol().handle_request_event(*msg);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_gimbal_manager_set_manual_control(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_gimbal_manager_set_manual_control(mavlink_message_t *msg)
 {
 	// mavlink_gimbal_manager_set_manual_control_t set_manual_control_msg;
 	// mavlink_msg_gimbal_manager_set_manual_control_decode(msg, &set_manual_control_msg);
@@ -3029,8 +3085,9 @@ MavlinkReceiver::handle_message_gimbal_manager_set_manual_control(mavlink_messag
 	// _gimbal_manager_set_manual_control_pub.publish(set_manual_control);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_gimbal_manager_set_attitude(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_gimbal_manager_set_attitude(mavlink_message_t *msg)
 {
 	// mavlink_gimbal_manager_set_attitude_t set_attitude_msg;
 	// mavlink_msg_gimbal_manager_set_attitude_decode(msg, &set_attitude_msg);
@@ -3054,8 +3111,9 @@ MavlinkReceiver::handle_message_gimbal_manager_set_attitude(mavlink_message_t *m
 	// _gimbal_manager_set_attitude_pub.publish(gimbal_attitude);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_gimbal_device_information(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_gimbal_device_information(mavlink_message_t *msg)
 {
 
 	// mavlink_gimbal_device_information_t gimbal_device_info_msg;
@@ -3094,8 +3152,9 @@ MavlinkReceiver::handle_message_gimbal_device_information(mavlink_message_t *msg
 	// _gimbal_device_information_pub.publish(gimbal_information);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::handle_message_gimbal_device_attitude_status(mavlink_message_t *msg)
+MavlinkReceiver<N>::handle_message_gimbal_device_attitude_status(mavlink_message_t *msg)
 {
 	// mavlink_gimbal_device_attitude_status_t gimbal_device_attitude_status_msg;
 	// mavlink_msg_gimbal_device_attitude_status_decode(msg, &gimbal_device_attitude_status_msg);
@@ -3350,7 +3409,8 @@ MavlinkReceiver::handle_message_gimbal_device_attitude_status(mavlink_message_t 
 // 	return false;
 // }
 
-void MavlinkReceiver::update_rx_stats(const mavlink_message_t &message)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::update_rx_stats(const mavlink_message_t &message)
 {
 	// const bool component_states_has_still_space = [this, &message]() {
 	// 	for (unsigned i = 0; i < MAX_REMOTE_COMPONENTS; ++i) {
@@ -3403,7 +3463,8 @@ void MavlinkReceiver::update_rx_stats(const mavlink_message_t &message)
 	// }
 }
 
-void MavlinkReceiver::update_message_statistics(const mavlink_message_t &message)
+template <int N>  /* seperate static messages for UAV N */
+void MavlinkReceiver<N>::update_message_statistics(const mavlink_message_t &message)
 {
 // #if !defined(CONSTRAINED_FLASH)
 
@@ -3532,8 +3593,9 @@ void MavlinkReceiver::update_message_statistics(const mavlink_message_t &message
 // 	pthread_attr_destroy(&receiveloop_attr);
 // }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MavlinkReceiver::updateParams()
+MavlinkReceiver<N>::updateParams()
 {
 	// update parameters from storage
 	ModuleParams::updateParams();
@@ -3575,3 +3637,43 @@ MavlinkReceiver::updateParams()
 // 	_should_exit.store(true);
 // 	pthread_join(_thread, nullptr);
 // }
+
+
+template class MavlinkReceiver<1>; template class MavlinkReceiver<2>; template class MavlinkReceiver<3>; template class MavlinkReceiver<4>; template class MavlinkReceiver<5>; template class MavlinkReceiver<6>; template class MavlinkReceiver<7>; template class MavlinkReceiver<8>; template class MavlinkReceiver<9>; template class MavlinkReceiver<10>; 
+template class MavlinkReceiver<11>; template class MavlinkReceiver<12>; template class MavlinkReceiver<13>; template class MavlinkReceiver<14>; template class MavlinkReceiver<15>; template class MavlinkReceiver<16>; template class MavlinkReceiver<17>; template class MavlinkReceiver<18>; template class MavlinkReceiver<19>; template class MavlinkReceiver<20>; 
+template class MavlinkReceiver<21>; template class MavlinkReceiver<22>; template class MavlinkReceiver<23>; template class MavlinkReceiver<24>; template class MavlinkReceiver<25>; template class MavlinkReceiver<26>; template class MavlinkReceiver<27>; template class MavlinkReceiver<28>; template class MavlinkReceiver<29>; template class MavlinkReceiver<30>; 
+template class MavlinkReceiver<31>; template class MavlinkReceiver<32>; template class MavlinkReceiver<33>; template class MavlinkReceiver<34>; template class MavlinkReceiver<35>; template class MavlinkReceiver<36>; template class MavlinkReceiver<37>; template class MavlinkReceiver<38>; template class MavlinkReceiver<39>; template class MavlinkReceiver<40>; 
+template class MavlinkReceiver<41>; template class MavlinkReceiver<42>; template class MavlinkReceiver<43>; template class MavlinkReceiver<44>; template class MavlinkReceiver<45>; template class MavlinkReceiver<46>; template class MavlinkReceiver<47>; template class MavlinkReceiver<48>; template class MavlinkReceiver<49>; template class MavlinkReceiver<50>; 
+template class MavlinkReceiver<51>; template class MavlinkReceiver<52>; template class MavlinkReceiver<53>; template class MavlinkReceiver<54>; template class MavlinkReceiver<55>; template class MavlinkReceiver<56>; template class MavlinkReceiver<57>; template class MavlinkReceiver<58>; template class MavlinkReceiver<59>; template class MavlinkReceiver<60>; 
+template class MavlinkReceiver<61>; template class MavlinkReceiver<62>; template class MavlinkReceiver<63>; template class MavlinkReceiver<64>; template class MavlinkReceiver<65>; template class MavlinkReceiver<66>; template class MavlinkReceiver<67>; template class MavlinkReceiver<68>; template class MavlinkReceiver<69>; template class MavlinkReceiver<70>; 
+template class MavlinkReceiver<71>; template class MavlinkReceiver<72>; template class MavlinkReceiver<73>; template class MavlinkReceiver<74>; template class MavlinkReceiver<75>; template class MavlinkReceiver<76>; template class MavlinkReceiver<77>; template class MavlinkReceiver<78>; template class MavlinkReceiver<79>; template class MavlinkReceiver<80>; 
+template class MavlinkReceiver<81>; template class MavlinkReceiver<82>; template class MavlinkReceiver<83>; template class MavlinkReceiver<84>; template class MavlinkReceiver<85>; template class MavlinkReceiver<86>; template class MavlinkReceiver<87>; template class MavlinkReceiver<88>; template class MavlinkReceiver<89>; template class MavlinkReceiver<90>; 
+template class MavlinkReceiver<91>; template class MavlinkReceiver<92>; template class MavlinkReceiver<93>; template class MavlinkReceiver<94>; template class MavlinkReceiver<95>; template class MavlinkReceiver<96>; template class MavlinkReceiver<97>; template class MavlinkReceiver<98>; template class MavlinkReceiver<99>; template class MavlinkReceiver<100>; 
+
+
+/* The above explicit template instantiation declartions are 
+ * auto-generated by the following python script:
+
+#! /bin/python
+import sys
+# generate explicit template instantiation declartions
+
+def output(s):
+    sys.stdout.write(s)
+
+def main(class_name, count):
+    for i in range(int(count)):
+        num = i+1
+        output("template class {}<{}>; ".format(class_name, num))
+        if num%10 == 0:
+            output("\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("[Error] Please input your class name and count after python xxx.py. For example: python xxx.py class_name 10")
+
+# python generate_template.py class_name 100
+
+*/

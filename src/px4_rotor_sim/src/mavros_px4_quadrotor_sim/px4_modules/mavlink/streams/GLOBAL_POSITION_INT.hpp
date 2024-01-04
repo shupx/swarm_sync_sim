@@ -44,6 +44,7 @@
 #include <matrix/matrix/math.hpp> // Added by Peixuan Shu
 #include <mathlib/mathlib.h>  // Added by Peixuan Shu
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkStreamGlobalPositionInt
 {
 private:

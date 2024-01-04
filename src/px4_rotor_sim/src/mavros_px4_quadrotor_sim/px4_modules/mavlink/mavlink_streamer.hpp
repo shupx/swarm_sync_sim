@@ -32,9 +32,10 @@
 #include "mavlink_msg_list.hpp"  // store the simulated static(global) mavlink messages
 
 
-#define STREAM_PTR(...) std::shared_ptr<MavlinkStream<__VA_ARGS__> >
-#define STREAM_MAKE_PTR(...) std::make_shared<MavlinkStream<__VA_ARGS__> >
+#define STREAM_PTR(...) std::shared_ptr<MavlinkStream<__VA_ARGS__<N> > >
+#define STREAM_MAKE_PTR(...) std::make_shared<MavlinkStream<__VA_ARGS__<N> > >
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkStreamer
 {
 public:
@@ -87,4 +88,5 @@ public:
 	void Stream(const uint64_t &time_us);
 };
 
+// #include "mavlink_streamer.cpp"
 

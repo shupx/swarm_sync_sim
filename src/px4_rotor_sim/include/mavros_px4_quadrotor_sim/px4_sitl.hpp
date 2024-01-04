@@ -50,6 +50,7 @@ namespace MavrosQuadSimulator
  * \brief PX4 flight stack simulation. Communicate with mavros and dynamics.
  * Mavros <---> PX4_SITL <---> Quadrotor Dynamics
  */
+template <int N>  /* seperate static messages for UAV N */
 class PX4SITL
 {
 public:
@@ -114,11 +115,11 @@ private:
     uORB_sim::Subscription<vehicle_control_mode_s>           _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
     
 
-    std::shared_ptr<MavlinkReceiver> mavlink_receiver_;
-    std::shared_ptr<MavlinkStreamer> mavlink_streamer_;
-    std::shared_ptr<Commander> commander_;
-    std::shared_ptr<MulticopterPositionControl> mc_pos_control_; 
-    std::shared_ptr<MulticopterAttitudeControl> mc_att_control_; 
+    std::shared_ptr<MavlinkReceiver<N> > mavlink_receiver_;
+    std::shared_ptr<MavlinkStreamer<N> > mavlink_streamer_;
+    std::shared_ptr<Commander<N> > commander_;
+    std::shared_ptr<MulticopterPositionControl<N> > mc_pos_control_; 
+    std::shared_ptr<MulticopterAttitudeControl<N> > mc_att_control_; 
 
     std::shared_ptr<Dynamics> uav_dynamics_;
 
@@ -150,6 +151,6 @@ private:
 
 }
 
-
+// #include "px4_sitl.cpp"
 
 #endif

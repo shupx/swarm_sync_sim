@@ -69,6 +69,7 @@ using namespace time_literals;
 //  */
 // extern "C" __EXPORT int mc_att_control_main(int argc, char *argv[]);
 
+template <int N>  /* seperate static messages for UAV N */
 class MulticopterAttitudeControl : /*public ModuleBase<MulticopterAttitudeControl>,*/ public ModuleParams/*,
 	public px4::WorkItem*/
 {
@@ -121,17 +122,17 @@ private:
 	// uORB::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub;
 
 
-	uORB_sim::Subscription<vehicle_attitude_setpoint_s> _vehicle_attitude_setpoint_sub{uORB_sim::vehicle_attitude_setpoint};
-	uORB_sim::Subscription<vehicle_control_mode_s> _v_control_mode_sub{uORB_sim::vehicle_control_mode};		/**< vehicle control mode subscription */
-	uORB_sim::Subscription<autotune_attitude_control_status_s> _autotune_attitude_control_status_sub{uORB_sim::autotune_attitude_control_status};
-	uORB_sim::Subscription<manual_control_setpoint_s> _manual_control_setpoint_sub{uORB_sim::manual_control_setpoint};	/**< manual control setpoint subscription */
-	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{uORB_sim::vehicle_status};			/**< vehicle status subscription */
-	uORB_sim::Subscription<vehicle_land_detected_s> _vehicle_land_detected_sub{uORB_sim::vehicle_land_detected};	/**< vehicle land detected subscription */
+	uORB_sim::Subscription<vehicle_attitude_setpoint_s> _vehicle_attitude_setpoint_sub{ORB_ID(vehicle_attitude_setpoint)};
+	uORB_sim::Subscription<vehicle_control_mode_s> _v_control_mode_sub{ORB_ID(vehicle_control_mode)};		/**< vehicle control mode subscription */
+	uORB_sim::Subscription<autotune_attitude_control_status_s> _autotune_attitude_control_status_sub{ORB_ID(autotune_attitude_control_status)};
+	uORB_sim::Subscription<manual_control_setpoint_s> _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};	/**< manual control setpoint subscription */
+	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{ORB_ID(vehicle_status)};			/**< vehicle status subscription */
+	uORB_sim::Subscription<vehicle_land_detected_s> _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};	/**< vehicle land detected subscription */
 
-	uORB_sim::Subscription<vehicle_attitude_s> _vehicle_attitude_sub{uORB_sim::vehicle_attitude};
+	uORB_sim::Subscription<vehicle_attitude_s> _vehicle_attitude_sub{ORB_ID(vehicle_attitude)};
 
-	uORB_sim::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{uORB_sim::vehicle_rates_setpoint};			/**< rate setpoint publication */
-	uORB_sim::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub{uORB_sim::vehicle_attitude_setpoint}; //for manual stick input
+	uORB_sim::Publication<vehicle_rates_setpoint_s>	_v_rates_sp_pub{ORB_ID(vehicle_rates_setpoint)};			/**< rate setpoint publication */
+	uORB_sim::Publication<vehicle_attitude_setpoint_s>	_vehicle_attitude_setpoint_pub{ORB_ID(vehicle_attitude_setpoint)}; //for manual stick input
 
 
 	struct manual_control_setpoint_s	_manual_control_setpoint {};	/**< manual control setpoint */
@@ -183,3 +184,5 @@ private:
 	)
 };
 
+// #include "mc_att_control_main.cpp"
+// #include "AttitudeControl/AttitudeControl.cpp"

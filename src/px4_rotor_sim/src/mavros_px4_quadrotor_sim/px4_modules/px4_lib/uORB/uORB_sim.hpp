@@ -53,7 +53,7 @@
 #endif
 
 #ifndef ORB_ID
-#define ORB_ID(x) uORB_sim::x 
+#define ORB_ID(x) uORB_sim::msg<N>::x 
 #endif
 
 namespace uORB_sim { 
@@ -86,6 +86,68 @@ extern vehicle_odometry_s vehicle_odometry;
 extern vehicle_rates_setpoint_s vehicle_rates_setpoint;
 extern vehicle_status_s vehicle_status;
 extern vehicle_status_flags_s vehicle_status_flags;
+
+template <int N>  /* store messages for UAV N */
+class msg
+{
+public:
+    static actuator_armed_s actuator_armed;
+    static autotune_attitude_control_status_s autotune_attitude_control_status;
+    static battery_status_s battery_status;
+    static commander_state_s commander_state;
+    static cpuload_s cpuload;
+    static home_position_s home_position;
+    static manual_control_setpoint_s manual_control_setpoint;
+    static offboard_control_mode_s offboard_control_mode;
+    static takeoff_status_s takeoff_status;
+    static vehicle_air_data_s vehicle_air_data;
+    static vehicle_angular_velocity_s vehicle_angular_velocity;
+    static vehicle_attitude_s vehicle_attitude;
+    static vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
+    static vehicle_command_s vehicle_command;
+    static vehicle_command_ack_s vehicle_command_ack;
+    static vehicle_constraints_s vehicle_constraints;
+    static vehicle_control_mode_s vehicle_control_mode;
+    static vehicle_global_position_s vehicle_global_position;
+    static vehicle_gps_position_s vehicle_gps_position;
+    static vehicle_land_detected_s vehicle_land_detected;
+    static vehicle_local_position_s vehicle_local_position;
+    static vehicle_local_position_setpoint_s vehicle_local_position_setpoint; // real target setpoints
+    static vehicle_local_position_setpoint_s trajectory_setpoint; // mavlink setpoints
+    static vehicle_odometry_s vehicle_odometry;
+    static vehicle_rates_setpoint_s vehicle_rates_setpoint;
+    static vehicle_status_s vehicle_status;
+    static vehicle_status_flags_s vehicle_status_flags;
+};
+
+template <int N> actuator_armed_s msg<N>::actuator_armed {};
+template <int N> autotune_attitude_control_status_s msg<N>::autotune_attitude_control_status {};
+template <int N> battery_status_s msg<N>::battery_status {};
+template <int N> commander_state_s msg<N>::commander_state {};
+template <int N> cpuload_s msg<N>::cpuload {};
+template <int N> home_position_s msg<N>::home_position {};
+template <int N> manual_control_setpoint_s msg<N>::manual_control_setpoint {};
+template <int N> offboard_control_mode_s msg<N>::offboard_control_mode {};
+template <int N> takeoff_status_s msg<N>::takeoff_status {};
+template <int N> vehicle_air_data_s msg<N>::vehicle_air_data {};
+template <int N> vehicle_angular_velocity_s msg<N>::vehicle_angular_velocity {};
+template <int N> vehicle_attitude_s msg<N>::vehicle_attitude {};
+template <int N> vehicle_attitude_setpoint_s msg<N>::vehicle_attitude_setpoint {};
+template <int N> vehicle_command_s msg<N>::vehicle_command {};
+template <int N> vehicle_command_ack_s msg<N>::vehicle_command_ack {};
+template <int N> vehicle_constraints_s msg<N>::vehicle_constraints {};
+template <int N> vehicle_control_mode_s msg<N>::vehicle_control_mode {};
+template <int N> vehicle_global_position_s msg<N>::vehicle_global_position {};
+template <int N> vehicle_gps_position_s msg<N>::vehicle_gps_position {};
+template <int N> vehicle_land_detected_s msg<N>::vehicle_land_detected {};
+template <int N> vehicle_local_position_s msg<N>::vehicle_local_position {};
+template <int N> vehicle_local_position_setpoint_s msg<N>::vehicle_local_position_setpoint {};
+template <int N> vehicle_local_position_setpoint_s msg<N>::trajectory_setpoint {};
+template <int N> vehicle_odometry_s msg<N>::vehicle_odometry {};
+template <int N> vehicle_rates_setpoint_s msg<N>::vehicle_rates_setpoint {};
+template <int N> vehicle_status_s msg<N>::vehicle_status {};
+template <int N> vehicle_status_flags_s msg<N>::vehicle_status_flags {};
+
 
 // Base uORB subscription wrapper class
 template<typename T>

@@ -137,6 +137,7 @@ using namespace time_literals;
 
 class Mavlink;
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkReceiver : public ModuleParams
 {
 
@@ -440,3 +441,5 @@ private:
 	MavlinkReceiver operator=(const MavlinkReceiver &) = delete;
 
 };
+
+// #include "mavlink_receiver.cpp"

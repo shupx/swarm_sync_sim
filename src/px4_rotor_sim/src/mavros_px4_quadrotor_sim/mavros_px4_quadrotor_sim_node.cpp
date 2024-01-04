@@ -17,20 +17,20 @@
 #include <nodelet/nodelet.h>
 #include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
-// using namespace MavrosQuadSimulator;
+using namespace MavrosQuadSimulator;
 
-// int main(int argc, char **argv)
-// {
-//     ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
-//     ros::NodeHandle nh;
-//     ros::NodeHandle nh_private("~");
+int main(int argc, char **argv)
+{
+    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~");
 
-//     //Use unique_ptr to auto-destory the object when exiting.
-//     std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
+    //Use unique_ptr to auto-destory the object when exiting.
+    std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
 
-//     ros::spin();
-//     return 0;
-// }
+    ros::spin();
+    return 0;
+}
 
 
 namespace MavrosQuadSimulator
@@ -91,7 +91,7 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     dynamics_->setSimStep(0.01); // set odeint integration step
     dynamics_->setPos(init_x, init_y, init_z);
 
-    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
+    px4sitl_ = std::make_shared<PX4SITL<1> >(nh_, nh_private_, dynamics_);
 
     mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
 

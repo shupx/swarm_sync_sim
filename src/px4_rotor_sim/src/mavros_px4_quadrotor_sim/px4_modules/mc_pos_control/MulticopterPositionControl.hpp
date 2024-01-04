@@ -77,6 +77,7 @@
 
 using namespace time_literals;
 
+template <int N>  /* seperate static messages for UAV N */
 class MulticopterPositionControl : /* public ModuleBase<MulticopterPositionControl>, public control::SuperBlock,*/
 	public ModuleParams/*, public px4::ScheduledWorkItem */
 {
@@ -119,15 +120,15 @@ private:
 	// uORB::Subscription _vehicle_land_detected_sub {ORB_ID(vehicle_land_detected)};
 
 
-	uORB_sim::PublicationData<takeoff_status_s>  _takeoff_status_pub {uORB_sim::takeoff_status};
-	uORB_sim::Publication<vehicle_attitude_setpoint_s>	 _vehicle_attitude_setpoint_pub {uORB_sim::vehicle_attitude_setpoint};
-	uORB_sim::Publication<vehicle_local_position_setpoint_s> _local_pos_sp_pub {uORB_sim::vehicle_local_position_setpoint};	/**< vehicle local position setpoint publication */
+	uORB_sim::PublicationData<takeoff_status_s>  _takeoff_status_pub {ORB_ID(takeoff_status)};
+	uORB_sim::Publication<vehicle_attitude_setpoint_s>	 _vehicle_attitude_setpoint_pub {ORB_ID(vehicle_attitude_setpoint)};
+	uORB_sim::Publication<vehicle_local_position_setpoint_s> _local_pos_sp_pub {ORB_ID(vehicle_local_position_setpoint)};	/**< vehicle local position setpoint publication */
 
-	uORB_sim::Subscription<vehicle_local_position_s> _local_pos_sub {uORB_sim::vehicle_local_position};
-	uORB_sim::Subscription<vehicle_local_position_setpoint_s> _trajectory_setpoint_sub{uORB_sim::trajectory_setpoint};
-	uORB_sim::Subscription<vehicle_constraints_s> _vehicle_constraints_sub{uORB_sim::vehicle_constraints};
-	uORB_sim::Subscription<vehicle_control_mode_s> _vehicle_control_mode_sub{uORB_sim::vehicle_control_mode};
-	uORB_sim::Subscription<vehicle_land_detected_s> _vehicle_land_detected_sub{uORB_sim::vehicle_land_detected};
+	uORB_sim::Subscription<vehicle_local_position_s> _local_pos_sub {ORB_ID(vehicle_local_position)};
+	uORB_sim::Subscription<vehicle_local_position_setpoint_s> _trajectory_setpoint_sub{ORB_ID(trajectory_setpoint)};
+	uORB_sim::Subscription<vehicle_constraints_s> _vehicle_constraints_sub{ORB_ID(vehicle_constraints)};
+	uORB_sim::Subscription<vehicle_control_mode_s> _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
+	uORB_sim::Subscription<vehicle_land_detected_s> _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};
 
 
 	hrt_abstime	_time_stamp_last_loop{0};		/**< time stamp of last loop iteration */
@@ -260,3 +261,8 @@ private:
 	 */
 	void reset_setpoint_to_nan(vehicle_local_position_setpoint_s &setpoint);
 };
+
+// #include "MulticopterPositionControl.cpp"
+// #include "PositionControl/ControlMath.cpp"
+// #include "PositionControl/PositionControl.cpp"
+// #include "Takeoff/Takeoff.cpp"

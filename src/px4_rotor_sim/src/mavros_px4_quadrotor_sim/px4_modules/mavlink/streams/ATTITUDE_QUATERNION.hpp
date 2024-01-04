@@ -47,6 +47,7 @@
 #include <uORB/uORB_sim.hpp> // Added by Peixuan Shu
 #include "../mavlink_msg_list.hpp"  // Added by Peixuan Shu
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkStreamAttitudeQuaternion
 {
 private:

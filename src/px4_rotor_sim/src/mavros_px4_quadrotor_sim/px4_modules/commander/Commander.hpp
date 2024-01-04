@@ -115,6 +115,7 @@ using systemlib::Hysteresis;
 
 using namespace time_literals;
 
+template <int N>  /* seperate static messages for UAV N */
 class Commander : /* public ModuleBase<Commander> ,*/ public ModuleParams
 {
 public:
@@ -477,3 +478,6 @@ private:
 	// perf_counter_t _loop_perf{perf_alloc(PC_ELAPSED, MODULE_NAME": cycle")};
 	// perf_counter_t _preflight_check_perf{perf_alloc(PC_ELAPSED, MODULE_NAME": preflight check")};
 };
+
+// #include "Commander.cpp"
+// #include "state_machine_helper.cpp"

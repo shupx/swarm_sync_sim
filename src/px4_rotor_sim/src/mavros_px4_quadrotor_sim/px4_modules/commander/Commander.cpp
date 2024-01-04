@@ -103,6 +103,7 @@ typedef enum VEHICLE_MODE_FLAG {
 } VEHICLE_MODE_FLAG;
 
 
+template <int N>  /* seperate static messages for UAV N */
 static bool send_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
 				 const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
 				 const double param6 = static_cast<double>(NAN), const float param7 = NAN)
@@ -128,6 +129,7 @@ static bool send_vehicle_command(const uint32_t cmd, const float param1 = NAN, c
 	return vcmd_pub.publish(vcmd);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 static bool broadcast_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
 				      const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
 				      const double param6 = static_cast<double>(NAN), const float param7 = NAN)
@@ -156,7 +158,8 @@ static bool broadcast_vehicle_command(const uint32_t cmd, const float param1 = N
 /* Delete some useless functions */ 
 
 
-Commander::Commander() :
+template <int N>  /* seperate static messages for UAV N */
+Commander<N>::Commander() :
 	ModuleParams(nullptr)
 	// _failure_detector(this)
 {
@@ -186,14 +189,16 @@ Commander::Commander() :
 	_vehicle_gps_position_valid.set_hysteresis_time_from(true, GPS_VALID_TIME);
 }
 
-Commander::~Commander()
+template <int N>  /* seperate static messages for UAV N */
+Commander<N>::~Commander()
 {
 	// perf_free(_loop_perf);
 	// perf_free(_preflight_check_perf);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 bool
-Commander::handle_command(const vehicle_command_s &cmd)
+Commander<N>::handle_command(const vehicle_command_s &cmd)
 {
 	/* only handle commands that are meant to be handled by this system and component, or broadcast */
 	if (((cmd.target_system != _status.system_id) && (cmd.target_system != 0))
@@ -411,8 +416,9 @@ Commander::handle_command(const vehicle_command_s &cmd)
 }
 
 
+template <int N>  /* seperate static messages for UAV N */
 bool
-Commander::hasMovedFromCurrentHomeLocation()
+Commander<N>::hasMovedFromCurrentHomeLocation()
 {
 	float home_dist_xy = -1.f;
 	float home_dist_z = -1.f;
@@ -461,8 +467,8 @@ Commander::hasMovedFromCurrentHomeLocation()
 * @brief This function initializes the home position an altitude of the vehicle. This happens first time we get a good GPS fix and each
 *		 time the vehicle is armed with a good GPS fix.
 **/
-bool
-Commander::set_home_position()
+template <int N>  /* seperate static messages for UAV N */bool
+Commander<N>::set_home_position()
 {
 	bool updated = false;
 	home_position_s home{};
@@ -512,8 +518,9 @@ Commander::set_home_position()
 	return updated;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::set_in_air_home_position()
+Commander<N>::set_in_air_home_position()
 {
 	home_position_s home{};
 	home = _home_pub.get();
@@ -593,14 +600,16 @@ Commander::set_in_air_home_position()
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::fillLocalHomePos(home_position_s &home, const vehicle_local_position_s &lpos) const
+Commander<N>::fillLocalHomePos(home_position_s &home, const vehicle_local_position_s &lpos) const
 {
 	fillLocalHomePos(home, lpos.x, lpos.y, lpos.z, lpos.heading);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::fillLocalHomePos(home_position_s &home, float x, float y, float z, float heading) const
+Commander<N>::fillLocalHomePos(home_position_s &home, float x, float y, float z, float heading) const
 {
 	home.x = x;
 	home.y = y;
@@ -610,12 +619,14 @@ Commander::fillLocalHomePos(home_position_s &home, float x, float y, float z, fl
 	home.yaw = heading;
 }
 
-void Commander::fillGlobalHomePos(home_position_s &home, const vehicle_global_position_s &gpos) const
+template <int N>  /* seperate static messages for UAV N */
+void Commander<N>::fillGlobalHomePos(home_position_s &home, const vehicle_global_position_s &gpos) const
 {
 	fillGlobalHomePos(home, gpos.lat, gpos.lon, gpos.alt);
 }
 
-void Commander::fillGlobalHomePos(home_position_s &home, double lat, double lon, float alt) const
+template <int N>  /* seperate static messages for UAV N */
+void Commander<N>::fillGlobalHomePos(home_position_s &home, double lat, double lon, float alt) const
 {
 	home.lat = lat;
 	home.lon = lon;
@@ -624,7 +635,8 @@ void Commander::fillGlobalHomePos(home_position_s &home, double lat, double lon,
 	home.valid_alt = true;
 }
 
-void Commander::setHomePosValid()
+template <int N>  /* seperate static messages for UAV N */
+void Commander<N>::setHomePosValid()
 {
 	// play tune first time we initialize HOME
 	if (!_status_flags.home_position_valid) {
@@ -635,8 +647,9 @@ void Commander::setHomePosValid()
 	_status_flags.home_position_valid = true;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::updateHomePositionYaw(float yaw)
+Commander<N>::updateHomePositionYaw(float yaw)
 {
 	if (_param_com_home_en.get()) {
 		home_position_s home = _home_pub.get();
@@ -648,8 +661,9 @@ Commander::updateHomePositionYaw(float yaw)
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::run()
+Commander<N>::run()
 {
 	static bool inited = false;   // added by Peixuan Shu
 
@@ -1809,7 +1823,8 @@ if (!inited)  // added by Peixuan Shu
 
 
 /* check if pos/vel from estimator is valid */
-bool Commander::check_posvel_validity(const bool data_valid, const float data_accuracy, const float required_accuracy,
+template <int N>  /* seperate static messages for UAV N */
+bool Commander<N>::check_posvel_validity(const bool data_valid, const float data_accuracy, const float required_accuracy,
 				      const hrt_abstime &data_timestamp_us, hrt_abstime &last_fail_time_us,
 				      const bool was_valid)
 {
@@ -1846,8 +1861,9 @@ bool Commander::check_posvel_validity(const bool data_valid, const float data_ac
 }
 
 /* Specify vehicle control flags for pos/att controller based on the flight mode */
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::update_control_mode()
+Commander<N>::update_control_mode()
 {
 	_vehicle_control_mode = {};
 
@@ -1983,8 +1999,9 @@ Commander::update_control_mode()
 	_control_mode_pub.publish(_vehicle_control_mode);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 bool
-Commander::stabilization_required()
+Commander<N>::stabilization_required()
 {
 	//delete vtol decision by Peixuan Shu
 	return (_status.vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING ||		// is a rotary wing, or
@@ -1995,7 +2012,8 @@ Commander::stabilization_required()
 }
 
 /* Send back command ack */
-void Commander::answer_command(const vehicle_command_s &cmd, uint8_t result)
+template <int N>  /* seperate static messages for UAV N */
+void Commander<N>::answer_command(const vehicle_command_s &cmd, uint8_t result)
 {
 	switch (result) {
 	case vehicle_command_s::VEHICLE_CMD_RESULT_ACCEPTED:
@@ -2032,7 +2050,8 @@ void Commander::answer_command(const vehicle_command_s &cmd, uint8_t result)
 }
 
 /* Check if estimator is valid */
-void Commander::estimator_check()
+template <int N>  /* seperate static messages for UAV N */
+void Commander<N>::estimator_check()
 {
 	// Check if quality checking of position accuracy and consistency is to be performed
 	const bool run_quality_checks = !_status_flags.circuit_breaker_engaged_posfailure_check;
@@ -2301,8 +2320,9 @@ void Commander::estimator_check()
 }
 
 /* Check if offboard control signal is lost */
+template <int N>  /* seperate static messages for UAV N */
 void
-Commander::offboard_control_update()
+Commander<N>::offboard_control_update()
 {
 	bool offboard_available = false;
 
@@ -2348,3 +2368,41 @@ Commander::offboard_control_update()
 		_status_changed = true;
 	}
 }
+
+template class Commander<1>; template class Commander<2>; template class Commander<3>; template class Commander<4>; template class Commander<5>; template class Commander<6>; template class Commander<7>; template class Commander<8>; template class Commander<9>; template class Commander<10>; 
+template class Commander<11>; template class Commander<12>; template class Commander<13>; template class Commander<14>; template class Commander<15>; template class Commander<16>; template class Commander<17>; template class Commander<18>; template class Commander<19>; template class Commander<20>; 
+template class Commander<21>; template class Commander<22>; template class Commander<23>; template class Commander<24>; template class Commander<25>; template class Commander<26>; template class Commander<27>; template class Commander<28>; template class Commander<29>; template class Commander<30>; 
+template class Commander<31>; template class Commander<32>; template class Commander<33>; template class Commander<34>; template class Commander<35>; template class Commander<36>; template class Commander<37>; template class Commander<38>; template class Commander<39>; template class Commander<40>; 
+template class Commander<41>; template class Commander<42>; template class Commander<43>; template class Commander<44>; template class Commander<45>; template class Commander<46>; template class Commander<47>; template class Commander<48>; template class Commander<49>; template class Commander<50>; 
+template class Commander<51>; template class Commander<52>; template class Commander<53>; template class Commander<54>; template class Commander<55>; template class Commander<56>; template class Commander<57>; template class Commander<58>; template class Commander<59>; template class Commander<60>; 
+template class Commander<61>; template class Commander<62>; template class Commander<63>; template class Commander<64>; template class Commander<65>; template class Commander<66>; template class Commander<67>; template class Commander<68>; template class Commander<69>; template class Commander<70>; 
+template class Commander<71>; template class Commander<72>; template class Commander<73>; template class Commander<74>; template class Commander<75>; template class Commander<76>; template class Commander<77>; template class Commander<78>; template class Commander<79>; template class Commander<80>; 
+template class Commander<81>; template class Commander<82>; template class Commander<83>; template class Commander<84>; template class Commander<85>; template class Commander<86>; template class Commander<87>; template class Commander<88>; template class Commander<89>; template class Commander<90>; 
+template class Commander<91>; template class Commander<92>; template class Commander<93>; template class Commander<94>; template class Commander<95>; template class Commander<96>; template class Commander<97>; template class Commander<98>; template class Commander<99>; template class Commander<100>;
+
+/* The above explicit template instantiation declartions are 
+ * auto-generated by the following python script:
+
+#! /bin/python
+import sys
+# generate explicit template instantiation declartions
+
+def output(s):
+    sys.stdout.write(s)
+
+def main(class_name, count):
+    for i in range(int(count)):
+        num = i+1
+        output("template class {}<{}>; ".format(class_name, num))
+        if num%10 == 0:
+            output("\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("[Error] Please input your class name and count after python xxx.py. For example: python xxx.py class_name 10")
+
+# python generate_template.py class_name 100
+
+*/

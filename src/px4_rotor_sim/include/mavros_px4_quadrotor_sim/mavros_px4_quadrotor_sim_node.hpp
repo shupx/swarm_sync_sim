@@ -22,7 +22,7 @@
 #include <sss_sim_env/sss_utils.hpp>
 
 #include "mavros_sim/MavrosSim.hpp"
-#include "mavros_px4_quadrotor_sim/px4_sitl.hpp"
+#include "px4_sitl.hpp"
 #include "mavros_px4_quadrotor_sim/quadrotor_dynamics.hpp"
 #include "mavros_px4_quadrotor_sim/drone_visualizer.hpp"
 
@@ -42,7 +42,7 @@ class Agent
         ros::NodeHandle nh_private_;
 
         std::shared_ptr<Dynamics> dynamics_;
-        std::shared_ptr<PX4SITL> px4sitl_;
+        std::shared_ptr<PX4SITL<1> > px4sitl_;
         std::shared_ptr<mavros_sim::MavrosSim> mavros_sim_;
         std::shared_ptr<Visualizer> visualizer_;
 

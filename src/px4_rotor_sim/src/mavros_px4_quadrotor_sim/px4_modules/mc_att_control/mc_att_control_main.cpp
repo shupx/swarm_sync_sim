@@ -63,7 +63,8 @@
 
 using namespace matrix;
 
-MulticopterAttitudeControl::MulticopterAttitudeControl(bool vtol) :
+template <int N>  /* seperate static messages for UAV N */
+MulticopterAttitudeControl<N>::MulticopterAttitudeControl(bool vtol) :
 	ModuleParams(nullptr),
 	/*WorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
 	_vehicle_attitude_setpoint_pub(vtol ? ORB_ID(mc_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),
@@ -81,13 +82,15 @@ MulticopterAttitudeControl::MulticopterAttitudeControl(bool vtol) :
 	parameters_updated();
 }
 
-MulticopterAttitudeControl::~MulticopterAttitudeControl()
+template <int N>  /* seperate static messages for UAV N */
+MulticopterAttitudeControl<N>::~MulticopterAttitudeControl()
 {
 	// perf_free(_loop_perf);
 }
 
+template <int N>  /* seperate static messages for UAV N */
 bool
-MulticopterAttitudeControl::init()
+MulticopterAttitudeControl<N>::init()
 {
 	// if (!_vehicle_attitude_sub.registerCallback()) {
 	// 	PX4_ERR("callback registration failed");
@@ -97,8 +100,9 @@ MulticopterAttitudeControl::init()
 	return true;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MulticopterAttitudeControl::parameters_updated()
+MulticopterAttitudeControl<N>::parameters_updated()
 {
 	// Store some of the parameters in a more convenient way & precompute often-used values
 	_attitude_control.setProportionalGain(Vector3f(_param_mc_roll_p.get(), _param_mc_pitch_p.get(), _param_mc_yaw_p.get()),
@@ -112,8 +116,9 @@ MulticopterAttitudeControl::parameters_updated()
 	_man_tilt_max = math::radians(_param_mpc_man_tilt_max.get());
 }
 
+template <int N>  /* seperate static messages for UAV N */
 float
-MulticopterAttitudeControl::throttle_curve(float throttle_stick_input)
+MulticopterAttitudeControl<N>::throttle_curve(float throttle_stick_input)
 {
 	const float throttle_min = _landed ? 0.0f : _param_mpc_manthr_min.get();
 
@@ -129,8 +134,9 @@ MulticopterAttitudeControl::throttle_curve(float throttle_stick_input)
 	}
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MulticopterAttitudeControl::generate_attitude_setpoint(const Quatf &q, float dt, bool reset_yaw_sp)
+MulticopterAttitudeControl<N>::generate_attitude_setpoint(const Quatf &q, float dt, bool reset_yaw_sp)
 {
 	vehicle_attitude_setpoint_s attitude_setpoint{};
 	const float yaw = Eulerf(q).psi();
@@ -234,8 +240,9 @@ MulticopterAttitudeControl::generate_attitude_setpoint(const Quatf &q, float dt,
 	_last_attitude_setpoint = attitude_setpoint.timestamp;
 }
 
+template <int N>  /* seperate static messages for UAV N */
 void
-MulticopterAttitudeControl::Run()
+MulticopterAttitudeControl<N>::Run()
 {
 	// if (should_exit()) {
 	// 	_vehicle_attitude_sub.unregisterCallback();
@@ -459,4 +466,42 @@ int mc_att_control_main(int argc, char *argv[])
 {
 	return MulticopterAttitudeControl::main(argc, argv);
 }
+*/
+
+template class MulticopterAttitudeControl<1>; template class MulticopterAttitudeControl<2>; template class MulticopterAttitudeControl<3>; template class MulticopterAttitudeControl<4>; template class MulticopterAttitudeControl<5>; template class MulticopterAttitudeControl<6>; template class MulticopterAttitudeControl<7>; template class MulticopterAttitudeControl<8>; template class MulticopterAttitudeControl<9>; template class MulticopterAttitudeControl<10>; 
+template class MulticopterAttitudeControl<11>; template class MulticopterAttitudeControl<12>; template class MulticopterAttitudeControl<13>; template class MulticopterAttitudeControl<14>; template class MulticopterAttitudeControl<15>; template class MulticopterAttitudeControl<16>; template class MulticopterAttitudeControl<17>; template class MulticopterAttitudeControl<18>; template class MulticopterAttitudeControl<19>; template class MulticopterAttitudeControl<20>; 
+template class MulticopterAttitudeControl<21>; template class MulticopterAttitudeControl<22>; template class MulticopterAttitudeControl<23>; template class MulticopterAttitudeControl<24>; template class MulticopterAttitudeControl<25>; template class MulticopterAttitudeControl<26>; template class MulticopterAttitudeControl<27>; template class MulticopterAttitudeControl<28>; template class MulticopterAttitudeControl<29>; template class MulticopterAttitudeControl<30>; 
+template class MulticopterAttitudeControl<31>; template class MulticopterAttitudeControl<32>; template class MulticopterAttitudeControl<33>; template class MulticopterAttitudeControl<34>; template class MulticopterAttitudeControl<35>; template class MulticopterAttitudeControl<36>; template class MulticopterAttitudeControl<37>; template class MulticopterAttitudeControl<38>; template class MulticopterAttitudeControl<39>; template class MulticopterAttitudeControl<40>; 
+template class MulticopterAttitudeControl<41>; template class MulticopterAttitudeControl<42>; template class MulticopterAttitudeControl<43>; template class MulticopterAttitudeControl<44>; template class MulticopterAttitudeControl<45>; template class MulticopterAttitudeControl<46>; template class MulticopterAttitudeControl<47>; template class MulticopterAttitudeControl<48>; template class MulticopterAttitudeControl<49>; template class MulticopterAttitudeControl<50>; 
+template class MulticopterAttitudeControl<51>; template class MulticopterAttitudeControl<52>; template class MulticopterAttitudeControl<53>; template class MulticopterAttitudeControl<54>; template class MulticopterAttitudeControl<55>; template class MulticopterAttitudeControl<56>; template class MulticopterAttitudeControl<57>; template class MulticopterAttitudeControl<58>; template class MulticopterAttitudeControl<59>; template class MulticopterAttitudeControl<60>; 
+template class MulticopterAttitudeControl<61>; template class MulticopterAttitudeControl<62>; template class MulticopterAttitudeControl<63>; template class MulticopterAttitudeControl<64>; template class MulticopterAttitudeControl<65>; template class MulticopterAttitudeControl<66>; template class MulticopterAttitudeControl<67>; template class MulticopterAttitudeControl<68>; template class MulticopterAttitudeControl<69>; template class MulticopterAttitudeControl<70>; 
+template class MulticopterAttitudeControl<71>; template class MulticopterAttitudeControl<72>; template class MulticopterAttitudeControl<73>; template class MulticopterAttitudeControl<74>; template class MulticopterAttitudeControl<75>; template class MulticopterAttitudeControl<76>; template class MulticopterAttitudeControl<77>; template class MulticopterAttitudeControl<78>; template class MulticopterAttitudeControl<79>; template class MulticopterAttitudeControl<80>; 
+template class MulticopterAttitudeControl<81>; template class MulticopterAttitudeControl<82>; template class MulticopterAttitudeControl<83>; template class MulticopterAttitudeControl<84>; template class MulticopterAttitudeControl<85>; template class MulticopterAttitudeControl<86>; template class MulticopterAttitudeControl<87>; template class MulticopterAttitudeControl<88>; template class MulticopterAttitudeControl<89>; template class MulticopterAttitudeControl<90>; 
+template class MulticopterAttitudeControl<91>; template class MulticopterAttitudeControl<92>; template class MulticopterAttitudeControl<93>; template class MulticopterAttitudeControl<94>; template class MulticopterAttitudeControl<95>; template class MulticopterAttitudeControl<96>; template class MulticopterAttitudeControl<97>; template class MulticopterAttitudeControl<98>; template class MulticopterAttitudeControl<99>; template class MulticopterAttitudeControl<100>; 
+
+/* The above explicit template instantiation declartions are 
+ * auto-generated by the following python script:
+
+#! /bin/python
+import sys
+# generate explicit template instantiation declartions
+
+def output(s):
+    sys.stdout.write(s)
+
+def main(class_name, count):
+    for i in range(int(count)):
+        num = i+1
+        output("template class {}<{}>; ".format(class_name, num))
+        if num%10 == 0:
+            output("\n")
+
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("[Error] Please input your class name and count after python xxx.py. For example: python xxx.py class_name 10")
+
+# python generate_template.py class_name 100
+
 */

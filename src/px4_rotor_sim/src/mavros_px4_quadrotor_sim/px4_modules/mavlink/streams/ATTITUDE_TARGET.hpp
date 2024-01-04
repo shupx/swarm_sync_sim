@@ -51,6 +51,7 @@
 
 using namespace time_literals;
 
+template <int N>  /* seperate static messages for UAV N */
 class MavlinkStreamAttitudeTarget
 {
 private:
