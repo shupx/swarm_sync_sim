@@ -60,6 +60,12 @@ private:
 	hrt_abstime _last_att_sp_update{0};
 
 public:
+	int agent_id_ = -1;
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		vehicle_attitude_setpoint_s att_sp;
@@ -97,7 +103,7 @@ public:
 
 			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 			int handle = (int) px4::mavlink_stream_handle::ATTITUDE_TARGET;
-			mavlink_msg_attitude_target_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+			mavlink_msg_attitude_target_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
 			px4::mavlink_stream_list[handle].updated = true;
 
 			return true;

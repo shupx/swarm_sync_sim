@@ -47,6 +47,7 @@ public:
 		public:
 			MavlinkStream(const float& rate, MavlinkStreamer* parent) : period_us_(1.e6/rate) 
 			{
+				stream_.set_agent_id(parent->agent_id_);
 				parent->stream_signal_.connect(boost::bind(&MavlinkStream::Stream, this, boost::placeholders::_1));
 			}
 
@@ -76,7 +77,7 @@ public:
 	STREAM_PTR(MavlinkStreamGlobalPositionInt) mavlink_stream_GlobalPositionInt_;
 	STREAM_PTR(MavlinkStreamGpsGlobalOrigin) mavlink_stream_GpsGlobalOrigin_;
 
-	MavlinkStreamer();
+	MavlinkStreamer(int agent_id);
 
 	~MavlinkStreamer();
 
@@ -85,6 +86,9 @@ public:
 	 * @param time_us time now (microseconds, us)
 	 */
 	void Stream(const uint64_t &time_us);
+
+private:
+	int agent_id_; // UAV id
 };
 
 

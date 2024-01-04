@@ -21,8 +21,8 @@
 namespace MavrosQuadSimulator
 {
 
-PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
-    : nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
+PX4SITL::PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
+    : agent_id_(agent_id), nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     load_px4_params_from_ros_params(); // Before loading px4 modules!
@@ -32,7 +32,7 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
 
     /* Load px4 modules */
     mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
-    mavlink_streamer_ = std::make_shared<MavlinkStreamer>();
+    mavlink_streamer_ = std::make_shared<MavlinkStreamer>(agent_id_);
     commander_ = std::make_shared<Commander>();
     mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
     mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
@@ -144,10 +144,10 @@ void PX4SITL::ReceiveMavlink()
 	/* Search for mavlink receiving list and handle the updated messages */
 	for (int i=0; i<MAVLINK_RECEIVE_NUM; ++i)
 	{		
-		if (px4::mavlink_receive_list[i].updated)
+		if (px4::mavlink_receive_lists.at(agent_id_)[i].updated)
 		{
-			mavlink_receiver_->handle_message(&px4::mavlink_receive_list[i].msg);
-			px4::mavlink_receive_list[i].updated = false; // waiting for the next update
+			mavlink_receiver_->handle_message(&px4::mavlink_receive_lists.at(agent_id_)[i].msg);
+			px4::mavlink_receive_lists.at(agent_id_)[i].updated = false; // waiting for the next update
 		}
 	}
 }

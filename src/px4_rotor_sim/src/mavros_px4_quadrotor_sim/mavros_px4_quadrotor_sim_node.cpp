@@ -17,20 +17,24 @@
 #include <nodelet/nodelet.h>
 #include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
-// using namespace MavrosQuadSimulator;
+using namespace MavrosQuadSimulator;
 
-// int main(int argc, char **argv)
-// {
-//     ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
-//     ros::NodeHandle nh;
-//     ros::NodeHandle nh_private("~");
+int main(int argc, char **argv)
+{
+    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~");
 
-//     //Use unique_ptr to auto-destory the object when exiting.
-//     std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
+    /* allocate global storage for messages of the agent */
+    int expected_agent_num = 1; // each agent runs in seperate process. No need to distinguish the messages.
+    allocate_message_storage(expected_agent_num);
 
-//     ros::spin();
-//     return 0;
-// }
+    //Use unique_ptr to auto-destory the object when exiting.
+    std::unique_ptr<Agent> agent(new Agent(agent_index, nh, nh_private));
+
+    ros::spin();
+    return 0;
+}
 
 
 namespace MavrosQuadSimulator
@@ -47,7 +51,13 @@ public:
         // ros::NodeHandle nh = getMTNodeHandle();
         // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
-        agent_ = std::make_unique<Agent>(nh, nh_private);
+        /* allocate global storage for messages of agent i */
+        int expected_agent_num = agent_index + 1;
+        allocate_message_storage(expected_agent_num);
+
+        agent_ = std::make_unique<Agent>(agent_index, nh, nh_private);
+
+        agent_index ++;
 
         // NODELET_DEBUG("My debug statement")
         // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)
@@ -67,8 +77,8 @@ PLUGINLIB_EXPORT_CLASS(MavrosQuadSimulator::SimAgent, nodelet::Nodelet);
 namespace MavrosQuadSimulator
 {
 
-Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
-    : nh_(nh), nh_private_(nh_private)
+Agent::Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : agent_id_(agent_id), nh_(nh), nh_private_(nh_private)
 {
     /* Check if sim time is used */
 
@@ -85,17 +95,19 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     nh_private_.param<float>("init_y_North_metre", init_y, 0.0);
     nh_private_.param<float>("init_z_Up_metre", init_z, 0.0);
 
+
     /* init sim modules */
 
     dynamics_ = std::make_shared<Dynamics>();
     dynamics_->setSimStep(0.01); // set odeint integration step
     dynamics_->setPos(init_x, init_y, init_z);
 
-    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
+    px4sitl_ = std::make_shared<PX4SITL>(agent_id_, nh_, nh_private_, dynamics_);
 
-    mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
+    mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(agent_id_, nh_, nh_private_);
 
     visualizer_ = std::make_shared<Visualizer>(nh_, nh_private_);
+
 
     /* Set main loop */
 

@@ -54,6 +54,12 @@ private:
 	bool _force_next_send{true};
 
 public:
+	int agent_id_ = -1;
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		vehicle_local_position_s vehicle_local_position;
@@ -80,7 +86,7 @@ public:
 
 					/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 					int handle = (int) px4::mavlink_stream_handle::GPS_GLOBAL_ORIGIN;
-					mavlink_msg_gps_global_origin_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+					mavlink_msg_gps_global_origin_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
 					px4::mavlink_stream_list[handle].updated = true;
 
 					_ref_timestamp = vehicle_local_position.ref_timestamp;

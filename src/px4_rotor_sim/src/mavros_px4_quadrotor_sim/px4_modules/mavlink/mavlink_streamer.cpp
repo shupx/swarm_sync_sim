@@ -16,7 +16,7 @@
 
 #include "mavlink_streamer.hpp"
 
-MavlinkStreamer::MavlinkStreamer()
+MavlinkStreamer::MavlinkStreamer(int agent_id) : agent_id_(agent_id)
 {
     mavlink_stream_AttitudeQuaternion_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this); // set streaming rate
     mavlink_stream_LocalPositionNED_ = STREAM_MAKE_PTR(MavlinkStreamLocalPositionNED)(30, this); // set streaming rate

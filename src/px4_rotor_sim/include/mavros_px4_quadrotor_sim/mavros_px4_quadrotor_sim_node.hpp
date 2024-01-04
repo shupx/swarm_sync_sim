@@ -30,10 +30,28 @@
 namespace MavrosQuadSimulator
 {
 
+extern int agent_index; // index of MavrosQuadSimulator agents (this variable is global across nodelets)
+int agent_index = 0;
+
+/* allocate global storage for messages of agent i */
+void allocate_message_storage(int expected_agent_num)
+{
+    while(px4::mavlink_stream_lists.size() < expected_agent_num)
+    {
+        px4::mavlink_stream_lists.emplace_back(std::array<mavlink_info_s, MAVLINK_STREAM_NUM>{});
+    }
+    while(px4::mavlink_receive_lists.size() < expected_agent_num)
+    {
+        px4::mavlink_receive_lists.emplace_back(std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>{});
+    }
+    
+}
+
+
 class Agent
 {
     public:
-        Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+        Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
     
     private:
         bool is_sim_time_;
@@ -50,6 +68,8 @@ class Agent
         sss_utils::Timer mainloop_timer_;
 
         void mainloop(const ros::TimerEvent &event);
+
+        int agent_id_=-1; // agent id
 
 };
 

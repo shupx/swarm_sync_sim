@@ -53,7 +53,7 @@ namespace MavrosQuadSimulator
 class PX4SITL
 {
 public:
-    PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
+    PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
 
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/    
     void load_px4_params_from_ros_params();
@@ -143,6 +143,7 @@ private:
     /* Send control input calculated by the controller to the quadrotor dynamics */
     void SendControlInput();
 
+    int agent_id_ = -1; //UAV id
 
 };
 

@@ -36,7 +36,7 @@ class MavrosSim
 {
     public:
         /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
-        MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+        MavrosSim(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
         /* Publish all updated mavlink messages into ROS topics (Added by Peixuan Shu) */
         void PublishRosMessage();
@@ -56,6 +56,8 @@ class MavrosSim
 
         /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
         void handle_message(const mavlink_message_t &msg);
+
+        int agent_id_; // UAV id
 
 };
 

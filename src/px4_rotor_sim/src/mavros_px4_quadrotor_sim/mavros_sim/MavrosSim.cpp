@@ -21,8 +21,8 @@
 namespace mavros_sim
 {
 
-MavrosSim::MavrosSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
-    : nh_(nh), nh_private_(nh_private)
+MavrosSim::MavrosSim(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    :agent_id_(agent_id), nh_(nh), nh_private_(nh_private)
 {
     uas_ = std::make_shared<UAS>(); // uas_ stores some common data and functions
     uas_->set_tgt(1, 1); // set target_system_id, target_component_id
@@ -46,11 +46,11 @@ void MavrosSim::PublishRosMessage()
 	/* Search for mavlink streaming list and handle the updated messages */
 	for (int i=0; i<MAVLINK_STREAM_NUM; ++i)
 	{
-		if (px4::mavlink_stream_list[i].updated)
+		if (px4::mavlink_stream_lists.at(agent_id_)[i].updated)
 		{
             // std::cout << "[MavrosSim::Publish] handle " << px4::mavlink_stream_list[i].msg.msgid << std::endl;
-			handle_message(px4::mavlink_stream_list[i].msg);
-			px4::mavlink_stream_list[i].updated = false; // waiting for the next update
+			handle_message(px4::mavlink_stream_lists.at(agent_id_)[i].msg);
+			px4::mavlink_stream_lists.at(agent_id_)[i].updated = false; // waiting for the next update
 		}
 	}
 }

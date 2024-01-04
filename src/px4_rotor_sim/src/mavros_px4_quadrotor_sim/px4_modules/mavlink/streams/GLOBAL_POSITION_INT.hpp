@@ -54,6 +54,12 @@ private:
 	uORB_sim::Subscription<vehicle_air_data_s> _air_data_sub{ORB_ID(vehicle_air_data)};
 
 public:
+	int agent_id_ = -1;
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		vehicle_global_position_s gpos;
@@ -107,7 +113,7 @@ public:
 
 			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 			int handle = (int) px4::mavlink_stream_handle::GLOBAL_POSITION_INT;
-			mavlink_msg_global_position_int_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
+			mavlink_msg_global_position_int_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
 			px4::mavlink_stream_list[handle].updated = true;
 
 			return true;
