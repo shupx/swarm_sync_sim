@@ -207,11 +207,11 @@ void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock:
     }
     else if (new_request_time < request_time)
     {
+        ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
+
         request_time = new_request_time;
         has_new_request = true;
         time_server->try_update_clock();
-
-        ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
     }
 
 }
