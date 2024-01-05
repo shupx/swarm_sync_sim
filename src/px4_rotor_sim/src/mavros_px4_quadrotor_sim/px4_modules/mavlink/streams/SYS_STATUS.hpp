@@ -51,12 +51,13 @@ class MavlinkStreamSysStatus
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<vehicle_status_s> _status_sub{ORB_ID(vehicle_status)};
 	uORB_sim::Subscription<cpuload_s> _cpuload_sub{ORB_ID(cpuload)};
 	uORB_sim::Subscription<battery_status_s> _battery_status_subs{ORB_ID(battery_status)};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

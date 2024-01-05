@@ -43,6 +43,8 @@ class MavlinkStreamGpsGlobalOrigin
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<vehicle_local_position_s> _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
 
 	uint64_t _ref_timestamp{0};
@@ -54,7 +56,6 @@ private:
 	bool _force_next_send{true};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

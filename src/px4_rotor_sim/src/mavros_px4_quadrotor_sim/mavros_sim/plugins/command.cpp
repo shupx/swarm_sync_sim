@@ -51,7 +51,7 @@
 #include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include <mavlink/v2.0/minimal/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
-#include "px4_modules/mavlink/mavlink_msg_list.hpp" // Added by Peixuan Shu store the simulated static(global) mavlink messages
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // Added by Peixuan Shu store the simulated extern(global) mavlink messages
 
 namespace mavros_sim {  // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace std_plugins {

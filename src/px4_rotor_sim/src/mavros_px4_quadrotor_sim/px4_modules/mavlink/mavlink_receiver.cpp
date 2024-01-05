@@ -90,7 +90,8 @@ MavlinkReceiver::~MavlinkReceiver()
 }
 
 // Added by Peixuan Shu
-MavlinkReceiver::MavlinkReceiver() :
+MavlinkReceiver::MavlinkReceiver(int agent_id) : 
+	agent_id_(agent_id),  // agent_id added by Peixuan Shu
 	ModuleParams(nullptr)
 {
 	_handle_sens_flow_maxhgt = param_find("SENS_FLOW_MAXHGT");
@@ -450,6 +451,8 @@ MavlinkReceiver::handle_message_command_long(mavlink_message_t *msg)
 
 	// handle_message_command_both(msg, cmd_mavlink, vcmd);
 	_cmd_pub.publish(vcmd); // modified by Peixuan Shu
+
+	// std::cout << "[MavlinkReceiver::handle_message_command_long] publish vehicle command. vcmd.timestamp = " << vcmd.timestamp << std::endl; //added by Peixuan Shu
 
 	// std::cout << "[mavlink_receiver] receive command long" << std::endl;
 

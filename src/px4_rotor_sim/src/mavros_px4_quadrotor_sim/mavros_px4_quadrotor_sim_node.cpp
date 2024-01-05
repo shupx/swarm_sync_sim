@@ -14,11 +14,11 @@
  * 
  */
 
-#include <nodelet/nodelet.h>
 #include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
 using namespace MavrosQuadSimulator;
 
+/* For compile of node */
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
@@ -27,7 +27,8 @@ int main(int argc, char **argv)
 
     /* allocate global storage for messages of the agent */
     int expected_agent_num = 1; // each agent runs in seperate process. No need to distinguish the messages.
-    allocate_message_storage(expected_agent_num);
+    px4::allocate_mavlink_message_storage(expected_agent_num);
+    uORB_sim::allocate_uorb_message_storage(expected_agent_num);
 
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Agent> agent(new Agent(agent_index, nh, nh_private));
@@ -37,6 +38,8 @@ int main(int argc, char **argv)
 }
 
 
+/* For compile of nodelet */
+#include <nodelet/nodelet.h>
 namespace MavrosQuadSimulator
 {
 class SimAgent :public nodelet::Nodelet
@@ -53,7 +56,8 @@ public:
 
         /* allocate global storage for messages of agent i */
         int expected_agent_num = agent_index + 1;
-        allocate_message_storage(expected_agent_num);
+        px4::allocate_mavlink_message_storage(expected_agent_num);
+        uORB_sim::allocate_uorb_message_storage(expected_agent_num);
 
         // std::cout << "expected_agent_num: " << expected_agent_num << std::endl;
 

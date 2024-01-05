@@ -37,6 +37,9 @@
 
 class MavlinkStreamer
 {
+private:
+    int agent_id_ = -1; // agent id.
+
 public:
 	typedef boost::signals2::signal<void(const uint64_t&)> VoidSignal;
 	VoidSignal stream_signal_;
@@ -55,7 +58,7 @@ public:
 			void Stream(const uint64_t &time_us)
 			{
 				static uint64_t last_send = 0;
-				if (time_us > last_send + period_us_)
+				if (time_us >= last_send + period_us_)
 				{
 					// std::cout << "[MavlinkStream::Stream] time_us: " << time_us << std::endl;
 					stream_.send();
@@ -86,9 +89,6 @@ public:
 	 * @param time_us time now (microseconds, us)
 	 */
 	void Stream(const uint64_t &time_us);
-
-private:
-	int agent_id_; // UAV id
 };
 
 

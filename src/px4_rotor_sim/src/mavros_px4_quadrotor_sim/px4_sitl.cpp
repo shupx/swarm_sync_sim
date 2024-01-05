@@ -31,11 +31,11 @@ PX4SITL::PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle 
     update_init_pos_from_dynamics();
 
     /* Load px4 modules */
-    mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
+    mavlink_receiver_ = std::make_shared<MavlinkReceiver>(agent_id_);
     mavlink_streamer_ = std::make_shared<MavlinkStreamer>(agent_id_);
-    commander_ = std::make_shared<Commander>();
-    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
-    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
+    commander_ = std::make_shared<Commander>(agent_id_);
+    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(agent_id_, false);
+    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(agent_id_, false);
 
     /* Init px4 modules */
     mc_pos_control_->init();
@@ -110,7 +110,7 @@ void PX4SITL::Run(const uint64_t &time_us)
     else
     {
         /* Update the global px4 time (stored in px4_modules/px4_lib/drivers/drv_hrt.h) */
-        hrt_absolute_time_us_sim = time_us;
+        hrt_absolute_time_us_sim = time_us; //@TODO seperate time for each UAV rather than extern/global time?
 
         /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
         UpdateDroneStates(time_us);

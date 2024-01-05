@@ -67,6 +67,7 @@ extern std::vector<std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>> mavlink_rece
 // // Store the receiving mavlink messages
 // extern mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // declare global
 
+void allocate_mavlink_message_storage(int expected_agent_num);
 
 }
 

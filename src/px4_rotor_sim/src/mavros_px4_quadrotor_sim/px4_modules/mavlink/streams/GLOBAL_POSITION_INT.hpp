@@ -48,13 +48,14 @@ class MavlinkStreamGlobalPositionInt
 {
 private:
 
+    int agent_id_ = -1; // agent id.
+	
 	uORB_sim::Subscription<vehicle_global_position_s> _gpos_sub{ORB_ID(vehicle_global_position)};
 	uORB_sim::Subscription<vehicle_local_position_s> _lpos_sub{ORB_ID(vehicle_local_position)};
 	uORB_sim::Subscription<home_position_s> _home_sub{ORB_ID(home_position)};
 	uORB_sim::Subscription<vehicle_air_data_s> _air_data_sub{ORB_ID(vehicle_air_data)};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

@@ -55,12 +55,13 @@ class MavlinkStreamAttitudeTarget
 {
 private:
 
+    int agent_id_ = -1; // agent id.
+	
 	uORB_sim::Subscription<vehicle_attitude_setpoint_s> _att_sp_sub{ORB_ID(vehicle_attitude_setpoint)};
 	uORB_sim::Subscription<vehicle_rates_setpoint_s> _att_rates_sp_sub{ORB_ID(vehicle_rates_setpoint)};
 	hrt_abstime _last_att_sp_update{0};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

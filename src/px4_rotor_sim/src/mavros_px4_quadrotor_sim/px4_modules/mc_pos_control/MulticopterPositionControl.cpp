@@ -54,7 +54,8 @@
 
 using namespace matrix;
 
-MulticopterPositionControl::MulticopterPositionControl(bool vtol) :
+MulticopterPositionControl::MulticopterPositionControl(int agent_id, bool vtol) :
+	agent_id_(agent_id),  // agent_id added by Peixuan Shu
 	// SuperBlock(nullptr, "MPC"),
 	ModuleParams(nullptr)/*,
 	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),

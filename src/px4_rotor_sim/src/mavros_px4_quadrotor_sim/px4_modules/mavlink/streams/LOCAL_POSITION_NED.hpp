@@ -49,10 +49,11 @@ class MavlinkStreamLocalPositionNED
 {
 private:
 
+    int agent_id_ = -1; // agent id.
+	
 	uORB_sim::Subscription<vehicle_local_position_s> _lpos_sub{ORB_ID(vehicle_local_position)};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

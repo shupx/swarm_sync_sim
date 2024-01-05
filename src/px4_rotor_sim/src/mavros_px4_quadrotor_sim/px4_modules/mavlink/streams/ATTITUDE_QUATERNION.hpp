@@ -51,12 +51,13 @@ class MavlinkStreamAttitudeQuaternion
 {
 private:
 
+    int agent_id_ = -1; // agent id.
+	
 	uORB_sim::Subscription<vehicle_attitude_s> _att_sub{ORB_ID(vehicle_attitude)};
 	uORB_sim::Subscription<vehicle_angular_velocity_s> _angular_velocity_sub{ORB_ID(vehicle_angular_velocity)};
 	uORB_sim::Subscription<vehicle_status_s> _status_sub{ORB_ID(vehicle_status)};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;

@@ -27,13 +27,16 @@
 
 #include "lib/mavros_uas.h"
 
-#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages (Created by Peixuan Shu)
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated extern(global) mavlink messages (Created by Peixuan Shu)
 
 namespace mavros_sim
 {
 
 class MavrosSim
 {
+    private:
+        int agent_id_ = -1; // UAV id.
+    
     public:
         /* Load mavros_sim plugins(mavlink msg -> mavros ROS msg; mavros ROS msg -> mavlink msg)*/
         MavrosSim(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
@@ -56,8 +59,6 @@ class MavrosSim
 
         /* Publish mavlink messages into ROS topics (Added by Peixuan Shu)*/
         void handle_message(const mavlink_message_t &msg);
-
-        int agent_id_; // UAV id
 
 };
 

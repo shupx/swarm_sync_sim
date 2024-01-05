@@ -117,8 +117,11 @@ using namespace time_literals;
 
 class Commander : /* public ModuleBase<Commander> ,*/ public ModuleParams
 {
+private: 
+	int agent_id_ = -1; // UAV id
+
 public:
-	Commander();
+	Commander(int agent_id); // Added by Peixuan Shu
 	~Commander();
 
 	// /** @see ModuleBase */

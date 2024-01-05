@@ -151,13 +151,14 @@ class MavlinkStreamHeartbeat
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<actuator_armed_s> _acturator_armed_sub{ORB_ID(actuator_armed)};
 	uORB_sim::Subscription<vehicle_control_mode_s> _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
 	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{ORB_ID(vehicle_status)};
 	uORB_sim::Subscription<vehicle_status_flags_s> _vehicle_status_flags_sub{ORB_ID(vehicle_status_flags)};
 
 public:
-	int agent_id_ = -1;
 	void set_agent_id(int id)
 	{
 		agent_id_ = id;
