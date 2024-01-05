@@ -9,7 +9,7 @@
 
     <!-- Same arguments for each vehicle that needs set -->
 
-    <arg name="use_sim_time" default="false"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
+    <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
     <arg name="local_pos_source" default="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
@@ -20,7 +20,7 @@
     <arg name="mavros_sim_plugin_config_yaml" default="$(find px4_rotor_sim)/launch/mavros_px4_config.yaml"/>
     <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     
-
+ <!-- if not use sim time, no need to use nodelet as there is no accelerating -->
 <arg name="use_nodelet_manager" value="$(arg use_sim_time)"/>
 <!-- <arg name="use_nodelet_manager" value="false"/> -->
 <param name="/use_sim_time" value="$(arg use_sim_time)"/>
@@ -67,7 +67,7 @@
     </node>
     <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->  <!-- joint states and base_link TF published by drone_visualizer instance in mavros_px4_quadrotor_sim_node already -->
     <group if="$(arg open_rviz)">
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/single_px4_rotor.rviz" required="true" />
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/single_px4_rotor.rviz" required="false" />
     </group>
 </group>
 

@@ -57,16 +57,18 @@ public:
 			/* Streaming the mavlink messages at a given rate */
 			void Stream(const uint64_t &time_us)
 			{
-				static uint64_t last_send = 0;
-				if (time_us >= last_send + period_us_)
+				// static uint64_t last_send = 0;
+				if (time_us >= time_last_send_ + period_us_)
 				{
 					// std::cout << "[MavlinkStream::Stream] time_us: " << time_us << std::endl;
+					// std::cout << "[MavlinkStream::Stream] time_us - last_send = " << (time_us - time_last_send_) << " us" << std::endl;
 					stream_.send();
-					last_send = time_us < last_send + 2*period_us_ ? last_send+period_us_ : time_us;
+					time_last_send_ = time_us < time_last_send_ + 2*period_us_ ? time_last_send_ + period_us_ : time_us;
 				}
 			}
 
 		private:
+			uint64_t time_last_send_ = 0; // us
 			T stream_; 
 			uint64_t period_us_; // us
 	};

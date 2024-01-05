@@ -25,7 +25,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     nh_private_(nh_private),
     armed_(false)
 {
-    nh_private_.param<float>("visualize_max_freq", max_freq_, 0);
+    nh_private_.param<float>("visualize_max_freq", max_freq_, 10);
     nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
     nh_private_.param<std::string>("visualize_tf_frame", tf_frame_, "map");
     nh_private_.param<std::string>("base_link_name", tf_child_frame_, "base_link");
@@ -115,32 +115,45 @@ void Visualizer::PublishBaseLinkTF()
 
 void Visualizer::PublishPath()
 {
-    // static double last_time = 0.0;
-    double time_now = ros::Time::now().toSec();
-    if (time_now - last_time_PublishPath_ > 1.0 / max_freq_)
+    /* Publishing a long path to rviz is heavily time consuming */
+    //@TODO do not publish new path if the uav is static?
+    if (path_pub_.getNumSubscribers() > 0)
     {
-        geometry_msgs::PoseStamped TrajPose_;
-        TrajPose_.header.stamp = ros::Time::now();
-        TrajPose_.header.frame_id = tf_frame_;
-        TrajPose_.pose.position.x = pos_x_;
-        TrajPose_.pose.position.y = pos_y_;
-        TrajPose_.pose.position.z = pos_z_;          
-        TrajPose_.pose.orientation = quat_;
-
-        // static std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector;
-        TrajPoseHistory_vector_.insert(TrajPoseHistory_vector_.begin(), TrajPose_);
-        if (TrajPoseHistory_vector_.size() > history_path_time_ * max_freq_)
+        // static double last_time = 0.0;
+        double time_now = ros::Time::now().toSec();
+        float history_path_update_freq = 20.0; // 5Hz fixed
+        if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
         {
-            TrajPoseHistory_vector_.pop_back();
+            geometry_msgs::PoseStamped TrajPose_;
+            TrajPose_.header.stamp = ros::Time::now();
+            TrajPose_.header.frame_id = tf_frame_;
+            TrajPose_.pose.position.x = pos_x_;
+            TrajPose_.pose.position.y = pos_y_;
+            TrajPose_.pose.position.z = pos_z_;          
+            TrajPose_.pose.orientation = quat_;
+
+            /* heavily time consuming */
+            TrajPoseHistory_vector_.insert(TrajPoseHistory_vector_.begin(), TrajPose_);
+            if (TrajPoseHistory_vector_.size() > history_path_time_ * history_path_update_freq)
+            {
+                TrajPoseHistory_vector_.pop_back();
+            }
+
+            // std::vector<geometry_msgs::PoseStamped> old_vector{TrajPoseHistory_vector_};
+            // TrajPoseHistory_vector_[0] = TrajPose_;
+            // for (int i=1; i< old_vector.size(); ++i)
+            // {
+            //     TrajPoseHistory_vector_[i] = old_vector[i-1];
+            // }
+            
+            nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
+            path_msg->header.stamp = ros::Time::now();
+            path_msg->header.frame_id = tf_frame_;
+            path_msg->poses = TrajPoseHistory_vector_;
+            path_pub_.publish(path_msg); /* heavily time consuming */
+
+            last_time_PublishPath_ = time_now;
         }
-
-        nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
-        path_msg->header.stamp = ros::Time::now();
-        path_msg->header.frame_id = tf_frame_;
-        path_msg->poses = TrajPoseHistory_vector_;
-        path_pub_.publish(path_msg);
-
-        last_time_PublishPath_ = time_now;
     }
 }
 

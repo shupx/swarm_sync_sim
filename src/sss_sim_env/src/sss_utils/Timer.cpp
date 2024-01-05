@@ -75,20 +75,20 @@ void Timer::Impl::AccelerateTimerThreadFunc()
     {
         while (!kill_thread_)
         {
-            static ros::Time last_time;
+            // static ros::Time last_time;
             ros::Time time_now = ros::Time::now();
-            if (time_now != last_time)
+            if (time_now != last_clock_time_)
             {
                 /* Clock is updated. Try to update timer_manager for the next loop as well. 
                 call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h */
                 timer_.setPeriod(period_, false);
-                last_time = time_now;
+                last_clock_time_ = time_now;
             }
-            /* This allows sim time to run up to 20x real-time even for very short timer periods.
-             * Sleep for 1 ms or (period_ / 20) s
+            /* This allows sim time to run up to 30x real-time ideally even for very short timer periods.
+             * Sleep for 1 ms or (period_ / 30) s
              * Inspired by https://github.com/ros/roscpp_core/blob/2951f0579a94955f5529d7f24bb1c8c7f0256451/rostime/src/time.cpp#L438 about ros::Duration::sleep() when use_sim_time is true
              */
-            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/20);
+            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/30);
             ros::WallDuration(0,sleep_nsec).sleep();
         }
     }
@@ -99,9 +99,6 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
 {
     if (inited_)
     {
-        // record the last loop real time
-        static double last_time = 0.0;
-
         /* call the main callback function */
         callback_(event);
 
@@ -109,13 +106,12 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
         // TODO: repeat requesting in case of lose?
         clock_updater_->request_clock_update(event.current_expected + period_);
 
-        // print the real loop rate
-        double time_now = ros::WallTime::now().toSec();
-        double rate = 1.0 / (time_now - last_time);
-        last_time = time_now;
+        /* print the real loop rate */
+        // double time_now = ros::WallTime::now().toSec();
+        // double rate = 1.0 / (time_now - last_sim_timer_cb_time_);
+        // last_sim_timer_cb_time_ = time_now;
         // ROS_INFO("[sss_utils::Timer] timer_callback rate: %s Hz", std::to_string(rate).c_str()); 
     }
-   
 }
 
 void Timer::Impl::start()

@@ -7,8 +7,8 @@
     </node>
 
     <node pkg="nodelet" type="nodelet" name="sim_clock_nodelet" args="load sss_sim_env/sim_clock_nodelet /nodelet_manager" output="screen">
-        <param name="max_speed_ratio" value="10"/>
-        <param name="auto_start" value="false"/>
+        <param name="max_speed_ratio" type="double" value="100"/>
+        <param name="auto_start"  type="bool" value="true"/>
     </node>
 
 </launch>

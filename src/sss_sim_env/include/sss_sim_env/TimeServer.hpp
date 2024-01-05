@@ -32,6 +32,7 @@ class TimeServer
         bool is_paused_;
         bool auto_start_;
         ros::Time init_time_;
+        ros::Time speed_regulator_expected_time_;
 
         ros::NodeHandle nh_;
         ros::NodeHandle nh_private_;

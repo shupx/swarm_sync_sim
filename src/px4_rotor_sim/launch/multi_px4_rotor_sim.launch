@@ -4,7 +4,7 @@
     <arg name="local_pos_source" value="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
     <!-- 1: mavros/local_position/pose will output the coordinates relative to the initial point or gp_origin which can be changed by mavros/globa_position/set_gp_origin -->
-    <arg name="open_rviz" value="false"/> <!-- open rviz for each single node -->
+    <arg name="open_rviz" value="true"/> <!-- Closing rviz will accelerate the simulation as publishing the long history path message to rviz is time-consuming -->
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
         <arg name="namespace" value="uav1"/>
@@ -13,7 +13,7 @@
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
-        <arg name="open_rviz" value="$(arg open_rviz)"/>
+        <arg name="open_rviz" value="false"/>
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -23,7 +23,7 @@
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
-        <arg name="open_rviz" value="$(arg open_rviz)"/>
+        <arg name="open_rviz" value="false"/>
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -33,9 +33,11 @@
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
-        <arg name="open_rviz" value="$(arg open_rviz)"/>
+        <arg name="open_rviz" value="false"/>
     </include>
 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/multi_px4_rotor.rviz" required="true" />
+    <group if="$(arg open_rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/multi_px4_rotor.rviz" required="false" />
+    </group>
 
 </launch>

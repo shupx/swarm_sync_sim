@@ -145,6 +145,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
 
     /* Publish rotor propeller joint positions, base_link tf and history path for the robot model visualization in rviz */
     visualizer_->Run();
+    //@TODO use a param to determine whether to publish history path? (time-consuming)
 
     mainloop_last_time_ = next_time;
 }
