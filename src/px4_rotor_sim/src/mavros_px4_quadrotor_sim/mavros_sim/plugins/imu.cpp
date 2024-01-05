@@ -74,7 +74,7 @@ class IMUPlugin
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	IMUPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : // uas added by Peixuan Shu
+	IMUPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : // uas added by Peixuan Shu
 		imu_nh(nh, "mavros/imu"),  // nodehandle modified by Peixuan Shu
 		imu_nh_private(nh_private, "imu"),  // nodehandle modified by Peixuan Shu
 		has_hr_imu(false),
@@ -84,7 +84,8 @@ public:
 		received_linear_accel(false),
 		linear_accel_vec_flu(Eigen::Vector3d::Zero()),
 		linear_accel_vec_frd(Eigen::Vector3d::Zero()),
-		m_uas(uas) // added by Peixuan Shu
+		m_uas(uas), // added by Peixuan Shu
+		agent_id_(agent_id) // added by Peixuan Shu
 	{
 		// PluginBase::initialize(uas_);
 
@@ -122,7 +123,8 @@ public:
 
 private:
 	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
-
+	int agent_id_ = -1; // global UAV mavlink id
+	
 	ros::NodeHandle imu_nh;
 	ros::NodeHandle imu_nh_private; // nodehandle added by Peixuan Shu
 	std::string frame_id;

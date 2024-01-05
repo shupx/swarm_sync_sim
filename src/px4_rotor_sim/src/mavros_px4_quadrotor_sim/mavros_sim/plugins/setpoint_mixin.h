@@ -107,9 +107,10 @@ public:
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int agent_id = static_cast<D *>(this)->agent_id_;
 		int handle = (int) px4::mavlink_receive_handle::SET_POSITION_TARGET_LOCAL_NED;
-		mavlink_msg_set_position_target_local_ned_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_set_position_target_local_ned_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id)[handle].msg, &sp); 
+		px4::mavlink_receive_lists.at(agent_id)[handle].updated = true;
 	}
 };
 
@@ -159,9 +160,10 @@ public:
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int agent_id = static_cast<D *>(this)->agent_id_;
 		int handle = (int) px4::mavlink_receive_handle::SET_POSITION_TARGET_GLOBAL_INT;
-		mavlink_msg_set_position_target_global_int_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_set_position_target_global_int_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id)[handle].msg, &sp); 
+		px4::mavlink_receive_lists.at(agent_id)[handle].updated = true;
 	}
 };
 
@@ -205,9 +207,10 @@ public:
 		// UAS_FCU(m_uas_)->send_message_ignore_drop(sp); //deleted by Peixuan Shu
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
+		int agent_id = static_cast<D *>(this)->agent_id_;
 		int handle = (int) px4::mavlink_receive_handle::SET_ATTITUDE_TARGET;
-		mavlink_msg_set_attitude_target_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sp); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_set_attitude_target_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id)[handle].msg, &sp); 
+		px4::mavlink_receive_lists.at(agent_id)[handle].updated = true;
 	}
 };
 

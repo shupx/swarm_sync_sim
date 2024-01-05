@@ -249,7 +249,7 @@ public:
 			msg.system_status = system_status;
 			int handle = (int) px4::mavlink_stream_handle::HEARTBEAT;
 			mavlink_msg_heartbeat_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
-			px4::mavlink_stream_list[handle].updated = true;
+			px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 			return true;
 		}

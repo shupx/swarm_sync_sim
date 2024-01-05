@@ -144,7 +144,7 @@ public:
 			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 			int handle = (int) px4::mavlink_stream_handle::POSITION_TARGET_LOCAL_NED;
 			mavlink_msg_position_target_local_ned_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
-			px4::mavlink_stream_list[handle].updated = true;
+			px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 			return true;
 		}

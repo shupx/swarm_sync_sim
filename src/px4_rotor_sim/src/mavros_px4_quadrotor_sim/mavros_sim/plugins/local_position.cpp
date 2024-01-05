@@ -78,13 +78,14 @@ namespace std_plugins {
 class LocalPositionPlugin
 {
 public:
-	LocalPositionPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+	LocalPositionPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
 		lp_nh(nh, "mavros/local_position"),  // nodehandle modified by Peixuan Shu
 		lp_nh_private(nh_private, "local_position"),   // nodehandle added by Peixuan Shu
 		tf_send(false),
 		has_local_position_ned(false),
 		has_local_position_ned_cov(false),
-		m_uas(uas) // added by Peixuan Shu
+		m_uas(uas), // added by Peixuan Shu
+		agent_id_(agent_id) // added by Peixuan Shu
 	{
 		// PluginBase::initialize(uas_);
 
@@ -108,7 +109,8 @@ public:
 
 private:
 	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
-
+	int agent_id_ = -1; // global UAV mavlink id
+	
 	ros::NodeHandle lp_nh;
 	ros::NodeHandle lp_nh_private; // nodehandle added by Peixuan Shu
 

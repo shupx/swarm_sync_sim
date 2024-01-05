@@ -55,6 +55,8 @@ public:
         int expected_agent_num = agent_index + 1;
         allocate_message_storage(expected_agent_num);
 
+        // std::cout << "expected_agent_num: " << expected_agent_num << std::endl;
+
         agent_ = std::make_unique<Agent>(agent_index, nh, nh_private);
 
         agent_index ++;

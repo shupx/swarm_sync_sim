@@ -46,10 +46,10 @@ enum class mavlink_stream_handle : uint16_t {
 	ENUM_NUM  // number of mavlink_stream
 };
 #define MAVLINK_STREAM_NUM (int)px4::mavlink_stream_handle::ENUM_NUM // number of mavlink_receive
-// Store the streaming mavlink messages (declaring global)
-extern mavlink_info_s mavlink_stream_list[MAVLINK_STREAM_NUM]; // declare global
 /* Store the mavlink stream messages for arbitrary number of UAVs */
 extern std::vector<std::array<mavlink_info_s, MAVLINK_STREAM_NUM>> mavlink_stream_lists; // declare global
+// // Store the streaming mavlink messages (declaring global)
+// extern mavlink_info_s mavlink_stream_list[MAVLINK_STREAM_NUM]; // declare global
 
 enum class mavlink_receive_handle : uint16_t {
 	SET_POSITION_TARGET_LOCAL_NED,
@@ -62,10 +62,10 @@ enum class mavlink_receive_handle : uint16_t {
 	ENUM_NUM // number of mavlink_receive
 };
 #define MAVLINK_RECEIVE_NUM (int)px4::mavlink_receive_handle::ENUM_NUM // number of mavlink_receive
-// Store the receiving mavlink messages
-extern mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // declare global
 /* Store the mavlink stream messages for arbitrary number of UAVs */
 extern std::vector<std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>> mavlink_receive_lists; // declare global
+// // Store the receiving mavlink messages
+// extern mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // declare global
 
 
 }

@@ -87,7 +87,7 @@ public:
 					/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 					int handle = (int) px4::mavlink_stream_handle::GPS_GLOBAL_ORIGIN;
 					mavlink_msg_gps_global_origin_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
-					px4::mavlink_stream_list[handle].updated = true;
+					px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 					_ref_timestamp = vehicle_local_position.ref_timestamp;
 					_ref_lat       = vehicle_local_position.ref_lat;
