@@ -102,6 +102,19 @@ private:
 
     bool pos_inited_; // if the LoadInitPos() is called
 
+    /* init landed detector hysteresis */
+    systemlib::Hysteresis _landed_hysteresis{true};
+    systemlib::Hysteresis _maybe_landed_hysteresis{true};
+    systemlib::Hysteresis _ground_contact_hysteresis{true};
+    systemlib::Hysteresis _freefall_hysteresis{false};
+    
+    uint64_t init_ref_timestamp_ = 0; // 0 means not initialized
+    uint64_t last_ref_timestamp_ = 0; // 0 means not initialized
+
+    double last_ref_lat_ = 0; // 0 means not initialized
+    double last_ref_lon_ = 0; // 0 means not initialized
+    float last_ref_alt_ = 0; // 0 means not initialized
+
 	// publications with topic
 	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};
 	uORB_sim::Publication<vehicle_local_position_s>     _local_position_pub{ORB_ID(vehicle_local_position)};

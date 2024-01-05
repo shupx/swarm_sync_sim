@@ -654,11 +654,11 @@ Commander::updateHomePositionYaw(float yaw)
 void
 Commander::run()
 {
-	static bool inited = false;   // added by Peixuan Shu
+	// static bool run_inited_ = false;   // added by Peixuan Shu
 
-if (!inited)  // added by Peixuan Shu
+if (!run_inited_)  // added by Peixuan Shu
 {
-	inited = true;   // added by Peixuan Shu
+	run_inited_ = true;   // added by Peixuan Shu
 
 	bool sensor_fail_tune_played = false;
 

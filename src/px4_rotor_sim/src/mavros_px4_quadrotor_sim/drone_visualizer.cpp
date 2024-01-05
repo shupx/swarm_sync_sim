@@ -64,14 +64,14 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
 void Visualizer::PublishRotorJointState()
 {
-    static double last_time = 0.0;
+    // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
     float rotor_joint_update_freq = 10.0; // 10Hz fixed
-    if (time_now - last_time > 1.0 / rotor_joint_update_freq)
+    if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
-        double dt = time_now - last_time;
+        double dt = time_now - last_time_PublishRotorJointState_;
 
-        static float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
+        // static float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
         float RPM = 1000; // revolutions per minute
         float omega = RPM * 2 * M_PI / 60; // rad/s
         if (!armed_) {omega = 0.0;}
@@ -89,15 +89,15 @@ void Visualizer::PublishRotorJointState()
         }
         joint_pub_.publish(msg);
 
-        last_time = time_now;
+        last_time_PublishRotorJointState_ = time_now;
     }
 }
 
 void Visualizer::PublishBaseLinkTF()
 {
-    static double last_time = 0.0;
+    // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    if (time_now - last_time > 1.0 / max_freq_)
+    if (time_now - last_time_PublishBaseLinkTF_ > 1.0 / max_freq_)
     {
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.frame_id = tf_frame_;
@@ -109,15 +109,15 @@ void Visualizer::PublishBaseLinkTF()
         odom_trans.transform.rotation = quat_;
         tf2_broadcaster.sendTransform(odom_trans);
 
-        last_time = time_now;
+        last_time_PublishBaseLinkTF_ = time_now;
     }
 }
 
 void Visualizer::PublishPath()
 {
-    static double last_time = 0.0;
+    // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    if (time_now - last_time > 1.0 / max_freq_)
+    if (time_now - last_time_PublishPath_ > 1.0 / max_freq_)
     {
         geometry_msgs::PoseStamped TrajPose_;
         TrajPose_.header.stamp = ros::Time::now();
@@ -127,20 +127,20 @@ void Visualizer::PublishPath()
         TrajPose_.pose.position.z = pos_z_;          
         TrajPose_.pose.orientation = quat_;
 
-        static std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector;
-        TrajPoseHistory_vector.insert(TrajPoseHistory_vector.begin(), TrajPose_);
-        if (TrajPoseHistory_vector.size() > history_path_time_ * max_freq_)
+        // static std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector;
+        TrajPoseHistory_vector_.insert(TrajPoseHistory_vector_.begin(), TrajPose_);
+        if (TrajPoseHistory_vector_.size() > history_path_time_ * max_freq_)
         {
-            TrajPoseHistory_vector.pop_back();
+            TrajPoseHistory_vector_.pop_back();
         }
 
         nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
         path_msg->header.stamp = ros::Time::now();
         path_msg->header.frame_id = tf_frame_;
-        path_msg->poses = TrajPoseHistory_vector;
+        path_msg->poses = TrajPoseHistory_vector_;
         path_pub_.publish(path_msg);
 
-        last_time = time_now;
+        last_time_PublishPath_ = time_now;
     }
 }
 

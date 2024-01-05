@@ -53,6 +53,7 @@ class Agent
         std::shared_ptr<Visualizer> visualizer_;
 
         double mainloop_period_;
+        double mainloop_last_time_ = 0;
         sss_utils::Timer mainloop_timer_;
 
         void mainloop(const ros::TimerEvent &event);

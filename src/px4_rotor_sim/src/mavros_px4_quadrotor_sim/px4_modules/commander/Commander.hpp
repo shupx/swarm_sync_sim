@@ -148,6 +148,8 @@ public:
 	// void get_circuit_breaker_params();
 
 private:
+	bool run_inited_ = false;   // added by Peixuan Shu
+
 	void answer_command(const vehicle_command_s &cmd, uint8_t result);
 
 	// transition_result_t arm(arm_disarm_reason_t calling_reason, bool run_preflight_checks = true);

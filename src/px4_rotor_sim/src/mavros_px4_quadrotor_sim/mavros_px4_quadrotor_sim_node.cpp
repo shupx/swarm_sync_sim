@@ -126,11 +126,11 @@ Agent::Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_
 void Agent::mainloop(const ros::TimerEvent &event)
 {
     /*  Validate time  */
-    static double last_time = ros::Time::now().toSec(); // use sim time
+    if (mainloop_last_time_ == 0) { mainloop_last_time_ = ros::Time::now().toSec(); } // init mainloop_last_time_
     double next_time = ros::Time::now().toSec() + mainloop_period_;
-    if (next_time < last_time)
+    if (next_time < mainloop_last_time_)
     {
-        ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(last_time).c_str());
+        ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(mainloop_last_time_).c_str());
     }
 
     /* Run PX4 SITL for one loop */
@@ -138,7 +138,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
     px4sitl_->Run(time_us);
 
     /* Dynamics step forward (ode integrate the numerical model) */
-    dynamics_->step(last_time, next_time);
+    dynamics_->step(mainloop_last_time_, next_time);
 
     /* Mavros publishing mavlink messages to ROS topics */
     mavros_sim_->PublishRosMessage();
@@ -146,7 +146,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
     /* Publish rotor propeller joint positions, base_link tf and history path for the robot model visualization in rviz */
     visualizer_->Run();
 
-    last_time = next_time;
+    mainloop_last_time_ = next_time;
 }
 
 }
