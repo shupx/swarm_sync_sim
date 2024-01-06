@@ -22,7 +22,7 @@ namespace sss_utils
 {
 
 Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false), inited_(false)
+    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false), inited_(false), has_accelerate_timer_thread_(false)
 {
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
@@ -60,40 +60,6 @@ Timer::Impl::~Impl()
     stop();
 }
 
-void Timer::Impl::AccelerateTimerThreadFunc()
-{
-    /**
-     * \brief Open a new thread to check if /clock updates, call timer_.setPeriod(period) 
-     * to release the condition variable "timers_cond_" in timer_manager.h for faster loop speed.
-     * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
-     * , where if use_sim_time is true, the timmer manager will block at least 
-     * for 1 ms even if the loop can be faster. This bug limits the timer loop 
-     * speed to less than 1000 Hz. With this fix, the sim loop rate can be 
-     * 20x faster than real speed.
-     */
-    if (use_sim_time_)
-    {
-        while (!kill_thread_)
-        {
-            // static ros::Time last_time;
-            ros::Time time_now = ros::Time::now();
-            if (time_now != last_clock_time_)
-            {
-                /* Clock is updated. Try to update timer_manager for the next loop as well. 
-                call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h */
-                timer_.setPeriod(period_, false);
-                last_clock_time_ = time_now;
-            }
-            /* This allows sim time to run up to 30x real-time ideally even for very short timer periods.
-             * Sleep for 1 ms or (period_ / 30) s
-             * Inspired by https://github.com/ros/roscpp_core/blob/2951f0579a94955f5529d7f24bb1c8c7f0256451/rostime/src/time.cpp#L438 about ros::Duration::sleep() when use_sim_time is true
-             */
-            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/30);
-            ros::WallDuration(0,sleep_nsec).sleep();
-        }
-    }
-}
-
 /* callback_ + clock update in every loop */
 void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
 {
@@ -127,6 +93,13 @@ void Timer::Impl::start()
             /* Launch a new thread to check /clock and update timer faster */
             kill_thread_ = false;
             boost::thread accelerate_timer_thread_ = boost::thread(&Timer::Impl::AccelerateTimerThreadFunc,this);
+            has_accelerate_timer_thread_ = true;
+
+            /* @TODO
+             * Note that setPeriod() unblocks all timers in timer manager as timer manager is global. 
+             * Maybe only one accelerate thread is needed for all timers?
+             * But More timers bring more more callbacks in the callback queue. We need check clock update more frequently.
+             */
         }
 
         timer_.start();
@@ -151,6 +124,47 @@ void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
     }
 }
 
+void Timer::Impl::AccelerateTimerThreadFunc()
+{
+    /**
+     * \brief Open a new thread to check if /clock updates, call timer_.setPeriod(period) 
+     * to release the condition variable "timers_cond_" in timer_manager.h for faster loop speed.
+     * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
+     * , where if use_sim_time is true, the timmer manager will block at least 
+     * for 1 ms even if the loop can be faster. This bug limits the timer loop 
+     * speed to less than 1000 Hz. With this fix, the sim loop rate can be 
+     * 20x faster than real speed.
+     */
+    if (use_sim_time_)
+    {
+        while (!kill_thread_)
+        {
+            // static ros::Time last_time;
+            ros::Time time_now = ros::Time::now();
+            if (time_now != last_clock_time_)
+            {
+                /* Clock is updated. Try to update timer_manager for the next loop as well. 
+                call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h */
+                timer_.setPeriod(period_, false);
+                last_clock_time_ = time_now;
+            }
+            /* This allows sim time to run up to 100 real-time ideally even for very short timer periods.
+             * Sleep for 1 ms or (period_ / 100) s
+             * Inspired by https://github.com/ros/roscpp_core/blob/2951f0579a94955f5529d7f24bb1c8c7f0256451/rostime/src/time.cpp#L438 about ros::Duration::sleep() when use_sim_time is true
+            */
+            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/100);
+            ros::WallDuration(0,sleep_nsec).sleep();
+
+            /** @TODO
+             * Note that setPeriod() unblocks all timers in timer_manager as timer manager is global. 
+             * If there are multiple timers, their callbacks are queued in one thread by timermanager.h as ros::spin() is single threaded by default. 
+             * Maybe we need just one accelerate thread for all timers but multiply its loop rate with timer multiples?
+             */ 
+
+        }
+    }
+}
+
 void Timer::Impl::stop()
 {
     if (started_)
@@ -159,7 +173,10 @@ void Timer::Impl::stop()
         {
             clock_updater_->unregister();
             kill_thread_ = true;
-            accelerate_timer_thread_.join();
+            if (has_accelerate_timer_thread_)
+            {
+                accelerate_timer_thread_.join();
+            }
         }
 
         timer_.stop();

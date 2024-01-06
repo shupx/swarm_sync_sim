@@ -85,6 +85,7 @@ class Timer
             void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
 
             bool kill_thread_;
+            bool has_accelerate_timer_thread_;
             ros::Time last_clock_time_;
             boost::thread accelerate_timer_thread_;
             /**
