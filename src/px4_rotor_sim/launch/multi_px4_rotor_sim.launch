@@ -14,6 +14,7 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
         <arg name="open_rviz" value="false"/>
+        <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -24,6 +25,7 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
         <arg name="open_rviz" value="false"/>
+        <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -34,6 +36,7 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
         <arg name="open_rviz" value="false"/>
+        <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     </include>
 
     <!-- <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -44,6 +47,7 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
         <arg name="open_rviz" value="false"/>
+        <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
@@ -54,6 +58,7 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="local_pos_source" value="$(arg local_pos_source)"/>
         <arg name="open_rviz" value="false"/>
+        <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     </include> -->
 
     <group if="$(arg open_rviz)">

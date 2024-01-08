@@ -23,13 +23,11 @@ namespace px4
 
 // Init mavlink lists here (they are global/extern!)
 
-// mavlink_info_s mavlink_stream_list[MAVLINK_STREAM_NUM]; // define (allocate storage)
+// initialize with at least one element for UAV 1
+std::vector<std::array<mavlink_info_s, MAVLINK_STREAM_NUM>> mavlink_stream_lists{std::array<mavlink_info_s, MAVLINK_STREAM_NUM>{}}; // define (allocate storage)
 
-std::vector<std::array<mavlink_info_s, MAVLINK_STREAM_NUM>> mavlink_stream_lists; // define (allocate storage)
-
-// mavlink_info_s mavlink_receive_list[MAVLINK_RECEIVE_NUM]; // define (allocate storage)
-
-std::vector<std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>> mavlink_receive_lists; // define (allocate storage)
+// initialize with at least one element for UAV 1
+std::vector<std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>> mavlink_receive_lists {std::array<mavlink_info_s, MAVLINK_RECEIVE_NUM>{}}; // define (allocate storage)
 
 
 /* allocate global storage for messages of agent i */

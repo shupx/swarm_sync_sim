@@ -44,7 +44,7 @@ PX4SITL::PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle 
 
 void PX4SITL::load_px4_params_from_ros_params()
 {
-    /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
+    /* Load px4 parameters from ROS parameter space to override the default values from parameters_vectors.at(agent_id_) in <parameters/px4_parameters.hpp>*/
     for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
     {
         switch (px4::parameters_type[i])
@@ -52,20 +52,20 @@ void PX4SITL::load_px4_params_from_ros_params()
             case PARAM_TYPE_INT32:
             {
                 int default_value = px4::parameters[i].val.i;
-                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.i);
-                if (px4::parameters[i].val.i != default_value)
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters_vectors.at(agent_id_)[i].val.i);
+                if (px4::parameters_vectors.at(agent_id_)[i].val.i != default_value)
                 {
-                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.i << std::endl;
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters_vectors.at(agent_id_)[i].val.i << std::endl;
                 }
                 break;
             }
             case PARAM_TYPE_FLOAT:
             {
                 float default_value = px4::parameters[i].val.f;
-                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.f);
-                if (px4::parameters[i].val.f != default_value)
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters_vectors.at(agent_id_)[i].val.f);
+                if (px4::parameters_vectors.at(agent_id_)[i].val.f != default_value)
                 {
-                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.f << std::endl;
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters_vectors.at(agent_id_)[i].val.f << std::endl;
                 }
                 break; 
             }   
@@ -427,7 +427,14 @@ void PX4SITL::get_px4_param(float& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
 
-        output = px4::parameters[(int) p].val.f;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.f;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 template <px4::params p>
@@ -436,7 +443,14 @@ void PX4SITL::get_px4_param(int32_t& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-        output = px4::parameters[(int) p].val.i;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.i;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 template <px4::params p>
@@ -445,7 +459,14 @@ void PX4SITL::get_px4_param(bool& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-        output = px4::parameters[(int) p].val.i != 0;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.i != 0;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 

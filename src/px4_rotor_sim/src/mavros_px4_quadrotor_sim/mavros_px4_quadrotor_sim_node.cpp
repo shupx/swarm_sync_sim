@@ -25,10 +25,11 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 
-    /* allocate global storage for messages of the agent */
-    int expected_agent_num = 1; // each agent runs in seperate process. No need to distinguish the messages.
-    px4::allocate_mavlink_message_storage(expected_agent_num);
-    uORB_sim::allocate_uorb_message_storage(expected_agent_num);
+    // /* allocate global storage for messages of the agent (already has one)*/
+    // int expected_agent_num = 1; // each agent runs in seperate process. No need to distinguish the messages.
+    // px4::allocate_mavlink_message_storage(expected_agent_num);
+    // uORB_sim::allocate_uorb_message_storage(expected_agent_num);
+    // px4::allocate_px4_params_storage(expected_agent_num);
 
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Agent> agent(new Agent(agent_index, nh, nh_private));
@@ -58,12 +59,13 @@ public:
         int expected_agent_num = agent_index + 1;
         px4::allocate_mavlink_message_storage(expected_agent_num);
         uORB_sim::allocate_uorb_message_storage(expected_agent_num);
-
-        // std::cout << "expected_agent_num: " << expected_agent_num << std::endl;
+        px4::allocate_px4_params_storage(expected_agent_num);
 
         agent_ = std::make_unique<Agent>(agent_index, nh, nh_private);
 
-        agent_index ++;
+        agent_index ++;  // index of MavrosQuadSimulator agents (this variable is global across nodelets)
+
+        // std::cout << "agent number: " << agent_index << std::endl;
 
         // NODELET_DEBUG("My debug statement")
         // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)

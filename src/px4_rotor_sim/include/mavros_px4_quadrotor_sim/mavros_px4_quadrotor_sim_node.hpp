@@ -31,7 +31,7 @@ namespace MavrosQuadSimulator
 {
 
 extern int agent_index; // index of MavrosQuadSimulator agents (this variable is global across nodelets)
-int agent_index = 0;
+int agent_index = 0;  // index of MavrosQuadSimulator agents (this variable is global across nodelets)
 
 class Agent
 {

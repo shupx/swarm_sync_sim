@@ -50,33 +50,34 @@ namespace uORB_sim {
 
 /* Store the PX4 uORB messages for arbitrary number of UAVs  (define) */
 // (These messages are global/extern!)
-std::vector<actuator_armed_s> actuator_armed;
-std::vector<autotune_attitude_control_status_s> autotune_attitude_control_status;
-std::vector<battery_status_s> battery_status;
-std::vector<commander_state_s> commander_state;
-std::vector<cpuload_s> cpuload;
-std::vector<home_position_s> home_position;
-std::vector<manual_control_setpoint_s> manual_control_setpoint;
-std::vector<offboard_control_mode_s> offboard_control_mode;
-std::vector<takeoff_status_s> takeoff_status;
-std::vector<vehicle_air_data_s> vehicle_air_data;
-std::vector<vehicle_angular_velocity_s> vehicle_angular_velocity;
-std::vector<vehicle_attitude_s> vehicle_attitude;
-std::vector<vehicle_attitude_setpoint_s> vehicle_attitude_setpoint;
-std::vector<vehicle_command_s> vehicle_command;
-std::vector<vehicle_command_ack_s> vehicle_command_ack;
-std::vector<vehicle_constraints_s> vehicle_constraints;
-std::vector<vehicle_control_mode_s> vehicle_control_mode;
-std::vector<vehicle_global_position_s> vehicle_global_position;
-std::vector<vehicle_gps_position_s> vehicle_gps_position;
-std::vector<vehicle_land_detected_s> vehicle_land_detected;
-std::vector<vehicle_local_position_s> vehicle_local_position;
-std::vector<vehicle_local_position_setpoint_s> vehicle_local_position_setpoint; // real target setpoints
-std::vector<vehicle_local_position_setpoint_s> trajectory_setpoint; // mavlink setpoints
-std::vector<vehicle_odometry_s> vehicle_odometry;
-std::vector<vehicle_rates_setpoint_s> vehicle_rates_setpoint;
-std::vector<vehicle_status_s> vehicle_status;
-std::vector<vehicle_status_flags_s> vehicle_status_flags;
+// initialize with at least one element for UAV 1
+std::vector<actuator_armed_s> actuator_armed {actuator_armed_s{.timestamp = 0}};
+std::vector<autotune_attitude_control_status_s> autotune_attitude_control_status {autotune_attitude_control_status_s{.timestamp = 0}};
+std::vector<battery_status_s> battery_status {battery_status_s{.timestamp = 0}};
+std::vector<commander_state_s> commander_state {commander_state_s{.timestamp = 0}};
+std::vector<cpuload_s> cpuload {cpuload_s{.timestamp = 0}};
+std::vector<home_position_s> home_position {home_position_s{.timestamp = 0}};
+std::vector<manual_control_setpoint_s> manual_control_setpoint {manual_control_setpoint_s{.timestamp = 0}};
+std::vector<offboard_control_mode_s> offboard_control_mode {offboard_control_mode_s{.timestamp = 0}};
+std::vector<takeoff_status_s> takeoff_status {takeoff_status_s{.timestamp = 0}};
+std::vector<vehicle_air_data_s> vehicle_air_data {vehicle_air_data_s{.timestamp = 0}};
+std::vector<vehicle_angular_velocity_s> vehicle_angular_velocity {vehicle_angular_velocity_s{.timestamp = 0}};
+std::vector<vehicle_attitude_s> vehicle_attitude {vehicle_attitude_s{.timestamp = 0}};
+std::vector<vehicle_attitude_setpoint_s> vehicle_attitude_setpoint {vehicle_attitude_setpoint_s{.timestamp = 0}};
+std::vector<vehicle_command_s> vehicle_command {vehicle_command_s{.timestamp = 0}};
+std::vector<vehicle_command_ack_s> vehicle_command_ack {vehicle_command_ack_s{.timestamp = 0}};
+std::vector<vehicle_constraints_s> vehicle_constraints {vehicle_constraints_s{.timestamp = 0}};
+std::vector<vehicle_control_mode_s> vehicle_control_mode {vehicle_control_mode_s{.timestamp = 0}};
+std::vector<vehicle_global_position_s> vehicle_global_position {vehicle_global_position_s{.timestamp = 0}};
+std::vector<vehicle_gps_position_s> vehicle_gps_position {vehicle_gps_position_s{.timestamp = 0}};
+std::vector<vehicle_land_detected_s> vehicle_land_detected {vehicle_land_detected_s{.timestamp = 0}};
+std::vector<vehicle_local_position_s> vehicle_local_position {vehicle_local_position_s{.timestamp = 0}};
+std::vector<vehicle_local_position_setpoint_s> vehicle_local_position_setpoint {vehicle_local_position_setpoint_s{.timestamp = 0}}; // real target setpoints
+std::vector<vehicle_local_position_setpoint_s> trajectory_setpoint {vehicle_local_position_setpoint_s{.timestamp = 0}}; // mavlink setpoints
+std::vector<vehicle_odometry_s> vehicle_odometry {vehicle_odometry_s{.timestamp = 0}};
+std::vector<vehicle_rates_setpoint_s> vehicle_rates_setpoint {vehicle_rates_setpoint_s{.timestamp = 0}};
+std::vector<vehicle_status_s> vehicle_status {vehicle_status_s{.timestamp = 0}};
+std::vector<vehicle_status_flags_s> vehicle_status_flags {vehicle_status_flags_s{.timestamp = 0}};
 
 /* allocate global storage for messages of agent i */
 void allocate_uorb_message_storage(int expected_agent_num)
