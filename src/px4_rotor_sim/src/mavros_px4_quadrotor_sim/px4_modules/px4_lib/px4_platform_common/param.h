@@ -120,6 +120,7 @@ param_type_t param_type(param_t param)
  * @return		Zero if the parameter's value could be returned, nonzero otherwise.
  */
 int		param_get(param_t param, void *val)
+//@TODO int		param_get(int &agent_id, param_t param, void *val)
 {
 	// Redefined from <parameters/param.cpp>
 	// Get the param from px4::parameters defined in <parameters/px4_parameters.hpp>
@@ -134,10 +135,12 @@ int		param_get(param_t param, void *val)
 		switch (param_type(param)) {
 		case PARAM_TYPE_INT32:
 			memcpy(val, &px4::parameters[param].val.i, sizeof(px4::parameters[param].val.i));
+			//@TODO &px4::parameters_vectors.at(agent_id)[param].val.i
 			return PX4_OK;
 
 		case PARAM_TYPE_FLOAT:
 			memcpy(val, &px4::parameters[param].val.f, sizeof(px4::parameters[param].val.f));
+			//@TODO &px4::parameters_vectors.at(agent_id)[param].val.f
 			return PX4_OK;
 		}
 	}
@@ -188,23 +191,30 @@ param_t	param_find(const char *name)
 	return PARAM_INVALID;
 }
 
-#define CHECK_PARAM_TYPE(param, type)
+#define CHECK_PARAM_TYPE(param, type) \
+	if (param_type(param) != type) { \
+		/* use printf() to avoid having to use more includes */ \
+		PX4_ERR("wrong type passed to param_get() for param %s", param_name(param)); \
+	}
+// #define CHECK_PARAM_TYPE(param, type)
+
 // param is a C-interface. This means there is no overloading, and thus no type-safety for param_get().
 // So for C++ code we redefine param_get() to inlined overloaded versions, which gives us type-safety
 // w/o having to use a different interface
-static inline int param_get_cplusplus(param_t param, float *val)
+static inline int param_get_cplusplus(param_t param, float *val) //@TODO add agent_id_
 {
 	CHECK_PARAM_TYPE(param, PARAM_TYPE_FLOAT);
-	return param_get(param, (void *)val);
+	return param_get(param, (void *)val); //@TODO add agent_id_
 }
-static inline int param_get_cplusplus(param_t param, int32_t *val)
+static inline int param_get_cplusplus(param_t param, int32_t *val) //@TODO add agent_id_
 {
 	CHECK_PARAM_TYPE(param, PARAM_TYPE_INT32);
-	return param_get(param, (void *)val);
+	return param_get(param, (void *)val); //@TODO add agent_id_
 }
 #undef CHECK_PARAM_TYPE
 
 #define param_get(param, val) param_get_cplusplus(param, val)
+//@TODO #define param_get(param, val) param_get_cplusplus(agent_id_(& passing), param, val)
 
 /*****************************************************************************
 ******************************************************************************
@@ -226,6 +236,7 @@ inline static param_t param_handle(px4::params p)
 
 #define _DEFINE_SINGLE_PARAMETER(x) \
 	do_not_explicitly_use_this_namespace::PAIR(x);
+	//@TODO do_not_explicitly_use_this_namespace::PAIR(x) {agent_id_};
 
 #define _CALL_UPDATE(x) \
 	STRIP(x).update();
@@ -284,7 +295,10 @@ public:
 	// static type-check
 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
 
+	//@TODO int &agent_id_; // reference passing
+
 	Param()
+	//@TODO Param(int& agent_id) : agent_id_(agent_id)
 	{
 		param_set_used(handle());
 		update();
@@ -386,7 +400,9 @@ public:
 	// static type-check
 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
+	//@TODO int &agent_id_; // reference passing
 	Param()
+	//@TODO Param(int& agent_id) : agent_id_(agent_id)
 	{
 		param_set_used(handle());
 		update();
