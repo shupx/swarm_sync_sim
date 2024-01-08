@@ -57,7 +57,7 @@
 #include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include <mavlink/v2.0/minimal/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
-#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated static(global) mavlink messages
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // store the simulated extern(global) mavlink messages
 
 
 using namespace mavros; // for mavros::ftf, added by Peixuan Shu
@@ -77,7 +77,7 @@ class GlobalPositionPlugin
 public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-	GlobalPositionPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+	GlobalPositionPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
 		gp_nh(nh, "mavros/global_position"), // nodehandle modified by Peixuan Shu
 		gp_nh_private(nh_private, "global_position"),   // nodehandle added by Peixuan Shu
 		hp_nh(nh, "mavros/home_position"), // nodehandle modified by Peixuan Shu
@@ -85,7 +85,8 @@ public:
 		use_relative_alt(true),
 		is_map_init(false),
 		rot_cov(99999.0),
-		m_uas(uas) // added by Peixuan Shu
+		m_uas(uas), // added by Peixuan Shu
+		agent_id_(agent_id) // added by Peixuan Shu
 	{ 
 		// PluginBase::initialize(uas_);
 
@@ -128,7 +129,8 @@ public:
 
 private:
 	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
-
+	int agent_id_ = -1; // global UAV mavlink id
+	
 	ros::NodeHandle gp_nh;
 	ros::NodeHandle gp_nh_private; // nodehandle added by Peixuan Shu
 	ros::NodeHandle hp_nh;	//node handler in home_position namespace
@@ -554,8 +556,8 @@ private:
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 		int handle = (int) px4::mavlink_receive_handle::SET_GPS_GLOBAL_ORIGIN;
-		mavlink_msg_set_gps_global_origin_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &gpo); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_set_gps_global_origin_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id_)[handle].msg, &gpo); 
+		px4::mavlink_receive_lists.at(agent_id_)[handle].updated = true;
 	}
 };
 }	// namespace std_plugins

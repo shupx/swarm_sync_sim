@@ -158,8 +158,17 @@ target_link_libraries(drone_visualizer
 )
 
 
-# add_executable(mavros_px4_quadrotor_sim_node
-#                   src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
+add_executable(mavros_px4_quadrotor_sim_node
+                  src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
+
+# link libraries for this lib
+target_link_libraries(mavros_px4_quadrotor_sim_node
+   ${catkin_LIBRARIES}
+   quadrotor_dynamics
+   px4_sitl
+   MavrosSim
+   drone_visualizer
+)
 
 add_library(mavros_px4_quadrotor_sim_nodelet
             src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)

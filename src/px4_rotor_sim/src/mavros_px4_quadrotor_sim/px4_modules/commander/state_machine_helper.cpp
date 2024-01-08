@@ -370,7 +370,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 			// set_link_loss_nav_state(status, armed, status_flags, internal_state, rc_loss_act, param_com_rcl_act_t);
 
 			/* Print warn messages. Added by Peixuan Shu  */
-			static bool printed = false; 
+			static bool printed = false; //@TODO do not use static variables (because multi-nodelets share this variable)
 			if(nav_state_old != commander_state_s::MAIN_STATE_ACRO &&
 				nav_state_old != commander_state_s::MAIN_STATE_MANUAL &&
 				 nav_state_old != commander_state_s::MAIN_STATE_STAB &&

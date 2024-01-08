@@ -53,6 +53,18 @@
 #include <px4_platform_common/defines.h> // added by Peixuan Shu 
 
 
+/************* Added by Peixuan Shu **********/
+#ifndef PX4_WARN
+#include <iostream> // added by Peixuan Shu
+#define PX4_WARN(x) std::cout << #x << std::endl
+#endif
+
+#ifndef PX4_ERR
+#include <iostream> // added by Peixuan Shu
+#define PX4_ERR(x) std::cout << #x << std::endl
+#endif
+/********************************************/
+
 /******************************************************************************
  * /***************************************************************************
  * /***************************************************************************
@@ -119,7 +131,8 @@ param_type_t param_type(param_t param)
  * @param val		Where to return the value, assumed to point to suitable storage for the parameter type.
  * @return		Zero if the parameter's value could be returned, nonzero otherwise.
  */
-int		param_get(param_t param, void *val)
+// int		param_get(param_t param, void *val)
+int		param_get(int &agent_id, param_t param, void *val) //add agent_id by Peixuan Shu
 {
 	// Redefined from <parameters/param.cpp>
 	// Get the param from px4::parameters defined in <parameters/px4_parameters.hpp>
@@ -133,11 +146,13 @@ int		param_get(param_t param, void *val)
 		// if parameter is unchanged (static default value) copy immediately and avoid locking
 		switch (param_type(param)) {
 		case PARAM_TYPE_INT32:
-			memcpy(val, &px4::parameters[param].val.i, sizeof(px4::parameters[param].val.i));
+			// memcpy(val, &px4::parameters[param].val.i, sizeof(px4::parameters[param].val.i));
+			memcpy(val, &px4::parameters_vectors.at(agent_id)[param].val.i, sizeof(px4::parameters[param].val.i)); // modified by Peixuan Shu
 			return PX4_OK;
 
 		case PARAM_TYPE_FLOAT:
-			memcpy(val, &px4::parameters[param].val.f, sizeof(px4::parameters[param].val.f));
+			// memcpy(val, &px4::parameters[param].val.f, sizeof(px4::parameters[param].val.f));
+			memcpy(val, &px4::parameters_vectors.at(agent_id)[param].val.f, sizeof(px4::parameters[param].val.f)); // modified by Peixuan Shu
 			return PX4_OK;
 		}
 	}
@@ -188,23 +203,47 @@ param_t	param_find(const char *name)
 	return PARAM_INVALID;
 }
 
-#define CHECK_PARAM_TYPE(param, type)
+/**
+ * Obtain the name of a parameter.
+ *
+ * @param param		A handle returned by param_find or passed by param_foreach.
+ * @return		The name assigned to the parameter, or NULL if the handle is invalid.
+ */
+const char *param_name(param_t param)
+{
+	return handle_in_range(param) ? px4::parameters[param].name : nullptr;
+}
+
+
+#define CHECK_PARAM_TYPE(param, type) \
+	if (param_type(param) != type) { \
+		/* use printf() to avoid having to use more includes */ \
+		PX4_ERR("wrong type passed to param_get() for param " + param_name(param)); \
+	}
+// #define CHECK_PARAM_TYPE(param, type)
+
 // param is a C-interface. This means there is no overloading, and thus no type-safety for param_get().
 // So for C++ code we redefine param_get() to inlined overloaded versions, which gives us type-safety
 // w/o having to use a different interface
-static inline int param_get_cplusplus(param_t param, float *val)
+
+// static inline int param_get_cplusplus(param_t param, float *val)
+static inline int param_get_cplusplus(int &agent_id, param_t param, float *val) // add agent_id by Peixuan Shu
 {
 	CHECK_PARAM_TYPE(param, PARAM_TYPE_FLOAT);
-	return param_get(param, (void *)val);
+	// return param_get(param, (void *)val);
+	return param_get(agent_id, param, (void *)val);  // add agent_id by Peixuan Shu
 }
-static inline int param_get_cplusplus(param_t param, int32_t *val)
+// static inline int param_get_cplusplus(param_t param, int32_t *val)
+static inline int param_get_cplusplus(int &agent_id, param_t param, int32_t *val) // add agent_id by Peixuan Shu
 {
 	CHECK_PARAM_TYPE(param, PARAM_TYPE_INT32);
-	return param_get(param, (void *)val);
+	// return param_get(param, (void *)val);
+	return param_get(agent_id, param, (void *)val);  // add agent_id by Peixuan Shu
 }
 #undef CHECK_PARAM_TYPE
 
-#define param_get(param, val) param_get_cplusplus(param, val)
+// #define param_get(param, val) param_get_cplusplus(param, val)
+#define param_get(param, val) param_get_cplusplus(agent_id_, param, val)  // add agent_id_ by Peixuan Shu
 
 /*****************************************************************************
 ******************************************************************************
@@ -225,7 +264,8 @@ inline static param_t param_handle(px4::params p)
 
 
 #define _DEFINE_SINGLE_PARAMETER(x) \
-	do_not_explicitly_use_this_namespace::PAIR(x);
+	do_not_explicitly_use_this_namespace::PAIR(x) {agent_id_}; // add agent_id_ by Peixuan Shu
+	// do_not_explicitly_use_this_namespace::PAIR(x);
 
 #define _CALL_UPDATE(x) \
 	STRIP(x).update();
@@ -284,13 +324,30 @@ public:
 	// static type-check
 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
 
-	Param()
+	int &agent_id_; // reference passing. // add agent_id_ by Peixuan Shu
+
+	// Param()
+	Param(int& agent_id) : agent_id_(agent_id) // add agent_id_ by Peixuan Shu
 	{
 		param_set_used(handle());
-		update();
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{update();}
 	}
 
-	float get() const { return _val; }
+	// float get() const { return _val; }
+	float get() 
+	{ 
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{	
+			update();
+			return _val; 
+		}
+		else  // add agent_id_ by Peixuan Shu
+		{
+			std::cout << "[Param.get() ERROR] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+			return _val; 
+		}
+	}
 
 	const float &reference() const { return _val; }
 
@@ -327,57 +384,57 @@ private:
 	float _val;
 };
 
-// external version
-template<px4::params p>
-class Param<float &, p>
-{
-public:
-	// static type-check
-	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
+// // external version
+// template<px4::params p>
+// class Param<float &, p>
+// {
+// public:
+// 	// static type-check
+// 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
 
-	Param(float &external_val)
-		: _val(external_val)
-	{
-		param_set_used(handle());
-		update();
-	}
+// 	Param(float &external_val)
+// 		: _val(external_val)
+// 	{
+// 		param_set_used(handle());
+// 		update();
+// 	}
 
-	float get() const { return _val; }
+// 	float get() const { return _val; }
 
-	const float &reference() const { return _val; }
+// 	const float &reference() const { return _val; }
 
-	/// Store the parameter value to the parameter storage (@see param_set())
-	bool commit() const { return param_set(handle(), &_val) == 0; }
+// 	/// Store the parameter value to the parameter storage (@see param_set())
+// 	bool commit() const { return param_set(handle(), &_val) == 0; }
 
-	/// Store the parameter value to the parameter storage, w/o notifying the system (@see param_set_no_notification())
-	bool commit_no_notification() const { return param_set_no_notification(handle(), &_val) == 0; }
+// 	/// Store the parameter value to the parameter storage, w/o notifying the system (@see param_set_no_notification())
+// 	bool commit_no_notification() const { return param_set_no_notification(handle(), &_val) == 0; }
 
-	/// Set and commit a new value. Returns true if the value changed.
-	bool commit_no_notification(float val)
-	{
-		if (fabsf(val - _val) > FLT_EPSILON) {
-			set(val);
-			commit_no_notification();
-			return true;
-		}
+// 	/// Set and commit a new value. Returns true if the value changed.
+// 	bool commit_no_notification(float val)
+// 	{
+// 		if (fabsf(val - _val) > FLT_EPSILON) {
+// 			set(val);
+// 			commit_no_notification();
+// 			return true;
+// 		}
 
-		return false;
-	}
+// 		return false;
+// 	}
 
-	void set(float val) { _val = val; }
+// 	void set(float val) { _val = val; }
 
-	void reset()
-	{
-		param_reset_no_notification(handle());
-		update();
-	}
+// 	void reset()
+// 	{
+// 		param_reset_no_notification(handle());
+// 		update();
+// 	}
 
-	bool update() { return param_get(handle(), &_val) == 0; }
+// 	bool update() { return param_get(handle(), &_val) == 0; }
 
-	param_t handle() const { return param_handle(p); }
-private:
-	float &_val;
-};
+// 	param_t handle() const { return param_handle(p); }
+// private:
+// 	float &_val;
+// };
 
 template<px4::params p>
 class Param<int32_t, p>
@@ -386,13 +443,30 @@ public:
 	// static type-check
 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-	Param()
+	int &agent_id_; // reference passing. // add agent_id_ by Peixuan Shu
+
+	// Param()
+	Param(int& agent_id) : agent_id_(agent_id) // add agent_id_ by Peixuan Shu
 	{
 		param_set_used(handle());
-		update();
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{update();}
 	}
 
-	int32_t get() const { return _val; }
+	// int32_t get() const { return _val; }
+	int32_t get() 
+	{ 
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{	
+			update();
+			return _val; 
+		}
+		else  // add agent_id_ by Peixuan Shu
+		{
+			std::cout << "[Param.get()] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+			return _val; 
+		}
+	}
 
 	const int32_t &reference() const { return _val; }
 
@@ -429,57 +503,57 @@ private:
 	int32_t _val;
 };
 
-//external version
-template<px4::params p>
-class Param<int32_t &, p>
-{
-public:
-	// static type-check
-	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
+// //external version
+// template<px4::params p>
+// class Param<int32_t &, p>
+// {
+// public:
+// 	// static type-check
+// 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-	Param(int32_t &external_val)
-		: _val(external_val)
-	{
-		param_set_used(handle());
-		update();
-	}
+// 	Param(int32_t &external_val)
+// 		: _val(external_val)
+// 	{
+// 		param_set_used(handle());
+// 		update();
+// 	}
 
-	int32_t get() const { return _val; }
+// 	int32_t get() const { return _val; }
 
-	const int32_t &reference() const { return _val; }
+// 	const int32_t &reference() const { return _val; }
 
-	/// Store the parameter value to the parameter storage (@see param_set())
-	bool commit() const { return param_set(handle(), &_val) == 0; }
+// 	/// Store the parameter value to the parameter storage (@see param_set())
+// 	bool commit() const { return param_set(handle(), &_val) == 0; }
 
-	/// Store the parameter value to the parameter storage, w/o notifying the system (@see param_set_no_notification())
-	bool commit_no_notification() const { return param_set_no_notification(handle(), &_val) == 0; }
+// 	/// Store the parameter value to the parameter storage, w/o notifying the system (@see param_set_no_notification())
+// 	bool commit_no_notification() const { return param_set_no_notification(handle(), &_val) == 0; }
 
-	/// Set and commit a new value. Returns true if the value changed.
-	bool commit_no_notification(int32_t val)
-	{
-		if (val != _val) {
-			set(val);
-			commit_no_notification();
-			return true;
-		}
+// 	/// Set and commit a new value. Returns true if the value changed.
+// 	bool commit_no_notification(int32_t val)
+// 	{
+// 		if (val != _val) {
+// 			set(val);
+// 			commit_no_notification();
+// 			return true;
+// 		}
 
-		return false;
-	}
+// 		return false;
+// 	}
 
-	void set(int32_t val) { _val = val; }
+// 	void set(int32_t val) { _val = val; }
 
-	void reset()
-	{
-		param_reset_no_notification(handle());
-		update();
-	}
+// 	void reset()
+// 	{
+// 		param_reset_no_notification(handle());
+// 		update();
+// 	}
 
-	bool update() { return param_get(handle(), &_val) == 0; }
+// 	bool update() { return param_get(handle(), &_val) == 0; }
 
-	param_t handle() const { return param_handle(p); }
-private:
-	int32_t &_val;
-};
+// 	param_t handle() const { return param_handle(p); }
+// private:
+// 	int32_t &_val;
+// };
 
 template<px4::params p>
 class Param<bool, p>
@@ -488,13 +562,31 @@ public:
 	// static type-check
 	static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-	Param()
+	int &agent_id_; // reference passing. // add agent_id_ by Peixuan Shu
+
+	// Param()
+	Param(int& agent_id) : agent_id_(agent_id) // add agent_id_ by Peixuan Shu
 	{
 		param_set_used(handle());
-		update();
+		// update();
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{update();}
 	}
 
-	bool get() const { return _val; }
+	// bool get() const { return _val; }
+	bool get() 
+	{ 
+		if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size()) // add agent_id_ by Peixuan Shu
+		{	
+			update();
+			return _val; 
+		}
+		else  // add agent_id_ by Peixuan Shu
+		{
+			std::cout << "[Param.get()] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+			return _val; 
+		}
+	}
 
 	const bool &reference() const { return _val; }
 
@@ -556,11 +648,11 @@ using ParamFloat = Param<float, p>;
 template <px4::params p>
 using ParamInt = Param<int32_t, p>;
 
-template <px4::params p>
-using ParamExtFloat = Param<float &, p>;
+// template <px4::params p>
+// using ParamExtFloat = Param<float &, p>;
 
-template <px4::params p>
-using ParamExtInt = Param<int32_t &, p>;
+// template <px4::params p>
+// using ParamExtInt = Param<int32_t &, p>;
 
 template <px4::params p>
 using ParamBool = Param<bool, p>;

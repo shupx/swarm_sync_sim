@@ -48,12 +48,19 @@ class MavlinkStreamGlobalPositionInt
 {
 private:
 
+    int agent_id_ = -1; // agent id.
+	
 	uORB_sim::Subscription<vehicle_global_position_s> _gpos_sub{ORB_ID(vehicle_global_position)};
 	uORB_sim::Subscription<vehicle_local_position_s> _lpos_sub{ORB_ID(vehicle_local_position)};
 	uORB_sim::Subscription<home_position_s> _home_sub{ORB_ID(home_position)};
 	uORB_sim::Subscription<vehicle_air_data_s> _air_data_sub{ORB_ID(vehicle_air_data)};
 
 public:
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		vehicle_global_position_s gpos;
@@ -107,8 +114,8 @@ public:
 
 			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 			int handle = (int) px4::mavlink_stream_handle::GLOBAL_POSITION_INT;
-			mavlink_msg_global_position_int_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
-			px4::mavlink_stream_list[handle].updated = true;
+			mavlink_msg_global_position_int_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
+			px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 			return true;
 		}

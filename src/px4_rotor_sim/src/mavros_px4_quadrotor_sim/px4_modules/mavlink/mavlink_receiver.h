@@ -139,9 +139,11 @@ class Mavlink;
 
 class MavlinkReceiver : public ModuleParams
 {
+private: 
+	int agent_id_ = -1; // UAV id
 
 public:
-	MavlinkReceiver(); // Added by Peixuan Shu
+	MavlinkReceiver(int agent_id); // agent_id added by Peixuan Shu
 	MavlinkReceiver(Mavlink *parent);
 	~MavlinkReceiver() override;
 

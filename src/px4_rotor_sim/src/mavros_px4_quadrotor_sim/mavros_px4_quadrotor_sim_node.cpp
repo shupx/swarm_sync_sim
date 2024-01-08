@@ -14,25 +14,33 @@
  * 
  */
 
-#include <nodelet/nodelet.h>
 #include "mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.hpp"
 
-// using namespace MavrosQuadSimulator;
+using namespace MavrosQuadSimulator;
 
-// int main(int argc, char **argv)
-// {
-//     ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
-//     ros::NodeHandle nh;
-//     ros::NodeHandle nh_private("~");
+/* For compile of node */
+int main(int argc, char **argv)
+{
+    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~");
 
-//     //Use unique_ptr to auto-destory the object when exiting.
-//     std::unique_ptr<Agent> agent(new Agent(nh, nh_private));
+    // /* allocate global storage for messages of the agent (already has one)*/
+    // int expected_agent_num = 1; // each agent runs in seperate process. No need to distinguish the messages.
+    // px4::allocate_mavlink_message_storage(expected_agent_num);
+    // uORB_sim::allocate_uorb_message_storage(expected_agent_num);
+    // px4::allocate_px4_params_storage(expected_agent_num);
 
-//     ros::spin();
-//     return 0;
-// }
+    //Use unique_ptr to auto-destory the object when exiting.
+    std::unique_ptr<Agent> agent(new Agent(agent_index, nh, nh_private));
+
+    ros::spin();
+    return 0;
+}
 
 
+/* For compile of nodelet */
+#include <nodelet/nodelet.h>
 namespace MavrosQuadSimulator
 {
 class SimAgent :public nodelet::Nodelet
@@ -47,7 +55,17 @@ public:
         // ros::NodeHandle nh = getMTNodeHandle();
         // ros::NodeHandle nh_private = getMTPrivateNodeHandle();
 
-        agent_ = std::make_unique<Agent>(nh, nh_private);
+        /* allocate global storage for messages of agent i */
+        int expected_agent_num = agent_index + 1;
+        px4::allocate_mavlink_message_storage(expected_agent_num);
+        uORB_sim::allocate_uorb_message_storage(expected_agent_num);
+        px4::allocate_px4_params_storage(expected_agent_num);
+
+        agent_ = std::make_unique<Agent>(agent_index, nh, nh_private);
+
+        agent_index ++;  // index of MavrosQuadSimulator agents (this variable is global across nodelets)
+
+        // std::cout << "agent number: " << agent_index << std::endl;
 
         // NODELET_DEBUG("My debug statement")
         // NODELET_DEBUG_STREAM("my debug statement " << (double) 1.0)
@@ -67,8 +85,8 @@ PLUGINLIB_EXPORT_CLASS(MavrosQuadSimulator::SimAgent, nodelet::Nodelet);
 namespace MavrosQuadSimulator
 {
 
-Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
-    : nh_(nh), nh_private_(nh_private)
+Agent::Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
+    : agent_id_(agent_id), nh_(nh), nh_private_(nh_private)
 {
     /* Check if sim time is used */
 
@@ -85,17 +103,19 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     nh_private_.param<float>("init_y_North_metre", init_y, 0.0);
     nh_private_.param<float>("init_z_Up_metre", init_z, 0.0);
 
+
     /* init sim modules */
 
     dynamics_ = std::make_shared<Dynamics>();
     dynamics_->setSimStep(0.01); // set odeint integration step
     dynamics_->setPos(init_x, init_y, init_z);
 
-    px4sitl_ = std::make_shared<PX4SITL>(nh_, nh_private_, dynamics_);
+    px4sitl_ = std::make_shared<PX4SITL>(agent_id_, nh_, nh_private_, dynamics_);
 
-    mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(nh_, nh_private_);
+    mavros_sim_ = std::make_shared<mavros_sim::MavrosSim>(agent_id_, nh_, nh_private_);
 
     visualizer_ = std::make_shared<Visualizer>(nh_, nh_private_);
+
 
     /* Set main loop */
 
@@ -108,11 +128,11 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
 void Agent::mainloop(const ros::TimerEvent &event)
 {
     /*  Validate time  */
-    static double last_time = ros::Time::now().toSec(); // use sim time
+    if (mainloop_last_time_ == 0) { mainloop_last_time_ = ros::Time::now().toSec(); } // init mainloop_last_time_
     double next_time = ros::Time::now().toSec() + mainloop_period_;
-    if (next_time < last_time)
+    if (next_time < mainloop_last_time_)
     {
-        ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(last_time).c_str());
+        ROS_ERROR("[sim Agent] The next_time %ss is smaller than the last_time %ss. Does the clock steps back?", std::to_string(next_time).c_str(), std::to_string(mainloop_last_time_).c_str());
     }
 
     /* Run PX4 SITL for one loop */
@@ -120,15 +140,16 @@ void Agent::mainloop(const ros::TimerEvent &event)
     px4sitl_->Run(time_us);
 
     /* Dynamics step forward (ode integrate the numerical model) */
-    dynamics_->step(last_time, next_time);
+    dynamics_->step(mainloop_last_time_, next_time);
 
     /* Mavros publishing mavlink messages to ROS topics */
     mavros_sim_->PublishRosMessage();
 
     /* Publish rotor propeller joint positions, base_link tf and history path for the robot model visualization in rviz */
     visualizer_->Run();
+    //@TODO use a param to determine whether to publish history path? (time-consuming)
 
-    last_time = next_time;
+    mainloop_last_time_ = next_time;
 }
 
 }

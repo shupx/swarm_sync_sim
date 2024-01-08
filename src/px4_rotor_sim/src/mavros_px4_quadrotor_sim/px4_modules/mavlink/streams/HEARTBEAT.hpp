@@ -151,12 +151,19 @@ class MavlinkStreamHeartbeat
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<actuator_armed_s> _acturator_armed_sub{ORB_ID(actuator_armed)};
 	uORB_sim::Subscription<vehicle_control_mode_s> _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
 	uORB_sim::Subscription<vehicle_status_s> _vehicle_status_sub{ORB_ID(vehicle_status)};
 	uORB_sim::Subscription<vehicle_status_flags_s> _vehicle_status_flags_sub{ORB_ID(vehicle_status_flags)};
 
 public:
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		if (/*_mavlink->get_free_tx_buf() >= get_size()*/ true) {
@@ -242,8 +249,8 @@ public:
 			msg.custom_mode = custom_mode.data;
 			msg.system_status = system_status;
 			int handle = (int) px4::mavlink_stream_handle::HEARTBEAT;
-			mavlink_msg_heartbeat_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
-			px4::mavlink_stream_list[handle].updated = true;
+			mavlink_msg_heartbeat_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
+			px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 			return true;
 		}

@@ -43,6 +43,8 @@ class MavlinkStreamGpsGlobalOrigin
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<vehicle_local_position_s> _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
 
 	uint64_t _ref_timestamp{0};
@@ -54,6 +56,11 @@ private:
 	bool _force_next_send{true};
 
 public:
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		vehicle_local_position_s vehicle_local_position;
@@ -80,8 +87,8 @@ public:
 
 					/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 					int handle = (int) px4::mavlink_stream_handle::GPS_GLOBAL_ORIGIN;
-					mavlink_msg_gps_global_origin_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
-					px4::mavlink_stream_list[handle].updated = true;
+					mavlink_msg_gps_global_origin_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
+					px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 					_ref_timestamp = vehicle_local_position.ref_timestamp;
 					_ref_lat       = vehicle_local_position.ref_lat;

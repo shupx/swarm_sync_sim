@@ -51,11 +51,18 @@ class MavlinkStreamSysStatus
 {
 private:
 
+    int agent_id_ = -1; // agent id. 
+	
 	uORB_sim::Subscription<vehicle_status_s> _status_sub{ORB_ID(vehicle_status)};
 	uORB_sim::Subscription<cpuload_s> _cpuload_sub{ORB_ID(cpuload)};
 	uORB_sim::Subscription<battery_status_s> _battery_status_subs{ORB_ID(battery_status)};
 
 public:
+	void set_agent_id(int id)
+	{
+		agent_id_ = id;
+	}
+
 	bool send()
 	{
 		if (_status_sub.updated() || _cpuload_sub.updated() || _battery_status_subs.updated()) {
@@ -125,8 +132,8 @@ public:
 
 			/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 			int handle = (int) px4::mavlink_stream_handle::SYS_STATUS;
-			mavlink_msg_sys_status_encode(1, 1, &px4::mavlink_stream_list[handle].msg, &msg); 
-			px4::mavlink_stream_list[handle].updated = true;
+			mavlink_msg_sys_status_encode(1, 1, &px4::mavlink_stream_lists.at(agent_id_)[handle].msg, &msg); 
+			px4::mavlink_stream_lists.at(agent_id_)[handle].updated = true;
 
 			return true;
 		}

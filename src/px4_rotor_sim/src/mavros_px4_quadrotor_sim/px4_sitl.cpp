@@ -21,8 +21,8 @@
 namespace MavrosQuadSimulator
 {
 
-PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
-    : nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
+PX4SITL::PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics)
+    : agent_id_(agent_id), nh_(nh), nh_private_(nh_private), uav_dynamics_(dynamics), pos_inited_(false)
 {
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
     load_px4_params_from_ros_params(); // Before loading px4 modules!
@@ -31,11 +31,11 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
     update_init_pos_from_dynamics();
 
     /* Load px4 modules */
-    mavlink_receiver_ = std::make_shared<MavlinkReceiver>();
-    mavlink_streamer_ = std::make_shared<MavlinkStreamer>();
-    commander_ = std::make_shared<Commander>();
-    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(false);
-    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(false);
+    mavlink_receiver_ = std::make_shared<MavlinkReceiver>(agent_id_);
+    mavlink_streamer_ = std::make_shared<MavlinkStreamer>(agent_id_);
+    commander_ = std::make_shared<Commander>(agent_id_);
+    mc_pos_control_ = std::make_shared<MulticopterPositionControl>(agent_id_, false);
+    mc_att_control_ = std::make_shared<MulticopterAttitudeControl>(agent_id_, false);
 
     /* Init px4 modules */
     mc_pos_control_->init();
@@ -44,7 +44,7 @@ PX4SITL::PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, c
 
 void PX4SITL::load_px4_params_from_ros_params()
 {
-    /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/
+    /* Load px4 parameters from ROS parameter space to override the default values from parameters_vectors.at(agent_id_) in <parameters/px4_parameters.hpp>*/
     for (int i=0; i<sizeof(px4::parameters)/sizeof(px4::parameters[0]); ++i)
     {
         switch (px4::parameters_type[i])
@@ -52,20 +52,20 @@ void PX4SITL::load_px4_params_from_ros_params()
             case PARAM_TYPE_INT32:
             {
                 int default_value = px4::parameters[i].val.i;
-                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.i);
-                if (px4::parameters[i].val.i != default_value)
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters_vectors.at(agent_id_)[i].val.i);
+                if (px4::parameters_vectors.at(agent_id_)[i].val.i != default_value)
                 {
-                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.i << std::endl;
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters_vectors.at(agent_id_)[i].val.i << std::endl;
                 }
                 break;
             }
             case PARAM_TYPE_FLOAT:
             {
                 float default_value = px4::parameters[i].val.f;
-                nh_private_.getParam(px4::parameters[i].name, px4::parameters[i].val.f);
-                if (px4::parameters[i].val.f != default_value)
+                nh_private_.getParam(px4::parameters[i].name, px4::parameters_vectors.at(agent_id_)[i].val.f);
+                if (px4::parameters_vectors.at(agent_id_)[i].val.f != default_value)
                 {
-                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters[i].val.f << std::endl;
+                    std::cout << "[PX4SITL] Reset " << px4::parameters[i].name << " from " << default_value << " to " << px4::parameters_vectors.at(agent_id_)[i].val.f << std::endl;
                 }
                 break; 
             }   
@@ -110,7 +110,7 @@ void PX4SITL::Run(const uint64_t &time_us)
     else
     {
         /* Update the global px4 time (stored in px4_modules/px4_lib/drivers/drv_hrt.h) */
-        hrt_absolute_time_us_sim = time_us;
+        hrt_absolute_time_us_sim = time_us; //@TODO seperate time for each UAV rather than extern/global time?
 
         /* Update px4 estimator uorb states (pos/vel/acc/att, etc.) from UAV dynamical model */
         UpdateDroneStates(time_us);
@@ -144,10 +144,10 @@ void PX4SITL::ReceiveMavlink()
 	/* Search for mavlink receiving list and handle the updated messages */
 	for (int i=0; i<MAVLINK_RECEIVE_NUM; ++i)
 	{		
-		if (px4::mavlink_receive_list[i].updated)
+		if (px4::mavlink_receive_lists.at(agent_id_)[i].updated)
 		{
-			mavlink_receiver_->handle_message(&px4::mavlink_receive_list[i].msg);
-			px4::mavlink_receive_list[i].updated = false; // waiting for the next update
+			mavlink_receiver_->handle_message(&px4::mavlink_receive_lists.at(agent_id_)[i].msg);
+			px4::mavlink_receive_lists.at(agent_id_)[i].updated = false; // waiting for the next update
 		}
 	}
 }
@@ -194,11 +194,11 @@ void PX4SITL::DectectLand(const uint64_t &time_us)
     /* Land detector module. Update vehicle_land_detected uORB message*/
     // Refer to https://github.com/PX4/PX4-Autopilot/blob/v1.13.3/src/modules/land_detector/LandDetector.cpp#L141
 
-    /* init landed detector hysteresis */
-    static systemlib::Hysteresis _landed_hysteresis{true};
-    static systemlib::Hysteresis _maybe_landed_hysteresis{true};
-    static systemlib::Hysteresis _ground_contact_hysteresis{true};
-    static systemlib::Hysteresis _freefall_hysteresis{false};
+    // /* init landed detector hysteresis */
+    // static systemlib::Hysteresis _landed_hysteresis{true};
+    // static systemlib::Hysteresis _maybe_landed_hysteresis{true};
+    // static systemlib::Hysteresis _ground_contact_hysteresis{true};
+    // static systemlib::Hysteresis _freefall_hysteresis{false};
 
     float trigger_landed_time;  // confirm landed after <trigger_landed_time> seconds
     get_px4_param<px4::params::LNDMC_TRIG_TIME>(trigger_landed_time);
@@ -297,8 +297,9 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
     switch (local_pos_source_)
     {
         case position_mode::MOCAP: { // local position origin at world origin
-            static float init_ref_timestamp = time_us;
-            vehicle_local_position_msg.ref_timestamp = init_ref_timestamp; // Time when reference position was set since system start, (microseconds)
+            // static float init_ref_timestamp = time_us;
+            if (init_ref_timestamp_ == 0) { init_ref_timestamp_ = time_us;} // initialize
+            vehicle_local_position_msg.ref_timestamp = init_ref_timestamp_; // Time when reference position was set since system start, (microseconds)
             vehicle_local_position_msg.ref_lat = world_origin_lat_; // (degrees) lat at local position(0,0)
             vehicle_local_position_msg.ref_lon = world_origin_lon_; // (degrees) lon at local position(0,0)
             vehicle_local_position_msg.ref_alt = world_origin_asml_alt_; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
@@ -308,21 +309,25 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
             break;
         }
         case position_mode::GPS: { // local position origin at init position or set by mavros/global_position/set_gp_origin
-            static float last_ref_timestamp = time_us;
-            static double last_ref_lat = init_lat_;
-            static double last_ref_lon = init_lon_;
-            static float last_ref_alt = world_origin_asml_alt_;
+            // static float last_ref_timestamp = time_us;
+            // static double last_ref_lat = init_lat_;
+            // static double last_ref_lon = init_lon_;
+            // static float last_ref_alt = world_origin_asml_alt_;
+            if (last_ref_timestamp_ == 0) { last_ref_timestamp_ = time_us;} // initialize
+            if (last_ref_lat_ == 0) { last_ref_lat_ = init_lat_;} // initialize
+            if (last_ref_lon_ == 0) { last_ref_lon_ = init_lon_;} // initialize
+            if (last_ref_alt_ == 0) { last_ref_alt_ = world_origin_asml_alt_;} // initialize
             if (_vehicle_command_sub.updated())
             {
                 vehicle_command_s vehicle_command;
                 if (_vehicle_command_sub.update(&vehicle_command)) {
                     if (vehicle_command.command == vehicle_command_s::VEHICLE_CMD_SET_GPS_GLOBAL_ORIGIN) {
                         if (-pos_ned[2] < 0.01) {
-                            last_ref_timestamp = time_us;
-                            last_ref_lat = vehicle_command.param5;
-                            last_ref_lon = vehicle_command.param6;
-                            last_ref_alt = vehicle_command.param7;
-                            std::cout << std::setprecision(12) << "[PX4SITL] New NED origin (LLA): " << last_ref_lat << ", " << last_ref_lon << ", " << last_ref_alt << std::endl;
+                            last_ref_timestamp_ = time_us;
+                            last_ref_lat_ = vehicle_command.param5;
+                            last_ref_lon_ = vehicle_command.param6;
+                            last_ref_alt_ = vehicle_command.param7;
+                            std::cout << std::setprecision(12) << "[PX4SITL] New NED origin (LLA): " << last_ref_lat_ << ", " << last_ref_lon_ << ", " << last_ref_alt_ << std::endl;
                         }
                         else{
                             std::cout << "[PX4SITL] Error! Set new NED origin in air is not allowed!" << std::endl;
@@ -330,10 +335,10 @@ void PX4SITL::UpdateDroneStates(const uint64_t &time_us)
                     }
                 }    
             }
-            vehicle_local_position_msg.ref_timestamp = last_ref_timestamp; // Time when reference position was set since system start, (microseconds)
-            vehicle_local_position_msg.ref_lat = last_ref_lat; // (degrees) lat at local position(0,0)
-            vehicle_local_position_msg.ref_lon = last_ref_lon; // (degrees) lon at local position(0,0)
-            vehicle_local_position_msg.ref_alt = last_ref_alt; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
+            vehicle_local_position_msg.ref_timestamp = last_ref_timestamp_; // Time when reference position was set since system start, (microseconds)
+            vehicle_local_position_msg.ref_lat = last_ref_lat_; // (degrees) lat at local position(0,0)
+            vehicle_local_position_msg.ref_lon = last_ref_lon_; // (degrees) lon at local position(0,0)
+            vehicle_local_position_msg.ref_alt = last_ref_alt_; // (metres) AMSL(Geoid) altitude at local position(0,0,0)
             /* Calculate the local x(North), y(East) according to ref lat/lon */
             float north, east;
             MapProjection global_local_proj_ref{vehicle_local_position_msg.ref_lat, vehicle_local_position_msg.ref_lon, time_us}; // MapProjection from PX4 geo.h
@@ -422,7 +427,14 @@ void PX4SITL::get_px4_param(float& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_FLOAT, "parameter type must be float");
 
-        output = px4::parameters[(int) p].val.f;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.f;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 template <px4::params p>
@@ -431,7 +443,14 @@ void PX4SITL::get_px4_param(int32_t& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-        output = px4::parameters[(int) p].val.i;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.i;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 template <px4::params p>
@@ -440,7 +459,14 @@ void PX4SITL::get_px4_param(bool& output)
 	    // static type-check
 	    static_assert(px4::parameters_type[(int)p] == PARAM_TYPE_INT32, "parameter type must be int32_t");
 
-        output = px4::parameters[(int) p].val.i != 0;
+        if (agent_id_>=0 && agent_id_ < px4::parameters_vectors.size())
+        {
+            output = px4::parameters_vectors.at(agent_id_)[(int) p].val.i != 0;
+        }
+        else
+        {
+            std::cout << "[PX4SITL::get_px4_param] agent_id_ " << agent_id_ << " is invalid" << std::endl;
+        }
 }
 
 

@@ -16,7 +16,7 @@
 
 #include "mavlink_streamer.hpp"
 
-MavlinkStreamer::MavlinkStreamer()
+MavlinkStreamer::MavlinkStreamer(int agent_id) : agent_id_(agent_id)
 {
     mavlink_stream_AttitudeQuaternion_ = STREAM_MAKE_PTR(MavlinkStreamAttitudeQuaternion)(50, this); // set streaming rate
     mavlink_stream_LocalPositionNED_ = STREAM_MAKE_PTR(MavlinkStreamLocalPositionNED)(30, this); // set streaming rate
@@ -27,7 +27,6 @@ MavlinkStreamer::MavlinkStreamer()
     mavlink_stream_GlobalPositionInt_ = STREAM_MAKE_PTR(MavlinkStreamGlobalPositionInt)(30, this); // set streaming rate
     mavlink_stream_GpsGlobalOrigin_ = STREAM_MAKE_PTR(MavlinkStreamGpsGlobalOrigin)(100, this); // set streaming rate (Actually it will only send the mavlink stream when the gps origin is updated. Refer to streams/GPS_GLOBAL_ORIGIN.hpp)
 
-    //@TODO SysStatus for battery
     //@TODO extended_sys_state for extended_state
 
 }

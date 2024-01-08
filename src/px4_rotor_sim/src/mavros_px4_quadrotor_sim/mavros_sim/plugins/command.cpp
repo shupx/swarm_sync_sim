@@ -51,7 +51,7 @@
 #include <mavlink/v2.0/common/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include <mavlink/v2.0/minimal/mavlink.h> // Added by Peixuan Shu to use mavlink c headers
 #include "../lib/mavros_uas.h" // Added by Peixuan Shu for mavros_sim::UAS
-#include "px4_modules/mavlink/mavlink_msg_list.hpp" // Added by Peixuan Shu store the simulated static(global) mavlink messages
+#include "px4_modules/mavlink/mavlink_msg_list.hpp" // Added by Peixuan Shu store the simulated extern(global) mavlink messages
 
 namespace mavros_sim {  // namespace modified from mavros to mavros_sim by Peixuan Shu
 namespace std_plugins {
@@ -83,11 +83,12 @@ public:
 class CommandPlugin
 {
 public:
-	CommandPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
+	CommandPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) :
 		cmd_nh(nh, "mavros/cmd"),   // nodehandle modified by Peixuan Shu
 		cmd_nh_private(nh_private, "cmd"),   // nodehandle added by Peixuan Shu
 		use_comp_id_system_control(false),
-		m_uas(uas) // added by Peixuan Shu
+		m_uas(uas), // added by Peixuan Shu
+		agent_id_(agent_id) // added by Peixuan Shu
 	{
 		// PluginBase::initialize(uas_);
 
@@ -116,7 +117,8 @@ private:
 	std::mutex mutex;
 
 	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
-
+	int agent_id_ = -1; // global UAV mavlink id
+	
 	ros::NodeHandle cmd_nh;
 	ros::NodeHandle cmd_nh_private; // nodehandle added by Peixuan Shu
 	ros::ServiceServer command_long_srv;
@@ -327,8 +329,8 @@ private:
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 		int handle = (int) px4::mavlink_receive_handle::COMMAND_LONG;
-		mavlink_msg_command_long_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_command_long_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id_)[handle].msg, &cmd); 
+		px4::mavlink_receive_lists.at(agent_id_)[handle].updated = true;
 	}
 
 	void command_int(bool broadcast,
@@ -359,8 +361,8 @@ private:
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 		int handle = (int) px4::mavlink_receive_handle::COMMAND_INT;
-		mavlink_msg_command_int_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
-		px4::mavlink_receive_list[handle].updated = true;		
+		mavlink_msg_command_int_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id_)[handle].msg, &cmd); 
+		px4::mavlink_receive_lists.at(agent_id_)[handle].updated = true;		
 	}
 
 	void command_ack( uint16_t command, uint8_t result,
@@ -379,8 +381,8 @@ private:
 
 		// /*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 		// int handle = (int) px4::mavlink_receive_handle::COMMAND_ACK;
-		// mavlink_msg_command_ack_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &cmd); 
-		// px4::mavlink_receive_list[handle].updated = true;		
+		// mavlink_msg_command_ack_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id_)[handle].msg, &cmd); 
+		// px4::mavlink_receive_lists.at(agent_id_)[handle].updated = true;		
 	}
 
 

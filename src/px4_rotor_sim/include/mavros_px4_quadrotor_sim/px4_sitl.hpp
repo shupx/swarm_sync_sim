@@ -52,8 +52,11 @@ namespace MavrosQuadSimulator
  */
 class PX4SITL
 {
+private:
+    int agent_id_ = -1; // agent id.
+
 public:
-    PX4SITL(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
+    PX4SITL(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private, const std::shared_ptr<Dynamics> &dynamics);
 
     /* Load px4 parameters from ROS parameter space to override the default values from <parameters/px4_parameters.hpp>*/    
     void load_px4_params_from_ros_params();
@@ -99,6 +102,19 @@ private:
 
     bool pos_inited_; // if the LoadInitPos() is called
 
+    /* init landed detector hysteresis */
+    systemlib::Hysteresis _landed_hysteresis{true};
+    systemlib::Hysteresis _maybe_landed_hysteresis{true};
+    systemlib::Hysteresis _ground_contact_hysteresis{true};
+    systemlib::Hysteresis _freefall_hysteresis{false};
+    
+    uint64_t init_ref_timestamp_ = 0; // 0 means not initialized
+    uint64_t last_ref_timestamp_ = 0; // 0 means not initialized
+
+    double last_ref_lat_ = 0; // 0 means not initialized
+    double last_ref_lon_ = 0; // 0 means not initialized
+    float last_ref_alt_ = 0; // 0 means not initialized
+
 	// publications with topic
 	uORB_sim::Publication<vehicle_attitude_s>           _attitude_pub {ORB_ID(vehicle_attitude)};
 	uORB_sim::Publication<vehicle_local_position_s>     _local_position_pub{ORB_ID(vehicle_local_position)};
@@ -142,7 +158,6 @@ private:
 
     /* Send control input calculated by the controller to the quadrotor dynamics */
     void SendControlInput();
-
 
 };
 

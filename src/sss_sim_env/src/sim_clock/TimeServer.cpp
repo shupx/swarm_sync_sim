@@ -43,6 +43,7 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
     init_time_ = ros::Time(0.0); //0 seconds
     sim_time_ = init_time_;
+    speed_regulator_expected_time_ = init_time_;
 
     next_client_id_ = 0;
 
@@ -63,14 +64,14 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
 void TimeServer::cb_speed_regulator_timer(const ros::WallTimerEvent &event)
 {
-    // try to update clock according to max_speed_ratio_
-    static ros::Time expected_time = init_time_;
+    /* try to update clock according to max_speed_ratio_ */
+    // static ros::Time expected_time = init_time_;
     if (!is_paused_)
     { 
-        if (sim_time_ >= expected_time)
+        if (sim_time_ >= speed_regulator_expected_time_)
         {
-            expected_time = expected_time + ros::Duration(speed_regulator_period_ * max_speed_ratio_);
-            clients_vector_[0]->request_time = expected_time;
+            speed_regulator_expected_time_ = speed_regulator_expected_time_ + ros::Duration(speed_regulator_period_ * max_speed_ratio_);
+            clients_vector_[0]->request_time = speed_regulator_expected_time_;
             clients_vector_[0]->has_new_request = true;
             try_update_clock();
         }

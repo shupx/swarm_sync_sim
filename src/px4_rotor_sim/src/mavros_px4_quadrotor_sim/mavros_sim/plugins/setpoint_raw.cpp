@@ -77,10 +77,11 @@ class SetpointRawPlugin :
 	public plugin::SetAttitudeTargetMixin<SetpointRawPlugin>
 {
     public:
-        SetpointRawPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : 
+        SetpointRawPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : 
             sp_nh(nh, "mavros/setpoint_raw"),
             sp_nh_private(nh_private, "setpoint_raw"), // nodehandle modified by Peixuan Shu
-            m_uas(uas) // added by Peixuan Shu
+            m_uas(uas), // added by Peixuan Shu
+		    agent_id_(agent_id) // added by Peixuan Shu
         {
             bool tf_listen;
 
@@ -194,8 +195,9 @@ class SetpointRawPlugin :
         }
 
     	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
+	    int agent_id_ = -1; // global UAV mavlink id
 
-private:
+private:	
         ros::NodeHandle sp_nh;
         ros::NodeHandle sp_nh_private;  // nodehandle added by Peixuan Shu
         ros::Subscriber local_sub, global_sub, attitude_sub;

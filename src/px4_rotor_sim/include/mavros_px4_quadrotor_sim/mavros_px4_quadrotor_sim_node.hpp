@@ -30,10 +30,16 @@
 namespace MavrosQuadSimulator
 {
 
+extern int agent_index; // index of MavrosQuadSimulator agents (this variable is global across nodelets)
+int agent_index = 0;  // index of MavrosQuadSimulator agents (this variable is global across nodelets)
+
 class Agent
 {
+    private:
+        int agent_id_=-1; // agent id
+
     public:
-        Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+        Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
     
     private:
         bool is_sim_time_;
@@ -47,10 +53,10 @@ class Agent
         std::shared_ptr<Visualizer> visualizer_;
 
         double mainloop_period_;
+        double mainloop_last_time_ = 0;
         sss_utils::Timer mainloop_timer_;
 
         void mainloop(const ros::TimerEvent &event);
-
 };
 
 }

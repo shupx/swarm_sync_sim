@@ -103,7 +103,7 @@ namespace std_plugins {
 class SystemStatusPlugin
 {
 public:
-	SystemStatusPlugin(const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh_input, const ros::NodeHandle &nh_private_input) : // uas added by Peixuan Shu
+	SystemStatusPlugin(int agent_id, const std::shared_ptr<UAS> &uas, const ros::NodeHandle &nh_input, const ros::NodeHandle &nh_private_input) : // uas added by Peixuan Shu
 		nh(nh_input, "mavros"),  // nodehandle modified by Peixuan Shu
 		nh_private(nh_private_input),  // nodehandle modified by Peixuan Shu
 		// hb_diag("Heartbeat", 10),
@@ -114,7 +114,8 @@ public:
 		version_retries(RETRIES_COUNT),
 		disable_diag(false),
 		has_battery_status0(false),
-		m_uas(uas) // added by Peixuan Shu
+		m_uas(uas), // added by Peixuan Shu
+		agent_id_(agent_id) // added by Peixuan Shu
 	{
 		// PluginBase::initialize(uas_);
 
@@ -184,7 +185,8 @@ public:
 
 private:
 	std::shared_ptr<UAS> m_uas; // store some common data and functions. Added by Peixuan Shu
-
+	int agent_id_ = -1; // global UAV mavlink id
+	
 	ros::NodeHandle nh;
 	ros::NodeHandle nh_private; // nodehandle added by Peixuan Shu
 
@@ -853,8 +855,8 @@ private:
 
 		/*  Added by Peixuan Shu. Write mavlink messages into "px4_modules/mavlink/mavlink_msg_list.hpp" */
 		int handle = (int) px4::mavlink_receive_handle::SET_MODE;
-		mavlink_msg_set_mode_encode(1, 1, &px4::mavlink_receive_list[handle].msg, &sm); 
-		px4::mavlink_receive_list[handle].updated = true;
+		mavlink_msg_set_mode_encode(1, 1, &px4::mavlink_receive_lists.at(agent_id_)[handle].msg, &sm); 
+		px4::mavlink_receive_lists.at(agent_id_)[handle].updated = true;
 
 		res.mode_sent = true;
 		return true;

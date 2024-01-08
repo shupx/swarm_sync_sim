@@ -103,60 +103,61 @@ typedef enum VEHICLE_MODE_FLAG {
 } VEHICLE_MODE_FLAG;
 
 
-static bool send_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
-				 const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
-				 const double param6 = static_cast<double>(NAN), const float param7 = NAN)
-{
-	vehicle_command_s vcmd{};
-	vcmd.command = cmd;
-	vcmd.param1 = param1;
-	vcmd.param2 = param2;
-	vcmd.param3 = param3;
-	vcmd.param4 = param4;
-	vcmd.param5 = param5;
-	vcmd.param6 = param6;
-	vcmd.param7 = param7;
+// static bool send_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
+// 				 const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
+// 				 const double param6 = static_cast<double>(NAN), const float param7 = NAN)
+// {
+	// vehicle_command_s vcmd{};
+	// vcmd.command = cmd;
+	// vcmd.param1 = param1;
+	// vcmd.param2 = param2;
+	// vcmd.param3 = param3;
+	// vcmd.param4 = param4;
+	// vcmd.param5 = param5;
+	// vcmd.param6 = param6;
+	// vcmd.param7 = param7;
 
-	uORB_sim::SubscriptionData<vehicle_status_s> vehicle_status_sub{ORB_ID(vehicle_status)};
-	vcmd.source_system = vehicle_status_sub.get().system_id;
-	vcmd.target_system = vehicle_status_sub.get().system_id;
-	vcmd.source_component = vehicle_status_sub.get().component_id;
-	vcmd.target_component = vehicle_status_sub.get().component_id;
+	// uORB_sim::SubscriptionData<vehicle_status_s> vehicle_status_sub{ORB_ID(vehicle_status)};
+	// vcmd.source_system = vehicle_status_sub.get().system_id;
+	// vcmd.target_system = vehicle_status_sub.get().system_id;
+	// vcmd.source_component = vehicle_status_sub.get().component_id;
+	// vcmd.target_component = vehicle_status_sub.get().component_id;
 
-	uORB_sim::Publication<vehicle_command_s> vcmd_pub{ORB_ID(vehicle_command)};
-	vcmd.timestamp = hrt_absolute_time();
-	return vcmd_pub.publish(vcmd);
-}
+	// uORB_sim::Publication<vehicle_command_s> vcmd_pub{ORB_ID(vehicle_command)};
+	// vcmd.timestamp = hrt_absolute_time();
+	// return vcmd_pub.publish(vcmd);
+// }
 
-static bool broadcast_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
-				      const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
-				      const double param6 = static_cast<double>(NAN), const float param7 = NAN)
-{
-	vehicle_command_s vcmd{};
-	vcmd.command = cmd;
-	vcmd.param1 = param1;
-	vcmd.param2 = param2;
-	vcmd.param3 = param3;
-	vcmd.param4 = param4;
-	vcmd.param5 = param5;
-	vcmd.param6 = param6;
-	vcmd.param7 = param7;
+// static bool broadcast_vehicle_command(const uint32_t cmd, const float param1 = NAN, const float param2 = NAN,
+// 				      const float param3 = NAN,  const float param4 = NAN, const double param5 = static_cast<double>(NAN),
+// 				      const double param6 = static_cast<double>(NAN), const float param7 = NAN)
+// {
+	// vehicle_command_s vcmd{};
+	// vcmd.command = cmd;
+	// vcmd.param1 = param1;
+	// vcmd.param2 = param2;
+	// vcmd.param3 = param3;
+	// vcmd.param4 = param4;
+	// vcmd.param5 = param5;
+	// vcmd.param6 = param6;
+	// vcmd.param7 = param7;
 
-	uORB_sim::SubscriptionData<vehicle_status_s> vehicle_status_sub{ORB_ID(vehicle_status)};
-	vcmd.source_system = vehicle_status_sub.get().system_id;
-	vcmd.target_system = 0;
-	vcmd.source_component = vehicle_status_sub.get().component_id;
-	vcmd.target_component = 0;
+	// uORB_sim::SubscriptionData<vehicle_status_s> vehicle_status_sub{ORB_ID(vehicle_status)};
+	// vcmd.source_system = vehicle_status_sub.get().system_id;
+	// vcmd.target_system = 0;
+	// vcmd.source_component = vehicle_status_sub.get().component_id;
+	// vcmd.target_component = 0;
 
-	uORB_sim::Publication<vehicle_command_s> vcmd_pub{ORB_ID(vehicle_command)};
-	vcmd.timestamp = hrt_absolute_time();
-	return vcmd_pub.publish(vcmd);
-}
+	// uORB_sim::Publication<vehicle_command_s> vcmd_pub{ORB_ID(vehicle_command)};
+	// vcmd.timestamp = hrt_absolute_time();
+	// return vcmd_pub.publish(vcmd);
+// }
 
 /* Delete some useless functions */ 
 
 
-Commander::Commander() :
+Commander::Commander(int agent_id) : 
+	agent_id_(agent_id), 
 	ModuleParams(nullptr)
 	// _failure_detector(this)
 {
@@ -319,6 +320,8 @@ Commander::handle_command(const vehicle_command_s &cmd)
 		break;
 
 	case vehicle_command_s::VEHICLE_CMD_COMPONENT_ARM_DISARM: {
+
+			// std::cout << "[PX4 Commander::handle_command] receive VEHICLE_CMD_COMPONENT_ARM_DISARM" << std::endl; //added by Peixuan Shu
 
 			// Adhere to MAVLink specs, but base on knowledge that these fundamentally encode ints
 			// for logic state parameters
@@ -651,11 +654,11 @@ Commander::updateHomePositionYaw(float yaw)
 void
 Commander::run()
 {
-	static bool inited = false;   // added by Peixuan Shu
+	// static bool run_inited_ = false;   // added by Peixuan Shu
 
-if (!inited)  // added by Peixuan Shu
+if (!run_inited_)  // added by Peixuan Shu
 {
-	inited = true;   // added by Peixuan Shu
+	run_inited_ = true;   // added by Peixuan Shu
 
 	bool sensor_fail_tune_played = false;
 

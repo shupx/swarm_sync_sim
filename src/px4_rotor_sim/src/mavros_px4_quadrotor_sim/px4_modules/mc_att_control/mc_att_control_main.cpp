@@ -63,7 +63,8 @@
 
 using namespace matrix;
 
-MulticopterAttitudeControl::MulticopterAttitudeControl(bool vtol) :
+MulticopterAttitudeControl::MulticopterAttitudeControl(int agent_id, bool vtol) :
+	agent_id_(agent_id),  // agent_id added by Peixuan Shu
 	ModuleParams(nullptr),
 	/*WorkItem(MODULE_NAME, px4::wq_configurations::nav_and_controllers),
 	_vehicle_attitude_setpoint_pub(vtol ? ORB_ID(mc_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),

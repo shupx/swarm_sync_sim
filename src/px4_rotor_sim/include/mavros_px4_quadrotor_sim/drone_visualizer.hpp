@@ -100,6 +100,14 @@ private:
     std::string tf_child_frame_; // visualize_tf_child_frame
     std::string rotor_joints_name_[4]; // rotor joints name
 
+    double last_time_PublishRotorJointState_ = 0.0;
+    double last_time_PublishBaseLinkTF_ = 0.0;
+    double last_time_PublishPath_ = 0.0;
+
+    float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
+    std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector_;
+
+
     void cb_mavros_state(const mavros_msgs::State::ConstPtr& msg);
     void cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr& msg);
     void cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& msg);

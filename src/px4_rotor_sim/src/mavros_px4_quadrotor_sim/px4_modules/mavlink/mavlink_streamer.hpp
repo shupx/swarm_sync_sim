@@ -37,6 +37,9 @@
 
 class MavlinkStreamer
 {
+private:
+    int agent_id_ = -1; // agent id.
+
 public:
 	typedef boost::signals2::signal<void(const uint64_t&)> VoidSignal;
 	VoidSignal stream_signal_;
@@ -47,22 +50,25 @@ public:
 		public:
 			MavlinkStream(const float& rate, MavlinkStreamer* parent) : period_us_(1.e6/rate) 
 			{
+				stream_.set_agent_id(parent->agent_id_);
 				parent->stream_signal_.connect(boost::bind(&MavlinkStream::Stream, this, boost::placeholders::_1));
 			}
 
 			/* Streaming the mavlink messages at a given rate */
 			void Stream(const uint64_t &time_us)
 			{
-				static uint64_t last_send = 0;
-				if (time_us > last_send + period_us_)
+				// static uint64_t last_send = 0;
+				if (time_us >= time_last_send_ + period_us_)
 				{
 					// std::cout << "[MavlinkStream::Stream] time_us: " << time_us << std::endl;
+					// std::cout << "[MavlinkStream::Stream] time_us - last_send = " << (time_us - time_last_send_) << " us" << std::endl;
 					stream_.send();
-					last_send = time_us < last_send + 2*period_us_ ? last_send+period_us_ : time_us;
+					time_last_send_ = time_us < time_last_send_ + 2*period_us_ ? time_last_send_ + period_us_ : time_us;
 				}
 			}
 
 		private:
+			uint64_t time_last_send_ = 0; // us
 			T stream_; 
 			uint64_t period_us_; // us
 	};
@@ -76,7 +82,7 @@ public:
 	STREAM_PTR(MavlinkStreamGlobalPositionInt) mavlink_stream_GlobalPositionInt_;
 	STREAM_PTR(MavlinkStreamGpsGlobalOrigin) mavlink_stream_GpsGlobalOrigin_;
 
-	MavlinkStreamer();
+	MavlinkStreamer(int agent_id);
 
 	~MavlinkStreamer();
 
