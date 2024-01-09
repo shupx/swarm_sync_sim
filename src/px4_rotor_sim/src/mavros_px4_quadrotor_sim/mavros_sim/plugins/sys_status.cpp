@@ -46,7 +46,7 @@
 #include <mavros_msgs/VehicleInfoGet.h>
 #include <mavros_msgs/MessageInterval.h>
 
-
+#define HAVE_SENSOR_MSGS_BATTERYSTATE_MSG
 #ifdef HAVE_SENSOR_MSGS_BATTERYSTATE_MSG
 #include <sensor_msgs/BatteryState.h>
 using BatteryMsg = sensor_msgs::BatteryState;
