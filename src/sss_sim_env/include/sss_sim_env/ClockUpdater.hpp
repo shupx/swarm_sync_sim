@@ -49,8 +49,6 @@ class ClockUpdater
         ClockUpdater(const ros::NodeHandle &nh);
         ~ClockUpdater();
 
-
-
         /* Publish new time request */
         bool request_clock_update(ros::Time new_time);
 

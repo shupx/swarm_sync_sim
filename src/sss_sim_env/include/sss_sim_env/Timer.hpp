@@ -59,6 +59,7 @@ class Timer
             /* stop timer and unregister clock_updater_ */
             void stop();
 
+        private:
             bool use_sim_time_;
             ros::NodeHandle nh_;
             ros::Timer timer_;
@@ -89,7 +90,7 @@ class Timer
             ros::Time last_clock_time_;
             boost::thread accelerate_timer_thread_;
             /**
-             * \brief Open a new thread to check ff /clock updates, call timer_.setPeriod(period) 
+             * \brief Open a new thread to check if /clock updates, call timer_.setPeriod(period) 
              * to release timers_cond_ in timer_manager.h for faster loop speed.
              * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
              * , where if use_sim_time is true, the timmer manager will block at least 

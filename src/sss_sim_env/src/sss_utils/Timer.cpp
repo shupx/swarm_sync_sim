@@ -31,8 +31,6 @@ Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const 
     {
         ROS_INFO("[sss_utils::Timer] use_sim_time is true. Init");
 
-        //@TODO specify nodehandle
-
         /* If use_sim_time, create a ROS timer with modified callback function 
         (add request_clock_update() each loop*/
         timer_ = nh_.createTimer(period_, &Timer::Impl::sim_timer_callback, this, oneshot_, autostart_); 
@@ -44,9 +42,7 @@ Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const 
 
     }
     else
-    {
-        //@TODO specify nodehandle
-        
+    {        
         /*If not use_sim_time, create a normal ROS timer */
         timer_ = nh_.createTimer(period_, callback_, oneshot_, autostart_); 
     }
