@@ -31,7 +31,7 @@ namespace sss_utils
 
 /**
  * \brief To Replace ros::Timer for swarm_sync_sim.
- * If use_sim_time is true, it is a ros::Timer with request_clock_update every loop.
+ * If use_sim_time is true, it is a ros::Timer with request_clock_update in each loop.
  * If use_sim_time is false, it is just a normal ros::Timer.
  */
 class Timer
@@ -45,7 +45,7 @@ class Timer
         class Impl
         {
         public:
-            /* If use_sim_time is true, it creates a ros::Timer with request_clock_update every loop.
+            /* If use_sim_time is true, it creates a ros::Timer with request_clock_update in each loop.
             * If use_sim_time is false, it just creates a normal ros::Timer.
             */
             Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart);
@@ -187,6 +187,8 @@ class TimerManagerExtra
 
             clock_sub_ = nh_.subscribe("/clock", 10, &TimerManagerExtra::cb_clock, this);
             async_spinner_.start(); // start a new thread to listen to clock updates
+
+            std::cout << "[sss_utils::TimerManagerExtra] Init" << std::endl;
         }
 
         /* static(global) timer manager extra */
@@ -235,20 +237,29 @@ class TimerManagerExtra
                 std::sort(next_time_list_.begin(), next_time_list_.end());
 
                 /* erase next expected time that smaller than now */
+                int erase_cout = 0;
                 for (auto it = next_time_list_.begin(); it != next_time_list_.end();)
                 {
                     if(*it <= now)
                     {
                         it = next_time_list_.erase(it);
+                        erase_cout ++;
                     }
                     else
                     {
                         break;
                     }
                 }
-                if (!next_time_list_.empty())
+
+                /* Request clock update */
+                if (!next_time_list_.empty() && erase_cout != 0)
                 {
                     clock_updater_->request_clock_update(next_time_list_[0]);
+                }
+                else
+                {
+                    //@TODO What if no next_time exists in the list?
+                    // clock_updater_->request_clock_update(ros::Time{MAX_ROS_TIME});
                 }
             }
 
@@ -265,6 +276,10 @@ class TimerManagerExtra
             {
                 timer_list_[0]->setPeriod(timer_list_[0]->get_period(), false);
                 // No affecting the period and next expected time. 
+            }
+            else
+            {
+                std::cout << "[sss_utils::TimerManagerExtra] Warn! No timer added in TimerManagerExtra" << std::endl;
             }
         }
 };

@@ -88,8 +88,8 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     ClockUpdaterPtr clock_updater = thread_clockupdater_map[thread_id]; // Get the clockupdater of this thread
 
-    clock_updater->request_clock_update(ros::Time::now()); //make clock waiting at now util the loop completes
-
+    clock_updater->request_clock_update(event.current_expected); //make clock waiting at now util the loop completes
+    // std::cout << "[Timer::Impl::sim_timer_callback] clock_updater->request_clock_update" << std::endl;
 
     /* call the main callback function */
     callback_(event);
@@ -99,7 +99,7 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     ros::Time next_time;
     if (oneshot_)
     {
-        next_time = ros::Time{DBL_MAX};
+        next_time = ros::Time{MAX_ROS_TIME};
     }
     else if(event.current_expected + period_ <= ros::Time::now())
     {
@@ -113,7 +113,7 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     TimerManagerExtra::global().add_next_cb_time(next_time);
 
     /* Request inifity next time (Do not know if there will be callbacks in this spinner thread in the future)*/
-    clock_updater->request_clock_update(ros::Time{DBL_MAX});
+    clock_updater->request_clock_update(ros::Time{MAX_ROS_TIME});
 
     /* print the real loop rate */
     // double time_now = ros::WallTime::now().toSec();

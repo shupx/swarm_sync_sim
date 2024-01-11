@@ -24,6 +24,10 @@
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
+#ifndef MAX_ROS_TIME
+#define MAX_ROS_TIME UINT32_MAX, 999999999UL  // {sec, nsec}
+#endif
+
 namespace sss_utils
 {
 
@@ -57,12 +61,11 @@ class ClockUpdater : public std::enable_shared_from_this<ClockUpdater>
 
         bool inited_; // if ClockUpdater is inited
 
-        ros::Time request_time_{DBL_MAX}; // requested clock time (default infinity)
+        ros::Time request_time_{MAX_ROS_TIME}; // requested clock time (default infinity)
 
         /* Register when sim clock is online */
         void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);  
 };
-
 
 
 typedef std::shared_ptr<ClockUpdater> ClockUpdaterPtr;

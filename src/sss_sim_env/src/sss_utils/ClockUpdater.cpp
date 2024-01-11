@@ -60,6 +60,8 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
         update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10, true); //latched
 
         inited_ = true;
+
+        request_clock_update(ros::Time{MAX_ROS_TIME}); // Request infinity time on init
     }
 }
 
