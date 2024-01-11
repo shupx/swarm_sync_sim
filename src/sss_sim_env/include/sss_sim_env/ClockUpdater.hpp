@@ -19,14 +19,29 @@
 #include <ros/ros.h>
 #include <rosgraph_msgs/Clock.h>
 #include <std_msgs/Bool.h>
+#include <thread>
+#include <map>
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
 namespace sss_utils
 {
 
-class ClockUpdater
+class ClockUpdater : public std::enable_shared_from_this<ClockUpdater> 
 {
+    public:
+        ClockUpdater(const ros::NodeHandle &nh);
+        ~ClockUpdater();
+
+        /* Publish new time request */
+        bool request_clock_update(const ros::Time &new_time);
+
+        /* unregister from time server. Stop time request in the future */
+        bool unregister();
+
+        /* get the latest request clock time */
+        ros::Time get_request_time() {return request_time_;}
+    
     private:
         bool use_sim_time;
 
@@ -42,20 +57,19 @@ class ClockUpdater
 
         bool inited_; // if ClockUpdater is inited
 
+        ros::Time request_time_{DBL_MAX}; // requested clock time (default infinity)
+
         /* Register when sim clock is online */
-        void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
-        
-    public:
-        ClockUpdater(const ros::NodeHandle &nh);
-        ~ClockUpdater();
-
-        /* Publish new time request */
-        bool request_clock_update(ros::Time new_time);
-
-        /* unregister from time server. Stop time request in the future */
-        bool unregister();
-        
+        void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);  
 };
 
+
+
+typedef std::shared_ptr<ClockUpdater> ClockUpdaterPtr;
+
+/* global variables */
+static std::map<std::thread::id, ClockUpdaterPtr>  thread_clockupdater_map;  // One clockupdater serves for one thread
+
 }
+
 #endif

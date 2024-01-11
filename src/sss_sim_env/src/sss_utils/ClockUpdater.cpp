@@ -30,7 +30,6 @@ ClockUpdater::ClockUpdater(const ros::NodeHandle &nh)
         simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &ClockUpdater::cb_simclock_online, this);
         register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
         unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
-        // init();
     }
     else{
         ROS_INFO("[ClockUpdater] use_sim_time == false. Skip!");
@@ -65,11 +64,13 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
 }
 
 /* Publish new time request */
-bool ClockUpdater::request_clock_update(ros::Time new_time)
+bool ClockUpdater::request_clock_update(const ros::Time &new_time)
 {
     if (use_sim_time){
         if (inited_)
         {
+            request_time_ = new_time;
+
             rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
             msg->clock = new_time;
             update_clock_pub_.publish(msg);
