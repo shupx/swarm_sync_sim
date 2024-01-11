@@ -18,6 +18,7 @@
 #ifndef __TIMESERVER__
 #define __TIMESERVER__
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
 // #include <std_msgs/Time.h>
 #include <rosgraph_msgs/Clock.h>
 #include <std_msgs/Bool.h>
@@ -42,6 +43,10 @@ class TimeServer
         ros::ServiceServer clock_control_service_;
         ros::ServiceServer timeclient_register_service_;
         ros::ServiceServer timeclient_unregister_service_;
+
+        ros::CallbackQueue async_callback_queue_;
+        ros::NodeHandle nh_async;
+        ros::AsyncSpinner async_spinner_{1, &async_callback_queue_};
         ros::WallTimer speed_regulator_timer_;
 
         int next_client_id_;

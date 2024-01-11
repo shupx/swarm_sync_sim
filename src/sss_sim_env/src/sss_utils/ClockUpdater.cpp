@@ -61,7 +61,7 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
 
         inited_ = true;
 
-        request_clock_update(ros::Time{MAX_ROS_TIME}); // Request infinity time on init
+        // request_clock_update(ros::Time{MAX_ROS_TIME}); // Request infinity time on init
     }
 }
 

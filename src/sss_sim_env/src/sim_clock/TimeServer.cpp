@@ -51,8 +51,12 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     std::unique_ptr<TimeClient> real_time_client(new TimeClient(next_client_id_, this, nh_, nh_private_));
     clients_vector_.emplace_back(std::move(real_time_client));
     ROS_INFO("[TimeServer] Register time client %s as simulation speed regulator",std::to_string(next_client_id_).c_str());
+
+    // update client 0 time in a wall timer with a seperate spinner thread
+    nh_async.setCallbackQueue(&async_callback_queue_);
     speed_regulator_period_ = 0.01; // s
-    speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
+    speed_regulator_timer_ = nh_async.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
+    async_spinner_.start(); // start a new thread to listen to clock updates
 
     ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
 
@@ -154,7 +158,7 @@ void TimeServer::try_update_clock()
             all_client_has_new_request = false;
             break;
 
-            // ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because clients_vector_[%s] has no new request", std::to_string(i).c_str());
+            ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because clients_vector_[%s] has no new request", std::to_string(i).c_str());
         }
         else{
             if (min_time_request == ros::Time(0.0) || clients_vector_[i]->request_time < min_time_request){
@@ -208,7 +212,7 @@ void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock:
     }
     else if (new_request_time < request_time)
     {
-        ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
+        // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
 
         request_time = new_request_time;
         has_new_request = true;

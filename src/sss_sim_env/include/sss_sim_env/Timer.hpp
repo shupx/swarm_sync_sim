@@ -70,7 +70,6 @@ class Timer
             bool use_sim_time_;
             ros::NodeHandle nh_;
             ros::Timer timer_;
-            // ros::Subscriber simclock_online_sub_;
 
             // std::shared_ptr<ClockUpdater> clock_updater_;
 
@@ -91,8 +90,12 @@ class Timer
              */
             void sim_timer_callback(const ros::TimerEvent &event);
 
-            // /* Publish the first loop time request when sim clock is online */
-            // void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
+            // ros::NodeHandle nh_simclock;
+            // ros::CallbackQueue callback_queue_;
+            ros::Subscriber simclock_online_sub_;
+            // ros::AsyncSpinner async_spinner_{1, &callback_queue_};
+            /* Publish the first loop time request when sim clock is online */
+            void cb_simclock_online(const std_msgs::Bool::ConstPtr& msg);
 
             bool kill_thread_;
             bool has_accelerate_timer_thread_;
@@ -205,14 +208,30 @@ class TimerManagerExtra
         }
 
         /* add next expected triggerred time of a timer callback */
-        void add_next_cb_time(ros::Time next_time)
+        bool add_next_cb_time(ros::Time next_time)
         {
             std::lock_guard<std::mutex> lockGuard(next_time_list_mutex_);
 
-            next_time_list_.emplace_back(next_time);
-            // sort next_time_list_ from small to large
-            std::sort(next_time_list_.begin(), next_time_list_.end());
-            clock_updater_->request_clock_update(next_time_list_[0]);
+            /* If the next_cb_time is larger than now, push it to the next_time_list_ and request clock update */
+            if (next_time > ros::Time::now())
+            {
+                next_time_list_.emplace_back(next_time);
+                // sort next_time_list_ from small to large
+                std::sort(next_time_list_.begin(), next_time_list_.end());
+                return clock_updater_->request_clock_update(next_time_list_[0]);
+            }
+            else
+            {
+                if (!next_time_list_.empty())
+                {
+                    std::sort(next_time_list_.begin(), next_time_list_.end());
+                    return clock_updater_->request_clock_update(next_time_list_[0]);
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
     private:
@@ -229,6 +248,8 @@ class TimerManagerExtra
         void cb_clock(const rosgraph_msgs::Clock::ConstPtr& msg)
         {
             ros::Time now = msg->clock;
+
+            // std::cout << "[TimerManagerExtra::cb_clock] receive clock time: " << std::to_string(now.toSec()) << std::endl;
         
             {
                 std::lock_guard<std::mutex> lockGuard(next_time_list_mutex_);
@@ -240,8 +261,11 @@ class TimerManagerExtra
                 int erase_cout = 0;
                 for (auto it = next_time_list_.begin(); it != next_time_list_.end();)
                 {
+                    // std::cout << "[TimerManagerExtra::cb_clock] next_time_list_(i) = " << *it << std::endl;
+
                     if(*it <= now)
                     {
+                        // std::cout << "[TimerManagerExtra::cb_clock] erase " << *it << std::endl;
                         it = next_time_list_.erase(it);
                         erase_cout ++;
                     }

@@ -103,7 +103,8 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     else if(event.current_expected + period_ <= ros::Time::now())
     {
-        next_time = ros::Time::now();
+        next_time = ros::Time::now();  // @TODO next time may be small than real next time
+        std::cout << "[Timer::Impl::sim_timer_callback] set next_time as now " << std::to_string(next_time.toSec()) << std::endl;
     }
     else
     {
@@ -130,7 +131,8 @@ void Timer::Impl::start()
         {
             // clock_updater_ = std::make_shared<ClockUpdater>(nh_);
 
-            // simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
+
+            simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
 
             // /* Launch a new thread to check /clock and update timer faster */
             // kill_thread_ = false;
@@ -149,22 +151,35 @@ void Timer::Impl::start()
     started_ = true;
 }
 
-// /* Publish the first loop time request when sim clock is online */
-// void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
-// {
-//     if (msg->data == true)
-//     {
-//         /* request the first clock update to start the first loop */
-//         while(!clock_updater_->request_clock_update(ros::Time::now() + period_)) 
-//         {
-//             // block until publishing successfully
-//             ros::WallDuration(0.2).sleep();
-//             ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
-//         }
-//         inited_ = true;
-//         // ROS_INFO("[sss_timer] inited_ = true");
-//     }
-// }
+/* Publish the first loop time request when sim clock is online */
+void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
+{
+    if (msg->data == true)
+    {
+        // /* request the first clock update to start the first loop */
+        // while(!clock_updater_->request_clock_update(ros::Time::now() + period_)) 
+        // {
+        //     // block until publishing successfully
+        //     ros::WallDuration(0.2).sleep();
+        //     ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
+        // }
+
+        while(true)
+        {
+            if (TimerManagerExtra::global().add_next_cb_time(ros::Time::now() + period_))
+            {
+                std::cout << "[Timer::Impl::cb_simclock_online] add_next_cb_time " << std::to_string((ros::Time::now() + period_).toSec()) << std::endl;
+                break;
+            }
+            // block until publishing successfully
+            ros::WallDuration(0.2).sleep();
+            ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
+        }
+
+        inited_ = true;
+        ROS_INFO("[sss_timer] inited_ = true");
+    }
+}
 
 void Timer::Impl::AccelerateTimerThreadFunc()
 {
