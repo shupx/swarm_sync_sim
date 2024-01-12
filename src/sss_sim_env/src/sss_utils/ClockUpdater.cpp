@@ -30,6 +30,8 @@ ClockUpdater::ClockUpdater(const ros::NodeHandle &nh)
         simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &ClockUpdater::cb_simclock_online, this);
         register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
         unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
+
+        UpdateClockPublisher::global(); // Create a global update_clock_publisher if has not been created
     }
     else{
         ROS_INFO("[ClockUpdater] use_sim_time == false. Skip!");

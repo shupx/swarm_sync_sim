@@ -96,7 +96,6 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     ClockUpdaterPtr clock_updater = thread_clockupdater_map[thread_id]; // Get the clockupdater of this thread
 
     /* make clock waiting at now util the loop completes */
-    //@TODO This time request may not be processed by sim_clock immediately
     while(!clock_updater->request_clock_update(event.current_expected))
     {
         // block until publishing successfully
@@ -106,7 +105,13 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     
     /* Set next callback expected time as infinity as we are not sure the next expected time now */
-    TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::Time{MAX_ROS_TIME});
+    while(!TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::Time{MAX_ROS_TIME}))
+    {
+        // block until publishing successfully
+        ros::WallDuration(0.1).sleep();
+
+        std::cout << "[Timer::Impl::sim_timer_callback] Repeat add_next_cb_time " << ros::Time{MAX_ROS_TIME}.toSec() << " for timer " << timer_handle_ << std::endl;
+    }
 
 
     /* call the main callback function */
@@ -130,7 +135,6 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     
     /* Set next callback expected time */
-    //@TODO This time request may not be processed by sim_clock immediately
     TimerManagerExtra::global().add_next_cb_time(timer_handle_, next_time);
 
     /* Request inifity next time in this thread as we do not know whether there will be callbacks in this spinner thread in the future)*/
