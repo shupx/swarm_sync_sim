@@ -15,10 +15,14 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
 )
 
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+)
+
+add_message_files(
+  FILES
+  TimeRequest.msg
 )
 
 add_service_files(
@@ -37,6 +41,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include 
    LIBRARIES ClockUpdater sss_timer
+   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 )
 
 # add_executable(sim_clock src/sim_clock/sim_clock.cpp

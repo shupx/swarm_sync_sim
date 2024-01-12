@@ -19,6 +19,7 @@
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
 #include <ros/callback_queue_interface.h>
+#include <rosgraph_msgs/Clock.h>
 #include <std_msgs/Bool.h>
 #include <boost/thread.hpp>
 #include <memory>
@@ -233,7 +234,7 @@ class TimerManagerExtra
 
             /* Update the next_expected_time of timer[handle] and check if all timers having next expected times*/
             bool timer_handle_found = false;
-            bool all_timer_has_next_expected_time = true;
+            bool all_timers_have_next_expected_time = true;
             for (auto it = timer_info_list_.begin(); it != timer_info_list_.end(); ++it)
             {
                 if ((*it).handle == handle)
@@ -244,9 +245,9 @@ class TimerManagerExtra
                 }
                 if ((*it).has_next_expected_time == false)
                 {
-                    all_timer_has_next_expected_time = false;
+                    all_timers_have_next_expected_time = false;
                 }
-                if (!all_timer_has_next_expected_time && timer_handle_found)
+                if (!all_timers_have_next_expected_time && timer_handle_found)
                 {
                     break;
                 }
@@ -258,14 +259,24 @@ class TimerManagerExtra
             }
             
             /* If all timers have next expected times, request the smallest one */
-            if (all_timer_has_next_expected_time)
+            if (all_timers_have_next_expected_time)
             {
                 std::sort(timer_info_list_.begin(), timer_info_list_.end(), compare_next_cb_time);
                 ros::Time request_time = timer_info_list_[0].next_expected_time;
-                return clock_updater_->request_clock_update(request_time);
-            }
 
-            return true;
+                bool ret;
+                ret = clock_updater_->request_clock_update(request_time);
+
+                // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update() : " << ret << std::endl;
+
+                return ret;
+            }
+            else
+            {
+                // std::cout << "[TimerManagerExtra::add_next_cb_time] Some other timers do not have next expected time. Timer " << handle << " said." << std::endl;
+
+                return true;
+            }
 
             // /* If the next_cb_time is larger than now, push it to the timer_info_list_ and request clock update */
             // if (next_time > ros::Time::now())
@@ -325,7 +336,7 @@ class TimerManagerExtra
 
                 if(!timer_info_list_.empty())
                 {
-                    timer_info_list_[0].timer_impl->setPeriod(timer_info_list_[0].period, false); // setPeriod(period, false) does not affect the period and next expected time. 
+                    // timer_info_list_[0].timer_impl->setPeriod(timer_info_list_[0].period, false); // setPeriod(period, false) does not affect the period and next expected time. 
 
                     // sort next_time_list_ from small to large
                     std::sort(timer_info_list_.begin(), timer_info_list_.end(), compare_next_cb_time);

@@ -17,10 +17,11 @@
 #ifndef __CLOCK_UPDATER__
 #define __CLOCK_UPDATER__
 #include <ros/ros.h>
-#include <rosgraph_msgs/Clock.h>
+// #include <rosgraph_msgs/Clock.h>
 #include <std_msgs/Bool.h>
 #include <thread>
 #include <map>
+#include "sss_sim_env/TimeRequest.h"
 #include "sss_sim_env/ClientRegister.h"
 #include "sss_sim_env/ClientUnregister.h"
 
@@ -30,6 +31,36 @@
 
 namespace sss_utils
 {
+
+/* Static (global) update clock pulisher used by all threads */
+class UpdateClockPublisher
+{
+    public:
+        UpdateClockPublisher()
+        {
+            update_clock_pub_ = nh_.advertise<sss_sim_env::TimeRequest>("/sss_time_client/update_clock_request", 1000, true); //latched
+        }
+
+        /* static(global) publisher */
+        static UpdateClockPublisher& global()
+        {
+            static UpdateClockPublisher global;
+            return global;
+        }
+
+        /* publish time request for time client i */
+        void publish(const int& time_client_id, const ros::Time &new_time)
+        {
+            sss_sim_env::TimeRequest::Ptr msg(new sss_sim_env::TimeRequest);
+            msg->time_client_id = time_client_id;
+            msg->request_time = new_time;
+            update_clock_pub_.publish(msg);
+        }
+    private:
+        ros::NodeHandle nh_;
+        ros::Publisher update_clock_pub_;
+};
+
 
 class ClockUpdater : public std::enable_shared_from_this<ClockUpdater> 
 {
@@ -57,7 +88,7 @@ class ClockUpdater : public std::enable_shared_from_this<ClockUpdater>
 
         int time_client_id_;
 
-        ros::Publisher update_clock_pub_;
+        // ros::Publisher update_clock_pub_;
 
         bool inited_; // if ClockUpdater is inited
 

@@ -45,6 +45,8 @@ ClockUpdater::~ClockUpdater()
 /* Register when sim clock is online */
 void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
 {
+    // std::cout << "[ClockUpdater::cb_simclock_online] Detect sim_clock online!" << std::endl;
+
     if (msg->data == true)
     {
         sss_sim_env::ClientRegister srv;
@@ -57,9 +59,11 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
         time_client_id_ = srv.response.client_id;
         ROS_INFO("[ClockUpdater] register to /sss_timeclient_register with response id = %s", std::to_string(time_client_id_).c_str());
         
-        update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 10, true); //latched
+        // update_clock_pub_ = nh_.advertise<rosgraph_msgs::Clock>("/sss_time_client"+std::to_string(time_client_id_)+"/update_clock_request", 1000, true); //latched
 
         inited_ = true;
+
+        // std::cout << "[ClockUpdater::cb_simclock_online] inited_ = true" << std::endl;
 
         // request_clock_update(ros::Time{MAX_ROS_TIME}); // Request infinity time on init
     }
@@ -73,9 +77,12 @@ bool ClockUpdater::request_clock_update(const ros::Time &new_time)
         {
             request_time_ = new_time;
 
-            rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
-            msg->clock = new_time;
-            update_clock_pub_.publish(msg);
+            // rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
+            // msg->clock = new_time;
+            // update_clock_pub_.publish(msg);
+
+            UpdateClockPublisher::global().publish(time_client_id_, request_time_);
+
             // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
             return true;
         }
