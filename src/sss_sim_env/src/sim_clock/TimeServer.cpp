@@ -21,6 +21,9 @@
 TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     : nh_(nh), nh_private_(nh_private)
 {
+    nh_async.setCallbackQueue(&async_callback_queue_);
+    async_spinner_.start(); // start a new thread to listen to clock updates
+
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {
@@ -53,10 +56,10 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     ROS_INFO("[TimeServer] Register time client %s as simulation speed regulator",std::to_string(next_client_id_).c_str());
 
     // update client 0 time in a wall timer with a seperate spinner thread
-    nh_async.setCallbackQueue(&async_callback_queue_);
+
     speed_regulator_period_ = 0.01; // s
     speed_regulator_timer_ = nh_async.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
-    async_spinner_.start(); // start a new thread to listen to clock updates
+    speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
 
     ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
 
@@ -139,15 +142,39 @@ bool TimeServer::cb_timeclient_unregister(sss_sim_env::ClientUnregister::Request
 }
 
 /** Check all timeclients and decide whether or not updating clock time **/
-void TimeServer::try_update_clock()
+bool TimeServer::try_update_clock()
 {   
-    ros::WallTime begin=ros::WallTime::now();  
+    // ros::WallTime begin=ros::WallTime::now();  
+
+    /* check if all time clients except client 0 has infinite time request */
+    if (clients_vector_.size() > 1)
+    {
+        bool all_clients_has_infinity_request = true;
+        for (int i=1; i<clients_vector_.size(); ++i)
+        {
+            if (clients_vector_[i]->has_new_request == false ||  
+                    clients_vector_[i]->request_time < ros::Time(4294967290))
+            {
+                all_clients_has_infinity_request = false;
+                break;
+            }
+        }
+
+        if (all_clients_has_infinity_request)
+        {
+            ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 has new infinite request time. Refuse to update clock.");
+            return false;
+        }
+    }
+
 
     if (clients_vector_.empty())
     {
         ROS_INFO("[TimeServer] try_update_clock() called. But clients_vector_ is empty, which means that there is no TimeClient");
-        return;
+        return false;
     }
+
+    bool ret = false;
 
     bool all_client_has_new_request = true;
     ros::Time min_time_request = ros::Time(0.0);
@@ -175,6 +202,8 @@ void TimeServer::try_update_clock()
             sim_clock_pub_.publish(msg);
 
             // ROS_INFO("[TimeServer] try_update_clock() publish %ss to /clock", std::to_string(sim_time_.toSec()).c_str());
+
+            ret = true;
         }
         // set has_new_request = false for clients whose request_time is satisfied.
         for (int i=0; i<clients_vector_.size(); ++i)
@@ -185,9 +214,10 @@ void TimeServer::try_update_clock()
         }        
     }
 
-    ros::WallDuration duration=ros::WallTime::now() - begin;  
+    // ros::WallDuration duration=ros::WallTime::now() - begin;  
     // ROS_INFO("[TimeServer] Function try_update_clock() called using %ss %sns", std::to_string(duration.sec).c_str(), std::to_string(duration.nsec).c_str());
 
+    return ret;
 }
 
 /** Create a timeclient for each node thread that requires clock updating**/
@@ -204,19 +234,13 @@ void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock:
     // ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
 
     ros::Time new_request_time = msg->clock;
-    if (new_request_time > request_time)
-    {
-        request_time = new_request_time;
-        has_new_request = true;
-        time_server->try_update_clock();
-    }
-    else if (new_request_time < request_time)
+    if (new_request_time < request_time)
     {
         // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
-
-        request_time = new_request_time;
-        has_new_request = true;
-        time_server->try_update_clock();
     }
+
+    request_time = new_request_time;
+    has_new_request = true;
+    time_server->try_update_clock();
 
 }

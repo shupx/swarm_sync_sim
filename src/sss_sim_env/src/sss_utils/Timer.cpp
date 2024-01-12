@@ -24,12 +24,17 @@ namespace sss_utils
 Timer::Timer(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
 {
     impl_ = boost::make_shared<Impl>(nh, period, callback, oneshot, autostart);
-    TimerManagerExtra::global().add_timer(impl_);
+
+    int handle = TimerManagerExtra::global().add_timer(impl_);
+    impl_->set_handle(handle);
 }
 
 Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
     :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false), inited_(false), has_accelerate_timer_thread_(false)
 {
+    nh_simclock.setCallbackQueue(&simclock_callback_queue_);
+    async_spinner_.start();  // start a new thread to communicate with sim clock
+
     nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
     /* If use_sim_time, create a ROS timer with modified callback function*/
@@ -40,6 +45,8 @@ Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const 
         /* If use_sim_time, create a ROS timer with modified callback function 
         (add request_clock_update() each loop*/
         timer_ = nh_.createTimer(period_, &Timer::Impl::sim_timer_callback, this, oneshot_, autostart_); 
+
+        simclock_online_sub_ = nh_simclock.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
 
         // /* Init callback_queue -> spinner_threads map*/
         // callback_queue_ = nh_.getCallbackQueue();
@@ -84,12 +91,22 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     if(thread_clockupdater_map.find(thread_id) == thread_clockupdater_map.end())
     {
         /* If no clockupdater exists for this thread, make a clockupdater */
-        thread_clockupdater_map[thread_id] = std::make_shared<ClockUpdater>(nh_);
+        thread_clockupdater_map[thread_id] = std::make_shared<ClockUpdater>(nh_simclock);
     }
     ClockUpdaterPtr clock_updater = thread_clockupdater_map[thread_id]; // Get the clockupdater of this thread
 
-    clock_updater->request_clock_update(event.current_expected); //make clock waiting at now util the loop completes
-    // std::cout << "[Timer::Impl::sim_timer_callback] clock_updater->request_clock_update" << std::endl;
+    /* make clock waiting at now util the loop completes */
+    while(!clock_updater->request_clock_update(event.current_expected))
+    {
+        // block until publishing successfully
+        ros::WallDuration(0.1).sleep();
+
+        std::cout << "[Timer::Impl::sim_timer_callback] Repeat clock_updater->request_clock_update " << event.current_expected.toSec() << std::endl;
+    }
+    
+    /* Set next callback expected time as infinity as we are not sure the next expected time now */
+    TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::Time{MAX_ROS_TIME});
+
 
     /* call the main callback function */
     callback_(event);
@@ -104,16 +121,17 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     else if(event.current_expected + period_ <= ros::Time::now())
     {
         next_time = ros::Time::now();  // @TODO next time may be small than real next time
-        std::cout << "[Timer::Impl::sim_timer_callback] set next_time as now " << std::to_string(next_time.toSec()) << std::endl;
+        std::cout << "[Timer::Impl::sim_timer_callback] Detect clock jumps, set next_time as now " << next_time.toSec() << " with event.current_expected = " << event.current_expected.toSec() << std::endl;
     }
     else
     {
         next_time = event.current_expected + period_;
     }
     
-    TimerManagerExtra::global().add_next_cb_time(next_time);
+    /* Set next callback expected time */
+    TimerManagerExtra::global().add_next_cb_time(timer_handle_, next_time);
 
-    /* Request inifity next time (Do not know if there will be callbacks in this spinner thread in the future)*/
+    /* Request inifity next time in this thread as we do not know whether there will be callbacks in this spinner thread in the future)*/
     clock_updater->request_clock_update(ros::Time{MAX_ROS_TIME});
 
     /* print the real loop rate */
@@ -131,8 +149,7 @@ void Timer::Impl::start()
         {
             // clock_updater_ = std::make_shared<ClockUpdater>(nh_);
 
-
-            simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
+            // simclock_online_sub_ = nh_simclock.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
 
             // /* Launch a new thread to check /clock and update timer faster */
             // kill_thread_ = false;
@@ -166,9 +183,9 @@ void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
 
         while(true)
         {
-            if (TimerManagerExtra::global().add_next_cb_time(ros::Time::now() + period_))
+            if (TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::Time::now() + period_))
             {
-                std::cout << "[Timer::Impl::cb_simclock_online] add_next_cb_time " << std::to_string((ros::Time::now() + period_).toSec()) << std::endl;
+                std::cout << "[Timer::Impl::cb_simclock_online] add_next_cb_time " << (ros::Time::now() + period_).toSec() << std::endl;
                 break;
             }
             // block until publishing successfully

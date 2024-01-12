@@ -81,7 +81,7 @@ class TimeServer
     
     public:
         TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
-        void try_update_clock();
+        bool try_update_clock();
         ros::Time sim_time_;
 };
 
