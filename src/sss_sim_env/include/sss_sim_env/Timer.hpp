@@ -405,7 +405,7 @@ class TimerManagerExtra
                              * at each timer callback even if the loop can be faster. This bug limits the real timer loop 
                              * speed to less than 1000 Hz. With this fix, the sim loop rate can be as fast as it can be (6000Hz+ max in practice).
                              */
-                            (*it).timer_impl->setPeriod((*it).period, false); // setPeriod(period, false) does not affect the period and next expected time. 
+                            // (*it).timer_impl->setPeriod((*it).period, false); // setPeriod(period, false) does not affect the period and next expected time. 
                         }
                         else
                         {

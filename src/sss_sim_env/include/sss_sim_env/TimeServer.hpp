@@ -49,6 +49,10 @@ class TimeServer
         ros::CallbackQueue async_callback_queue_;
         ros::NodeHandle nh_async_;
         ros::AsyncSpinner async_spinner_{1, &async_callback_queue_};
+
+        ros::CallbackQueue speed_regulator_callback_queue_;
+        ros::NodeHandle nh_speed_regulator_;
+        ros::AsyncSpinner speed_regulator_spinner_{1, &speed_regulator_callback_queue_};
         ros::WallTimer speed_regulator_timer_;
 
         int next_client_id_;
@@ -75,7 +79,7 @@ class TimeServer
                 int client_id_;
                 bool has_new_request;
                 ros::Time request_time;    
-                // std::recursive_mutex client_mutex_;
+                std::recursive_mutex client_mutex_;
                 TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
         };
 

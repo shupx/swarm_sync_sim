@@ -40,7 +40,7 @@ generate_messages(
 # Output include directories and libraries for other package to use
 catkin_package(
    INCLUDE_DIRS include 
-   LIBRARIES ClockUpdater sss_timer sss_duration
+   LIBRARIES ClockUpdater sss_timer sss_sleep
    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 )
 
@@ -93,15 +93,15 @@ target_link_libraries(sss_timer
           ClockUpdater
        )
 
-add_library(sss_duration
+add_library(sss_sleep
        src/sss_utils/Sleep.cpp
    )
 
-add_dependencies(sss_duration 
+add_dependencies(sss_sleep 
                 ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                 ${catkin_EXPORTED_TARGETS} )
 
-target_link_libraries(sss_duration
+target_link_libraries(sss_sleep
    ${catkin_LIBRARIES}
    ClockUpdater
 )

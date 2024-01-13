@@ -109,6 +109,7 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     
     /* Set next callback expected time as infinity as we are not sure the next expected time now */
+    //@TODO check if other timers in timer_manager are blocked by this thread. If blocked, add its next time as infinity too.
     while(!TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::TIME_MAX))
     {
         // block until publishing successfully
@@ -131,10 +132,16 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     else if(event.current_expected + period_ <= ros::Time::now())
     {
-        next_time = ros::Time::now();  // @TODO next time may be small than real next time
+        next_time = ros::Time::now();  // @TODO next time may be smaller than real next time
 
-        ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. This is mostly caused by the callback execution time longer than the timer period. Check if a long sleep is applied in the timer callback. Set next expected time as now %s s with last time = %s s", std::to_string(ros::Time::now().toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str());
+        ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now %ss with last time = %ss and period = %ss. This is mostly caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
     }
+    // else if(event.current_expected + period_ == ros::Time::now())
+    // {
+    //     next_time = ros::Time::now() + period_;  // @TODO next time may be smaller than real next time
+
+    //     ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now %ss with last time = %ss and period = %ss. This is mostly caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
+    // }
     else
     {
         next_time = event.current_expected + period_;

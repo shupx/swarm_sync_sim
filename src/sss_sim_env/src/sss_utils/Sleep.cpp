@@ -49,7 +49,10 @@ bool Duration::sleep() const
 
         ClockUpdaterPtr clock_updater = ThreadClockupdaters::global().get_clockupdater(thread_id);
 
-        while(!clock_updater->request_clock_update(ros::Time::now() + ros::Duration(sec, nsec)))
+        ros::Time start = ros::Time::now();
+        ros::Time end = start + ros::Duration(sec, nsec);
+
+        while(!clock_updater->request_clock_update(end))
         {
             // block until publishing successfully
             ros::WallDuration(0.1).sleep();
@@ -58,7 +61,23 @@ bool Duration::sleep() const
         }
 
         /* Block until the duration is satisfied */
-        return ros::Duration(sec, nsec).sleep();
+        {
+            // This allows sim time to run up to 100x real-time even for very short sleep durations.
+            const uint32_t sleep_nsec = (sec != 0) ? 1000000 : (std::min)(1000000, nsec/100);
+            while (ros::Time::now() < end)
+            {
+                ros::WallDuration(0, sleep_nsec).sleep();
+
+                // If time jumped backwards from when we started sleeping, return immediately
+                if (ros::Time::now() < start)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // return ros::Duration(sec, nsec).sleep();
     }
 }
 
