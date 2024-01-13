@@ -192,14 +192,19 @@ class TimerManagerExtra
     public:
         TimerManagerExtra()
         {
-            nh_.setCallbackQueue(&callback_queue_);
-            async_spinner_.start(); // start a new thread to listen to clock updates
+            nh_.param<bool>("/use_sim_time", use_sim_time_, false);
 
-            clock_updater_ = std::make_shared<ClockUpdater>(nh_);
+            if (use_sim_time_)
+            {
+                nh_.setCallbackQueue(&callback_queue_);
+                async_spinner_.start(); // start a new thread to listen to clock updates
 
-            clock_sub_ = nh_.subscribe("/clock", 10, &TimerManagerExtra::cb_clock, this);
+                clock_updater_ = std::make_shared<ClockUpdater>();
 
-            std::cout << "[sss_utils::TimerManagerExtra] Init" << std::endl;
+                clock_sub_ = nh_.subscribe("/clock", 10, &TimerManagerExtra::cb_clock, this);
+
+                std::cout << "[sss_utils::TimerManagerExtra] Init" << std::endl;
+            }
         }
 
         /* static(global) timer manager extra */
@@ -220,16 +225,37 @@ class TimerManagerExtra
                     .timer_impl = timer_impl_ptr,
                     .period = timer_impl_ptr->get_period(),
                     .has_next_expected_time = false,
-                    .next_expected_time = ros::Time{MAX_ROS_TIME}
+                    .next_expected_time = ros::TIME_MAX
                 }
             );
             handle ++;
             return (handle-1);
         }
 
+        bool remove_timer_info(int handle)
+        {
+            /* find the time info that matches the handle id */
+            auto it = std::find_if(timer_info_list_.begin(), timer_info_list_.end(), [handle](TimerInfo timer_info){return timer_info.handle == handle;});
+
+            if (it == timer_info_list_.end())
+            {
+                std::cout << "[sss_utils::TimerManagerExtra] remove timer info failed. Handle " << handle << " not found." << std::endl;
+                return false;
+            }
+            else
+            {
+                add_next_cb_time(handle, ros::TIME_MAX);
+                timer_info_list_.erase(it);
+                //@TODO reuse the handle id for new timer info?
+                return true;
+            }
+        }
+
         /* add next expected triggerred time of a timer callback */
         bool add_next_cb_time(int handle, ros::Time next_time)
         {
+            std::cout << "[TimerManagerExtra::add_next_cb_time] timer info " << handle << " request " << next_time.toSec() << std::endl;
+
             std::lock_guard<std::mutex> lockGuard(timer_info_list_mutex_);
 
             /* Update the next_expected_time of timer[handle] and check if all timers having next expected times*/
@@ -258,6 +284,17 @@ class TimerManagerExtra
                 return false;
             }
             
+            /* If this timer request inifite time, publish infinite time to unblock this time client */
+            if (next_time == ros::TIME_MAX)
+            {
+                bool ret;
+                ret = clock_updater_->request_clock_update(next_time);
+
+                std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << next_time.toSec() << std::endl;
+
+                return ret;
+            }
+
             /* If all timers have next expected times, request the smallest one */
             if (all_timers_have_next_expected_time)
             {
@@ -267,15 +304,25 @@ class TimerManagerExtra
                 bool ret;
                 ret = clock_updater_->request_clock_update(request_time);
 
-                // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update() : " << ret << std::endl;
+                std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << request_time.toSec() << std::endl;
 
                 return ret;
             }
             else
             {
-                // std::cout << "[TimerManagerExtra::add_next_cb_time] Some other timers do not have next expected time. Timer " << handle << " said." << std::endl;
+                std::cout << "[TimerManagerExtra::add_next_cb_time] Some other timers do not have next expected time. Timer " << handle << " said." << std::endl;
 
-                return true;
+                bool ret = true;
+                
+                /* Publish now time request for this clockupdater (recover from the last infinite reqeust) */
+                if (clock_updater_->get_request_time() == ros::TIME_MAX)
+                {
+                    ret = clock_updater_->request_clock_update(ros::Time::now());
+
+                    std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << ros::Time::now().toSec() << std::endl;
+                }
+                
+                return ret;
             }
 
             // /* If the next_cb_time is larger than now, push it to the timer_info_list_ and request clock update */
@@ -301,6 +348,8 @@ class TimerManagerExtra
         }
 
     private:
+        bool use_sim_time_;
+
         ClockUpdaterPtr clock_updater_;
 
         ros::NodeHandle nh_;
@@ -352,10 +401,9 @@ class TimerManagerExtra
                              * \brief The purpose of calling timer.setPeriod(period, false) is to release 
                              * the condition variable "timers_cond_" in timer_manager.h for faster loop speed.
                              * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
-                             * , where if use_sim_time is true, the timmer manager will block at least 
-                             * for 1 ms even if the loop can be faster. This bug limits the real timer loop 
-                             * speed to less than 1000 Hz. With this fix, the sim loop rate can be as fast 
-                             * as it can be.
+                             * , where if use_sim_time is true, the timmer manager will block at least for 1 ms 
+                             * at each timer callback even if the loop can be faster. This bug limits the real timer loop 
+                             * speed to less than 1000 Hz. With this fix, the sim loop rate can be as fast as it can be (6000Hz+ max in practice).
                              */
                             (*it).timer_impl->setPeriod((*it).period, false); // setPeriod(period, false) does not affect the period and next expected time. 
                         }
@@ -392,7 +440,7 @@ class TimerManagerExtra
                     // else
                     // {
                     //     //@TODO What if no next_time exists in the list?
-                    //     // clock_updater_->request_clock_update(ros::Time{MAX_ROS_TIME});
+                    //     // clock_updater_->request_clock_update(ros::TIME_MAX);
                     // }
                 }
             }

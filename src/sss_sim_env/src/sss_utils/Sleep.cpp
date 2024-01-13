@@ -1,230 +1,65 @@
 /**
- * @file Timer.cpp
+ * @file Sleep.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
- * @brief Replace ROS timer. Utilized by other sim/real agent nodes.
+ * @brief Replace ROS Duration and Rate sleep. Utilized by other sim/real agent nodes.
  * 
  * Note: This program relies on 
  * 
  * @version 1.0
- * @date 2023-12-7
+ * @date 2024-1-13
  * 
  * @license BSD 3-Clause License
- * @copyright (c) 2023, Peixuan Shu
+ * @copyright (c) 2024, Peixuan Shu
  * All rights reserved.
  * 
  */
 
 
-#include "sss_sim_env/Timer.hpp"
+#include "sss_sim_env/Sleep.hpp"
 
 
 namespace sss_utils
 {
 
-Timer::Timer(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
+/**
+ * \brief To replace ros::Duration(time).sleep() for swarm_sync_sim.
+ * If use_sim_time is false, it is just same as ros::Duration(time).sleep()
+ * If use_sim_time is true, it is ros::Duration(time).sleep() + requesting sim clock update in this thread.
+ */
+bool Duration::sleep() const
 {
-    impl_ = boost::make_shared<Impl>(nh, period, callback, oneshot, autostart);
-    TimerManagerExtra::global().add_timer(impl_);
-}
-
-Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const ros::TimerCallback& callback, bool oneshot, bool autostart)
-    :nh_(nh), period_(period), callback_(callback), oneshot_(oneshot), autostart_(autostart), started_(false), inited_(false), has_accelerate_timer_thread_(false)
-{
-    nh_.param<bool>("/use_sim_time", use_sim_time_, false);
-
-    /* If use_sim_time, create a ROS timer with modified callback function*/
-    if (use_sim_time_)
+    if (ros::Time::useSystemTime())
     {
-        ROS_INFO("[sss_utils::Timer] use_sim_time is true. Init");
+        /* Normal ros::Duration().sleep() */
+        return ros::Duration(sec, nsec).sleep();
+    }
+    else // if use sim time
+    {
+        /* Requesting sim clock update in this thread */
 
-        /* If use_sim_time, create a ROS timer with modified callback function 
-        (add request_clock_update() each loop*/
-        timer_ = nh_.createTimer(period_, &Timer::Impl::sim_timer_callback, this, oneshot_, autostart_); 
+        std::thread::id thread_id = std::this_thread::get_id();
 
-        // /* Init callback_queue -> spinner_threads map*/
-        // callback_queue_ = nh_.getCallbackQueue();
-        // if (cbqueue_spinnerthreads_map.find(callback_queue_) == cbqueue_spinnerthreads_map.end())
+        // if(thread_clockupdater_map.find(thread_id) == thread_clockupdater_map.end())
         // {
-        //     cbqueue_spinnerthreads_map[callback_queue_] = std::make_shared<ThreadIdVector>();
+        //     /* If no clockupdater exists on this thread, make a clockupdater */
+        //     thread_clockupdater_map[thread_id] = std::make_shared<ClockUpdater>(); 
+        //     std::cout << "[sss_utils::Duration::sleep] Create a new clock updater on thread_id " << thread_id << std::endl;
         // }
+        // ClockUpdaterPtr clock_updater = thread_clockupdater_map[thread_id]; // Get the clockupdater of this thread
 
-        if (autostart_)
+        ClockUpdaterPtr clock_updater = ThreadClockupdaters::global().get_clockupdater(thread_id);
+
+        while(!clock_updater->request_clock_update(ros::Time::now() + ros::Duration(sec, nsec)))
         {
-            start();
+            // block until publishing successfully
+            ros::WallDuration(0.1).sleep();
+
+            std::cout << "[sss_utils::Duration::sleep] Repeat clock_updater->request_clock_update " << (ros::Time::now() + ros::Duration(sec, nsec)).toSec() << std::endl;
         }
 
-    }
-    else
-    {        
-        /*If not use_sim_time, create a normal ROS timer */
-        timer_ = nh_.createTimer(period_, callback_, oneshot_, autostart_); 
-    }
-
-    //@TODO catch SIGINT error caused by ctrl+C, and destroy the parent before ros shutdown (for clock_updater_->unregister())
-
-}
-
-Timer::Impl::~Impl()
-{
-    stop();
-}
-
-/* callback_() + clock update in each loop */
-void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
-{
-    std::thread::id thread_id = std::this_thread::get_id();
-
-    // /* Associate this spinner thread id with the callback queue of this timer */
-    // ThreadIdVectorPtr spinner_threads = cbqueue_spinnerthreads_map[callback_queue_];
-    // if (std::find(spinner_threads->begin(), spinner_threads->end(), thread_id) == spinner_threads->end())
-    // {
-    //     spinner_threads->emplace_back(thread_id);
-    // }
-
-    if(thread_clockupdater_map.find(thread_id) == thread_clockupdater_map.end())
-    {
-        /* If no clockupdater exists for this thread, make a clockupdater */
-        thread_clockupdater_map[thread_id] = std::make_shared<ClockUpdater>(nh_);
-    }
-    ClockUpdaterPtr clock_updater = thread_clockupdater_map[thread_id]; // Get the clockupdater of this thread
-
-    clock_updater->request_clock_update(ros::Time::now()); //make clock waiting at now util the loop completes
-
-
-    /* call the main callback function */
-    callback_(event);
-
-
-    /* Request next triggered time */
-    ros::Time next_time;
-    if (oneshot_)
-    {
-        next_time = ros::Time{DBL_MAX};
-    }
-    else if(event.current_expected + period_ <= ros::Time::now())
-    {
-        next_time = ros::Time::now();
-    }
-    else
-    {
-        next_time = event.current_expected + period_;
-    }
-    
-    TimerManagerExtra::global().add_next_cb_time(next_time);
-
-    /* Request inifity next time (Do not know if there will be callbacks in this spinner thread in the future)*/
-    clock_updater->request_clock_update(ros::Time{DBL_MAX});
-
-    /* print the real loop rate */
-    // double time_now = ros::WallTime::now().toSec();
-    // double rate = 1.0 / (time_now - last_sim_timer_cb_time_);
-    // last_sim_timer_cb_time_ = time_now;
-    // ROS_INFO("[sss_utils::Timer] timer_callback rate: %s Hz", std::to_string(rate).c_str()); 
-}
-
-void Timer::Impl::start()
-{
-    if (!started_)
-    {
-        if (use_sim_time_)
-        {
-            // clock_updater_ = std::make_shared<ClockUpdater>(nh_);
-
-            // simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &Timer::Impl::cb_simclock_online, this);
-
-            // /* Launch a new thread to check /clock and update timer faster */
-            // kill_thread_ = false;
-            // boost::thread accelerate_timer_thread_ = boost::thread(&Timer::Impl::AccelerateTimerThreadFunc,this);
-            // has_accelerate_timer_thread_ = true;
-
-            /* @TODO
-             * Note that setPeriod() unblocks all timers in timer manager as timer manager is global. 
-             * Maybe only one accelerate thread is needed for all timers?
-             * But More timers bring more more callbacks in the callback queue. We need check clock update more frequently.
-             */
-        }
-
-        timer_.start();
-    }
-    started_ = true;
-}
-
-// /* Publish the first loop time request when sim clock is online */
-// void Timer::Impl::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
-// {
-//     if (msg->data == true)
-//     {
-//         /* request the first clock update to start the first loop */
-//         while(!clock_updater_->request_clock_update(ros::Time::now() + period_)) 
-//         {
-//             // block until publishing successfully
-//             ros::WallDuration(0.2).sleep();
-//             ROS_INFO("[sss_timer] Repeat the first request_clock_update...");
-//         }
-//         inited_ = true;
-//         // ROS_INFO("[sss_timer] inited_ = true");
-//     }
-// }
-
-void Timer::Impl::AccelerateTimerThreadFunc()
-{
-    /**
-     * \brief Open a new thread to check if /clock updates, call timer_.setPeriod(period) 
-     * to release the condition variable "timers_cond_" in timer_manager.h for faster loop speed.
-     * This is actually for fixing a bug in https://github.com/ros/ros_comm/blob/845f74602c7464e08ef5ac6fd9e26c97d0fe42c9/clients/roscpp/include/ros/timer_manager.h#L591 
-     * , where if use_sim_time is true, the timmer manager will block at least 
-     * for 1 ms even if the loop can be faster. This bug limits the timer loop 
-     * speed to less than 1000 Hz. With this fix, the sim loop rate can be 
-     * 20x faster than real speed.
-     */
-    if (use_sim_time_)
-    {
-        while (!kill_thread_)
-        {
-            // static ros::Time last_time;
-            ros::Time time_now = ros::Time::now();
-            if (time_now != last_clock_time_)
-            {
-                /* Clock is updated. Try to update timer_manager for the next loop as well. 
-                call timer_.setPeriod(period) to release timers_cond_ in timer_manager.h */
-                timer_.setPeriod(period_, false);
-                last_clock_time_ = time_now;
-            }
-            /* This allows sim time to run up to 100 real-time ideally even for very short timer periods.
-             * Sleep for 1 ms or (period_ / 100) s
-             * Inspired by https://github.com/ros/roscpp_core/blob/2951f0579a94955f5529d7f24bb1c8c7f0256451/rostime/src/time.cpp#L438 about ros::Duration::sleep() when use_sim_time is true
-            */
-            const uint32_t sleep_nsec = (period_.sec != 0) ? 1000000 : (std::min)(1000000, period_.nsec/100);
-            ros::WallDuration(0,sleep_nsec).sleep();
-
-            /** @TODO
-             * Note that setPeriod() unblocks all timers in timer_manager as timer manager is global. 
-             * If there are multiple timers, their callbacks are queued in one thread by timermanager.h as ros::spin() is single threaded by default. 
-             * Maybe we need just one accelerate thread for all timers but multiply its loop rate with timer multiples?
-             */ 
-
-        }
+        /* Block until the duration is satisfied */
+        return ros::Duration(sec, nsec).sleep();
     }
 }
 
-void Timer::Impl::stop()
-{
-    if (started_)
-    {
-        if (use_sim_time_)
-        {
-            // clock_updater_->unregister();
-            // kill_thread_ = true;
-            // if (has_accelerate_timer_thread_)
-            // {
-            //     accelerate_timer_thread_.join();
-            // }
-        }
-
-        timer_.stop();
-    }
-    started_ = false;
-}
-
-
-}
+} //sss_utils

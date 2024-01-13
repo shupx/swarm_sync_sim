@@ -20,16 +20,20 @@
 namespace sss_utils
 {
 
-ClockUpdater::ClockUpdater(const ros::NodeHandle &nh)
-    : nh_(nh), inited_(false)
+ClockUpdater::ClockUpdater()
+    : inited_(false)
 {
-    nh_.param<bool>("/use_sim_time", use_sim_time, false);
+    nh_async_.param<bool>("/use_sim_time", use_sim_time, false);
 
     if (use_sim_time){
         // ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for sim_clock online.");
-        simclock_online_sub_ = nh_.subscribe("/sss_clock_is_online", 1000, &ClockUpdater::cb_simclock_online, this);
-        register_client_ = nh_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
-        unregister_client_ = nh_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
+
+        nh_async_.setCallbackQueue(&callback_queue_);
+        async_spinner_.start(); // start a new thread to listen to sim clock online
+
+        simclock_online_sub_ = nh_async_.subscribe("/sss_clock_is_online", 1000, &ClockUpdater::cb_simclock_online, this);
+        register_client_ = nh_async_.serviceClient<sss_sim_env::ClientRegister>("/sss_timeclient_register");
+        unregister_client_ = nh_async_.serviceClient<sss_sim_env::ClientUnregister>("/sss_timeclient_unregister");
 
         UpdateClockPublisher::global(); // Create a global update_clock_publisher if has not been created
     }
@@ -67,7 +71,7 @@ void ClockUpdater::cb_simclock_online(const std_msgs::Bool::ConstPtr& msg)
 
         // std::cout << "[ClockUpdater::cb_simclock_online] inited_ = true" << std::endl;
 
-        // request_clock_update(ros::Time{MAX_ROS_TIME}); // Request infinity time on init
+        // request_clock_update(ros::TIME_MAX); // Request infinity time on init
     }
 }
 
@@ -83,10 +87,9 @@ bool ClockUpdater::request_clock_update(const ros::Time &new_time)
             // msg->clock = new_time;
             // update_clock_pub_.publish(msg);
 
-            UpdateClockPublisher::global().publish(time_client_id_, request_time_);
-
             // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
-            return true;
+
+            return UpdateClockPublisher::global().publish(time_client_id_, request_time_);
         }
         else
         {
