@@ -352,10 +352,10 @@ class TimerManagerExtra
             // }
         }
 
+        ClockUpdaterPtr clock_updater_;
+
     private:
         bool use_sim_time_;
-
-        ClockUpdaterPtr clock_updater_;
 
         ros::NodeHandle nh_;
         ros::CallbackQueue callback_queue_;

@@ -20,6 +20,7 @@
 #include <ros/time.h>
 #include <thread>
 #include "sss_sim_env/ClockUpdater.hpp"
+#include "sss_sim_env/Timer.hpp"
 
 
 namespace sss_utils
@@ -37,7 +38,48 @@ class Duration : public ros::Duration
         Duration(int32_t _sec, int32_t _nsec) : ros::Duration(_sec, _nsec) {}
         Duration(double t) : ros::Duration(t) {}
         Duration(const ros::Rate& rate) : ros::Duration(rate) {}
+
+        /* Rewrite sleep() */
         bool sleep() const;
+};
+
+/**
+ * \brief To replace ros::Rate for swarm_sync_sim.
+ * If use_sim_time is false, it is just same as rate.sleep()
+ * If use_sim_time is true, it is rate.sleep() + requesting sim clock update in this thread.
+ */
+class Rate
+{
+    public:
+        /**
+         * @brief  Constructor, creates a Rate
+         * @param  frequency The desired rate to run at in Hz
+         */
+        Rate(double frequency);
+        explicit Rate(const ros::Duration&);
+
+        bool sleep();
+
+        /**
+         * @brief  Sets the start time for the rate to now
+         */
+        void reset();
+
+        /**
+         * @brief  Get the actual run time of a cycle from start to sleep
+         * @return The runtime of the cycle
+         */
+        ros::Duration cycleTime() const;
+
+        /**
+         * @brief Get the expected cycle time -- one over the frequency passed in to the constructor
+         */
+        ros::Duration expectedCycleTime() const { return expected_cycle_time_; }
+    
+    private:
+        ros::Time start_;
+        ros::Duration expected_cycle_time_, actual_cycle_time_;
+        std::shared_ptr<ros::Rate> rate_;
 };
 
 
