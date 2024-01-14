@@ -1,0 +1,2 @@
+uint32 time_client_id
+time request_time

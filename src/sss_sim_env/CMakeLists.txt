@@ -15,10 +15,14 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
 )
 
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+)
+
+add_message_files(
+  FILES
+  TimeRequest.msg
 )
 
 add_service_files(
@@ -36,7 +40,8 @@ generate_messages(
 # Output include directories and libraries for other package to use
 catkin_package(
    INCLUDE_DIRS include 
-   LIBRARIES ClockUpdater sss_timer
+   LIBRARIES ClockUpdater sss_timer sss_sleep
+   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 )
 
 # add_executable(sim_clock src/sim_clock/sim_clock.cpp
@@ -60,8 +65,6 @@ target_link_libraries(sim_clock
 add_dependencies(sim_clock 
                       ${${PROJECT_NAME}_EXPORTED_TARGETS} 
                       ${catkin_EXPORTED_TARGETS} )
-
-
 
 
 ##################### sss_utils lib #######################
@@ -89,6 +92,19 @@ target_link_libraries(sss_timer
           ${catkin_LIBRARIES}
           ClockUpdater
        )
+
+add_library(sss_sleep
+       src/sss_utils/Sleep.cpp
+   )
+
+add_dependencies(sss_sleep 
+                ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+                ${catkin_EXPORTED_TARGETS} )
+
+target_link_libraries(sss_sleep
+   ${catkin_LIBRARIES}
+   ClockUpdater
+)
 
 #############
 ## Install ##
