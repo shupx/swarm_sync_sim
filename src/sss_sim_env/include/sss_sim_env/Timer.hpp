@@ -185,7 +185,7 @@ class Timer
 /**
  * \brief timer_manager.h in roscpp governs all timers in the ROS space 
  * and adds the timer callback functions to the callback queue. This class 
- * serves as an extra part of timer_manager.h to request clock time.
+ * serves as an extra part of timer_manager.h to request sim clock time.
  */
 class TimerManagerExtra
 {
@@ -203,6 +203,9 @@ class TimerManagerExtra
 
                 clock_sub_ = nh_.subscribe("/clock", 10, &TimerManagerExtra::cb_clock, this);
 
+                dummy_timer_ = nh_.createTimer(ros::DURATION_MAX, &TimerManagerExtra::dummy_timer_callback, this);
+                // Call dummy_timer_.setPeriod() for faster loop speed in simulation.
+
                 std::cout << "[sss_utils::TimerManagerExtra] Init" << std::endl;
             }
         }
@@ -217,6 +220,8 @@ class TimerManagerExtra
         /* add a timer to the timer_manager_extra */
         int add_timer(sss_utils::Timer::ImplPtr timer_impl_ptr)
         {
+            std::lock_guard<std::mutex> lockGuard(timer_info_list_mutex_);
+
             static int handle = 0;
             timer_info_list_.emplace_back(
                 TimerInfo
@@ -254,7 +259,7 @@ class TimerManagerExtra
         /* add next expected triggerred time of a timer callback */
         bool add_next_cb_time(int handle, ros::Time next_time)
         {
-            std::cout << "[TimerManagerExtra::add_next_cb_time] timer info " << handle << " request " << next_time.toSec() << std::endl;
+            // std::cout << "[TimerManagerExtra::add_next_cb_time] timer info " << handle << " request " << next_time.toSec() << std::endl;
 
             std::lock_guard<std::mutex> lockGuard(timer_info_list_mutex_);
 
@@ -290,7 +295,7 @@ class TimerManagerExtra
                 bool ret;
                 ret = clock_updater_->request_clock_update(next_time);
 
-                std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << next_time.toSec() << std::endl;
+                // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << next_time.toSec() << std::endl;
 
                 return ret;
             }
@@ -304,13 +309,13 @@ class TimerManagerExtra
                 bool ret;
                 ret = clock_updater_->request_clock_update(request_time);
 
-                std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << request_time.toSec() << std::endl;
+                // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << request_time.toSec() << std::endl;
 
                 return ret;
             }
             else
             {
-                std::cout << "[TimerManagerExtra::add_next_cb_time] Some other timers do not have next expected time. Timer " << handle << " said." << std::endl;
+                // std::cout << "[TimerManagerExtra::add_next_cb_time] Some other timers do not have next expected time. Timer " << handle << " said." << std::endl;
 
                 bool ret = true;
                 
@@ -319,7 +324,7 @@ class TimerManagerExtra
                 {
                     ret = clock_updater_->request_clock_update(ros::Time::now());
 
-                    std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << ros::Time::now().toSec() << std::endl;
+                    // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << ros::Time::now().toSec() << std::endl;
                 }
                 
                 return ret;
@@ -357,6 +362,8 @@ class TimerManagerExtra
         ros::Subscriber clock_sub_;
         ros::AsyncSpinner async_spinner_{1, &callback_queue_};
 
+        ros::Timer dummy_timer_;
+
         struct TimerInfo
         {
             int handle;
@@ -387,6 +394,8 @@ class TimerManagerExtra
                 {
                     // timer_info_list_[0].timer_impl->setPeriod(timer_info_list_[0].period, false); // setPeriod(period, false) does not affect the period and next expected time. 
 
+                    // dummy_timer_.setPeriod(ros::DURATION_MAX, false);
+
                     // sort next_time_list_ from small to large
                     std::sort(timer_info_list_.begin(), timer_info_list_.end(), compare_next_cb_time);
 
@@ -405,7 +414,13 @@ class TimerManagerExtra
                              * at each timer callback even if the loop can be faster. This bug limits the real timer loop 
                              * speed to less than 1000 Hz. With this fix, the sim loop rate can be as fast as it can be (6000Hz+ max in practice).
                              */
-                            // (*it).timer_impl->setPeriod((*it).period, false); // setPeriod(period, false) does not affect the period and next expected time. 
+                            if ((*it).timer_impl->hasPending())
+                            {
+                                //setPeriod(period, false) may change the next time of this timer based on the last real time. So I use a dummy timer.
+                                // (*it).timer_impl->setPeriod((*it).period, false);
+                                dummy_timer_.setPeriod(ros::DURATION_MAX, false);
+                            }
+                            // dummy_timer_.setPeriod(ros::DURATION_MAX, false);
                         }
                         else
                         {
@@ -464,6 +479,8 @@ class TimerManagerExtra
             //     std::cout << "[sss_utils::TimerManagerExtra] Warn! No timer added in TimerManagerExtra" << std::endl;
             // }
         }
+
+        void dummy_timer_callback(const ros::TimerEvent &event) {}
 };
 
 

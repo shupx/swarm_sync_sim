@@ -79,7 +79,7 @@ class TimeServer
                 int client_id_;
                 bool has_new_request;
                 ros::Time request_time;    
-                std::recursive_mutex client_mutex_;
+                std::recursive_mutex client_mutex_; //@TODO seems not working in multi-thread spinner modes
                 TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
         };
 

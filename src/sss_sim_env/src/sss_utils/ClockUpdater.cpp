@@ -93,7 +93,7 @@ bool ClockUpdater::request_clock_update(const ros::Time &new_time)
         }
         else
         {
-            ROS_ERROR("[ClockUpdater%s] Not inited.", std::to_string(time_client_id_).c_str());
+            ROS_INFO("[ClockUpdater%s] Not inited.", std::to_string(time_client_id_).c_str());
             return false;
         }
     }

@@ -103,7 +103,7 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     while(!clock_updater->request_clock_update(event.current_expected))
     {
         // block until publishing successfully
-        ros::WallDuration(0.5).sleep(); // 0.1 is fine
+        ros::WallDuration(0.1).sleep(); // 0.1 is fine
 
         std::cout << "[Timer::Impl::sim_timer_callback] Repeat clock_updater->request_clock_update " << event.current_expected.toSec() << std::endl;
     }
@@ -134,13 +134,13 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     {
         next_time = ros::Time::now();  // @TODO next time may be smaller than real next time
 
-        ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now %ss with last time = %ss and period = %ss. This is mostly caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
+        ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now %ss with last time = %ss and period = %ss. This is most likely caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
     }
     // else if(event.current_expected + period_ == ros::Time::now())
     // {
     //     next_time = ros::Time::now() + period_;  // @TODO next time may be smaller than real next time
 
-    //     ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now %ss with last time = %ss and period = %ss. This is mostly caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
+    //     ROS_WARN("[sss_utils::Timer::Impl::sim_timer_callback] Detect timer loop jumps. Set next expected time as now+period %ss with last time = %ss and period = %ss. This is mostly caused by the callback execution time longer than the timer period. Check if a too long sleep is applied in the timer callback.", std::to_string(next_time.toSec()).c_str(), std::to_string(event.current_expected.toSec()).c_str(), std::to_string(period_.toSec()).c_str());
     // }
     else
     {

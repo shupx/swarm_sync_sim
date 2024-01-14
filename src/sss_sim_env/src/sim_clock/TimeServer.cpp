@@ -62,14 +62,16 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     TimeClientPtr real_time_client(new TimeClient(next_client_id_, this, nh_async_, nh_private_)); // use a single thread spinner of nh_async_
     clients_vector_.emplace_back(std::move(real_time_client));
     ROS_INFO("[TimeServer] Register time client %s as simulation speed regulator",std::to_string(next_client_id_).c_str());
-
-    // update client 0 time in a wall timer with a seperate spinner thread
-    speed_regulator_period_ = 0.0001; // s
-    speed_regulator_timer_ = nh_speed_regulator_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
-    // speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
-
     // clients_vector_[0]->has_new_request = true;
     // clients_vector_[0]->request_time = ros::TIME_MAX;
+
+
+    // update client 0 time in a wall timer with a seperate spinner thread
+    speed_regulator_period_ = 0.001; // (s) maximum sim step
+    speed_regulator_timer_ = nh_async_.createWallTimer(ros::WallDuration(speed_regulator_period_ / max_speed_ratio_), &TimeServer::cb_speed_regulator_timer, this);
+    // speed_regulator_timer_ = nh_speed_regulator_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
+    // speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
+
 
     ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
 
@@ -89,7 +91,7 @@ void TimeServer::cb_speed_regulator_timer(const ros::WallTimerEvent &event)
     {
         if (sim_time_ >= speed_regulator_expected_time_)        
         {
-            speed_regulator_expected_time_ = speed_regulator_expected_time_ + ros::Duration(speed_regulator_period_ * max_speed_ratio_);
+            speed_regulator_expected_time_ = speed_regulator_expected_time_ + ros::Duration(speed_regulator_period_);
             {
                 std::lock_guard<std::recursive_mutex> LockGuard(clients_vector_[0]->client_mutex_);
                 clients_vector_[0]->request_time = speed_regulator_expected_time_;
@@ -104,9 +106,15 @@ void TimeServer::cb_speed_regulator_timer(const ros::WallTimerEvent &event)
 bool TimeServer::cb_clock_control(sss_sim_env::SimClockControl::Request& req,
                                      sss_sim_env::SimClockControl::Response& res)
 {
-    // Control the clock to pause / proceed / speed up
+    /* Control the clock to pause / proceed*/
     is_paused_ = !req.proceed; 
-    if (req.max_sim_speed != 0) { max_speed_ratio_ = req.max_sim_speed;}
+
+    /* Reset speed regulator */
+    if (req.max_sim_speed != 0) 
+    { 
+        max_speed_ratio_ = req.max_sim_speed;
+        speed_regulator_timer_.setPeriod(ros::WallDuration(speed_regulator_period_ / max_speed_ratio_), false);
+    }
 
     res.success = true;
 
@@ -159,7 +167,7 @@ bool TimeServer::cb_timeclient_unregister(sss_sim_env::ClientUnregister::Request
 
 void TimeServer::cb_update_clock_request(const sss_sim_env::TimeRequest::ConstPtr& msg)
 {
-    ROS_WARN("[TimeClient %s] Receive time request %ss", std::to_string(msg->time_client_id).c_str(), std::to_string(msg->request_time.toSec()).c_str());
+    // ROS_WARN("[TimeClient %s] Receive time request %ss", std::to_string(msg->time_client_id).c_str(), std::to_string(msg->request_time.toSec()).c_str());
 
     uint32_t id = msg->time_client_id;
     ros::Time new_request_time = msg->request_time;
@@ -173,13 +181,17 @@ void TimeServer::cb_update_clock_request(const sss_sim_env::TimeRequest::ConstPt
         return;
     }
 
-    if (new_request_time < (*it)->request_time)
     {
-        // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
-    }
+        std::lock_guard<std::recursive_mutex> LockGuard((*it)->client_mutex_);
 
-    (*it)->request_time = new_request_time;
-    (*it)->has_new_request = true;
+        if (new_request_time < (*it)->request_time)
+        {
+            // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
+        }
+
+        (*it)->request_time = new_request_time;
+        (*it)->has_new_request = true;
+    }
 
     try_update_clock();
 }
@@ -202,7 +214,7 @@ bool TimeServer::try_update_clock()
     /* Check whether there exists a time client other than the speed regulator*/
     if (clients_vector_.size() == 1)
     {
-        ROS_INFO("[TimeServer] try_update_clock() called. But no time client > 0 registered");
+        // ROS_INFO("[TimeServer] try_update_clock() called. But no time client > 0 registered");
         return false;
     }
 
@@ -219,7 +231,6 @@ bool TimeServer::try_update_clock()
                 break;
             }
         }
-
         if (all_clients_has_infinity_request)
         {
             ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 have new infinite request time, which means they are inactive. Stop clock.");
@@ -234,10 +245,12 @@ bool TimeServer::try_update_clock()
     ros::Time min_time_request = ros::Time(0.0);
     for (int i=0; i<clients_vector_.size(); ++i)
     {
+        std::lock_guard<std::recursive_mutex> LockGuard(clients_vector_[i]->client_mutex_);
+
         if (clients_vector_[i]->has_new_request == false){
             all_client_has_new_request = false;
 
-            ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because time client %s has no new request. Its last request is %ss", std::to_string(clients_vector_[i]->client_id_).c_str(), std::to_string(clients_vector_[i]->request_time.toSec()).c_str());
+            // ROS_INFO("[TimeServer] try_update_clock() refuses to update clock because time client %s has no new request. Its last request is %ss", std::to_string(clients_vector_[i]->client_id_).c_str(), std::to_string(clients_vector_[i]->request_time.toSec()).c_str());
 
             break;
         }
@@ -272,6 +285,7 @@ bool TimeServer::try_update_clock()
 
             // if (clients_vector_[i]->request_time <= min_time_request)
             if (clients_vector_[i]->request_time <= sim_time_)
+            // if (clients_vector_[i]->request_time <= ros::Time::now())
             {
                 clients_vector_[i]->has_new_request = false;
             }
