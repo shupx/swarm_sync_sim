@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     
-    <arg name="max_speed_ratio" default="1"/>
+    <arg name="max_speed_ratio" default="100"/>
     <arg name="auto_start" default="true"/>
     <arg name="use_sim_time" default="true"/>
 

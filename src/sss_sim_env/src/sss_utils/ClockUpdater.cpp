@@ -81,15 +81,22 @@ bool ClockUpdater::request_clock_update(const ros::Time &new_time)
     if (use_sim_time){
         if (inited_)
         {
-            request_time_ = new_time;
+            if (new_time != request_time_)
+            {
+                request_time_ = new_time;
 
-            // rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
-            // msg->clock = new_time;
-            // update_clock_pub_.publish(msg);
+                // rosgraph_msgs::ClockPtr msg(new rosgraph_msgs::Clock);
+                // msg->clock = new_time;
+                // update_clock_pub_.publish(msg);
 
-            // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
+                // ROS_INFO("[ClockUpdater%s] publish %ss to topic update_clock_request", std::to_string(time_client_id_).c_str(), std::to_string(new_time.toSec()).c_str());
 
-            return UpdateClockPublisher::global().publish(time_client_id_, request_time_);
+                return UpdateClockPublisher::global().publish(time_client_id_, request_time_);
+            }
+            else
+            {
+                return true;
+            }
         }
         else
         {
