@@ -6,7 +6,8 @@
     <arg name="open_rviz" default="true"/>
 
     <arg name="visualize_max_freq" default="20"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
-    <arg name="visualize_path_time" default="25"/> <!-- (s) displaying history path time -->
+    <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
+    <arg name="visualize_path_time" default="30"/> <!-- (s) displaying history path time -->
     <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->
     <arg name="base_link_name" default="base_link"/> <!-- base link name in the robot urdf -->
     <arg name="base_link_tf_prefix" default="$(arg namespace)"/> <!-- tf prefix added to the base_link_name -->
@@ -14,7 +15,9 @@
     <arg name="rotor_1_joint_name" default="rotor_1_joint"/> <!-- rotor revolute joint name in the robot urdf -->
     <arg name="rotor_2_joint_name" default="rotor_2_joint"/> <!-- rotor revolute joint name in the robot urdf -->
     <arg name="rotor_3_joint_name" default="rotor_3_joint"/> <!-- rotor revolute joint name in the robot urdf -->
-    <arg name="local_pos_source" default="0"/> <!-- mavros/local_position/pose source -->     <!-- 0 for mocap (use local_position/pose for visualization directly) -->     <!-- 1 for GPS (use global_position/global relative to the world_origin_gps for x,y visualization, use local_position/pose for z and attitude visualization) -->
+    <arg name="local_pos_source" default="0"/> <!-- mavros/local_position/pose source -->     
+    <!-- 0 for mocap (use local_position/pose for visualization directly) -->     
+    <!-- 1 for GPS (use global_position/global relative to the world_origin_gps for x,y visualization, use local_position/pose for z and attitude visualization) -->
     <!-- world origin gps values as the ref of visualizing the local position if local_pos_source = 1 -->
     <arg name="world_origin_latitude_deg" default="39.978861"/> <!-- degree -->
     <arg name="world_origin_longitude_deg" default="116.339803"/> <!-- degree -->

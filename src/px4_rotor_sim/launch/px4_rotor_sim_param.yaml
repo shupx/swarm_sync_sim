@@ -8,7 +8,8 @@ mavros_use_egm96: false # Enable transforming from AMSL to Ellipsoid(WGS84) alti
 # Visualizer parameters
 
 visualize_max_freq: 15 # (Hz) Maximum base_link tf publishing rate 
-visualize_path_time: 30 # (s) displaying history path time (long history path slows the simulation speed significantly)
+enable_history_path: true # Enable visualizing history path (long history path slows the simulation speed significantly).
+visualize_path_time: 30 # (s) Visualizing history path time (long history path slows the simulation speed significantly).
 visualize_tf_frame: map # tf world frame name
 base_link_name: base_link # base link name in the robot urdf
 # base_link_tf_prefix: uav1 # tf prefix added to the base_link_name

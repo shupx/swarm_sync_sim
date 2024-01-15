@@ -44,6 +44,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
         tf_child_frame_ = tf_prefix + "/" + tf_child_frame_;
     }
 
+    nh_private_.param<bool>("enable_history_path", enable_history_path_, true);
     
     nh_private_.param<double>("world_origin_latitude_deg", world_origin_lat_, 39.978861);
     nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
@@ -115,44 +116,47 @@ void Visualizer::PublishBaseLinkTF()
 
 void Visualizer::PublishPath()
 {
-    /* Publishing a long path to rviz is heavily time consuming */
-    //@TODO do not publish new path if the uav is static?
-    if (path_pub_.getNumSubscribers() > 0)
+    if (enable_history_path_)
     {
-        // static double last_time = 0.0;
-        double time_now = ros::Time::now().toSec();
-        float history_path_update_freq = 20.0; // 5Hz fixed
-        if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
+        /* Publishing a long path to rviz is heavily time consuming */
+        //@TODO do not publish new path if the uav is static?
+        if (path_pub_.getNumSubscribers() > 0)
         {
-            geometry_msgs::PoseStamped TrajPose_;
-            TrajPose_.header.stamp = ros::Time::now();
-            TrajPose_.header.frame_id = tf_frame_;
-            TrajPose_.pose.position.x = pos_x_;
-            TrajPose_.pose.position.y = pos_y_;
-            TrajPose_.pose.position.z = pos_z_;          
-            TrajPose_.pose.orientation = quat_;
-
-            /* heavily time consuming */
-            TrajPoseHistory_vector_.insert(TrajPoseHistory_vector_.begin(), TrajPose_);
-            if (TrajPoseHistory_vector_.size() > history_path_time_ * history_path_update_freq)
+            // static double last_time = 0.0;
+            double time_now = ros::Time::now().toSec();
+            float history_path_update_freq = 5.0; // 5Hz fixed
+            if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
             {
-                TrajPoseHistory_vector_.pop_back();
+                geometry_msgs::PoseStamped TrajPose_;
+                TrajPose_.header.stamp = ros::Time::now();
+                TrajPose_.header.frame_id = tf_frame_;
+                TrajPose_.pose.position.x = pos_x_;
+                TrajPose_.pose.position.y = pos_y_;
+                TrajPose_.pose.position.z = pos_z_;          
+                TrajPose_.pose.orientation = quat_;
+
+                /* heavily time consuming */
+                TrajPoseHistory_vector_.insert(TrajPoseHistory_vector_.begin(), TrajPose_);
+                if (TrajPoseHistory_vector_.size() > history_path_time_ * history_path_update_freq)
+                {
+                    TrajPoseHistory_vector_.pop_back();
+                }
+
+                // std::vector<geometry_msgs::PoseStamped> old_vector{TrajPoseHistory_vector_};
+                // TrajPoseHistory_vector_[0] = TrajPose_;
+                // for (int i=1; i< old_vector.size(); ++i)
+                // {
+                //     TrajPoseHistory_vector_[i] = old_vector[i-1];
+                // }
+                
+                nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
+                path_msg->header.stamp = ros::Time::now();
+                path_msg->header.frame_id = tf_frame_;
+                path_msg->poses = TrajPoseHistory_vector_;
+                path_pub_.publish(path_msg); /* heavily time consuming */
+
+                last_time_PublishPath_ = time_now;
             }
-
-            // std::vector<geometry_msgs::PoseStamped> old_vector{TrajPoseHistory_vector_};
-            // TrajPoseHistory_vector_[0] = TrajPose_;
-            // for (int i=1; i< old_vector.size(); ++i)
-            // {
-            //     TrajPoseHistory_vector_[i] = old_vector[i-1];
-            // }
-            
-            nav_msgs::Path::Ptr path_msg(new nav_msgs::Path);
-            path_msg->header.stamp = ros::Time::now();
-            path_msg->header.frame_id = tf_frame_;
-            path_msg->poses = TrajPoseHistory_vector_;
-            path_pub_.publish(path_msg); /* heavily time consuming */
-
-            last_time_PublishPath_ = time_now;
         }
     }
 }

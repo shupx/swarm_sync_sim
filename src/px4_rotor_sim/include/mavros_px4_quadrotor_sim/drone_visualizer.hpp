@@ -100,6 +100,8 @@ private:
     std::string tf_child_frame_; // visualize_tf_child_frame
     std::string rotor_joints_name_[4]; // rotor joints name
 
+    bool enable_history_path_;
+
     double last_time_PublishRotorJointState_ = 0.0;
     double last_time_PublishBaseLinkTF_ = 0.0;
     double last_time_PublishPath_ = 0.0;
