@@ -50,9 +50,9 @@ class TimeServer
         ros::NodeHandle nh_async_;
         ros::AsyncSpinner async_spinner_{1, &async_callback_queue_};
 
-        ros::CallbackQueue speed_regulator_callback_queue_;
-        ros::NodeHandle nh_speed_regulator_;
-        ros::AsyncSpinner speed_regulator_spinner_{1, &speed_regulator_callback_queue_};
+        // ros::CallbackQueue speed_regulator_callback_queue_;
+        // ros::NodeHandle nh_speed_regulator_;
+        // ros::AsyncSpinner speed_regulator_spinner_{1, &speed_regulator_callback_queue_};
         ros::WallTimer speed_regulator_timer_;
 
         int next_client_id_;
@@ -73,14 +73,16 @@ class TimeServer
                 // ros::AsyncSpinner async_spinner_{1, &callback_queue_};
                 // ros::Subscriber update_clock_request_sub_;
 
-                TimeServer* time_server;
-                void cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg);
+                // TimeServer* time_server;
+                // void cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg);
             public:
                 int client_id_;
                 bool has_new_request;
                 ros::Time request_time;    
                 std::recursive_mutex client_mutex_; //@TODO seems not working in multi-thread spinner modes
-                TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+                
+                // TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+                TimeClient(const int &id);
         };
 
         typedef std::shared_ptr<TimeClient> TimeClientPtr;

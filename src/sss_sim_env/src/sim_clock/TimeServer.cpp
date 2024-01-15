@@ -24,9 +24,6 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     nh_async_.setCallbackQueue(&async_callback_queue_);
     async_spinner_.start(); // start a new thread to listen to clock updates
 
-    nh_speed_regulator_.setCallbackQueue(&speed_regulator_callback_queue_);
-    speed_regulator_spinner_.start();
-
     nh_.param<bool>("/use_sim_time", is_sim_time_, false);
     if (!is_sim_time_)
     {
@@ -58,22 +55,18 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
     next_client_id_ = 0;
 
-    // client 0 is the simulation speed regulator
-    TimeClientPtr real_time_client(new TimeClient(next_client_id_, this, nh_async_, nh_private_)); // use a single thread spinner of nh_async_
+    /* client 0 is the simulation speed regulator */
+    // TimeClientPtr real_time_client(new TimeClient(next_client_id_, this, nh_async_, nh_private_)); // use a single thread spinner of nh_async_
+    TimeClientPtr real_time_client(new TimeClient(next_client_id_));
     clients_vector_.emplace_back(std::move(real_time_client));
     ROS_INFO("[TimeServer] Register time client %s as simulation speed regulator",std::to_string(next_client_id_).c_str());
     // clients_vector_[0]->has_new_request = true;
     // clients_vector_[0]->request_time = ros::TIME_MAX;
 
-
     // update client 0 time in a wall timer with a seperate spinner thread
     speed_regulator_period_ = 0.001; // (s) maximum sim step (crucial for timers on multi threads)
     speed_regulator_timer_ = nh_async_.createWallTimer(ros::WallDuration(speed_regulator_period_ / max_speed_ratio_), &TimeServer::cb_speed_regulator_timer, this);
-    // speed_regulator_timer_ = nh_speed_regulator_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
     // speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
-
-
-    ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
 
     update_clock_request_sub_ = nh_async_.subscribe("/sss_time_client/update_clock_request", 10000, &TimeServer::cb_update_clock_request, this);
 
@@ -81,6 +74,8 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     std_msgs::Bool::Ptr online_msg(new std_msgs::Bool);
     online_msg->data = true;
     online_pub_.publish(online_msg);
+
+    ROS_INFO("[TimeServer] Initialized at max %sx speed!", std::to_string(max_speed_ratio_).c_str());
 }
 
 void TimeServer::cb_speed_regulator_timer(const ros::WallTimerEvent &event)
@@ -126,7 +121,8 @@ bool TimeServer::cb_timeclient_register(sss_sim_env::ClientRegister::Request& re
 {
     //register a time client
     next_client_id_ ++;
-    TimeClientPtr client(new TimeClient(next_client_id_, this, nh_async_,nh_private_)); // use a single thread spinner of nh_async_
+    // TimeClientPtr client(new TimeClient(next_client_id_, this, nh_async_,nh_private_)); // use a single thread spinner of nh_async_
+    TimeClientPtr client(new TimeClient(next_client_id_));
     clients_vector_.emplace_back(std::move(client));   
 
     ROS_INFO("[TimeServer] Register time client %s",std::to_string(next_client_id_).c_str());
@@ -299,10 +295,12 @@ bool TimeServer::try_update_clock()
 }
 
 /** Create a timeclient for each node thread that requires clock updating**/
-TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private): client_id_(id), time_server(obj), nh_(nh), nh_private_(nh_private)
+TimeServer::TimeClient::TimeClient(const int &id): client_id_(id)
+// TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::NodeHandle &nh, const ros::NodeHandle &nh_private): client_id_(id), time_server(obj), nh_(nh), nh_private_(nh_private)
 {
     has_new_request = false;
     request_time = ros::Time(0.0); //0 seconds
+
     // update_clock_request_sub_ = nh_.subscribe("/sss_time_client"+std::to_string(client_id_)+"/update_clock_request", 1000, &TimeClient::cb_update_clock_request, this);
 
     // nh_async.setCallbackQueue(&callback_queue_);
@@ -311,29 +309,21 @@ TimeServer::TimeClient::TimeClient(const int &id, TimeServer *obj, const ros::No
 }
 
 
-void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
-{
-    // ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
+// void TimeServer::TimeClient::cb_update_clock_request(const rosgraph_msgs::Clock::ConstPtr& msg)
+// {
+//     // ROS_INFO("[TimeClient %s] Receive time request %ss", std::to_string(client_id_).c_str(), std::to_string(msg->clock.toSec()).c_str());
 
-    ros::Time new_request_time = msg->clock;
-    if (new_request_time < request_time)
-    {
-        // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
-    }
+//     ros::Time new_request_time = msg->clock;
+//     if (new_request_time < request_time)
+//     {
+//         // ROS_WARN("[TimeClient %s] new time request %ss is smaller than last request %ss", std::to_string(client_id_).c_str(), std::to_string(new_request_time.toSec()).c_str(), std::to_string(request_time.toSec()).c_str());
+//     }
 
-    {
-        // std::lock_guard<std::recursive_mutex> LockGuard(client_mutex_);
-        request_time = new_request_time;
-        has_new_request = true;
-    }
+//     {
+//         // std::lock_guard<std::recursive_mutex> LockGuard(client_mutex_);
+//         request_time = new_request_time;
+//         has_new_request = true;
+//     }
     
-    time_server->try_update_clock();
-
-    //@TODO What if new_request_time is infinite?
-
-    // if(new_request_time < ros::Time(4294967290))
-    // {
-    //     // Only request clock update if the new_request_time is finite
-    //     time_server->try_update_clock();
-    // }
-}
+//     time_server->try_update_clock();
+// }
