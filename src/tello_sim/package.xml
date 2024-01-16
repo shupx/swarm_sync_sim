@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>px4_rotor_sim</name>
+  <name>tello_sim</name>
   <version>1.0.0</version>
-  <description>A tailered mavros + PX4_SITL + drone_dynamics package for px4 rotor drone simulation </description>
+  <description>A tello control and dynamics package for simulation </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

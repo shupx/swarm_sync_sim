@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(px4_rotor_sim)
+project(tello_sim)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++14) # for px4_lib
+# add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -11,12 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp  # already installed with ros-noetic-desktop
   rospy  # already installed with ros-noetic-desktop
   std_msgs  # already installed with ros-noetic-desktop
-  # mavlink # for px4_sitl mavlink messages (already installed with ros-noetic-mavlink by mavros) (mavlink c/c++ header files already downloaded in include/ folder)
-  mavros # for mavros_sim mavros::ftf::
-  mavros_msgs
-  eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
   sss_sim_env # for sss_utils
-  nodelet # for mavros_px4_quadrotor_sim_node.cpp nodelet
+  nodelet # for nodelet
 )
 
 #uncomment the following 4 lines to use the Eigen library
@@ -27,7 +23,6 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 include_directories(
   include
-  src/mavros_px4_quadrotor_sim/px4_modules/px4_lib # for px4_modules build
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -36,159 +31,41 @@ catkin_package(
    INCLUDE_DIRS include
 )
 
-add_library(px4_rotor_dynamics src/mavros_px4_quadrotor_sim/quadrotor_dynamics.cpp)
-
-add_library(px4_lib
-              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/drivers/drv_hrt.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/hysteresis/hysteresis.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/geo/geo.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/parameters/px4_parameters.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/px4_lib/uORB/uORB_sim.cpp) 
-
-add_library(mc_pos_control
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/ControlMath.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/PositionControl/PositionControl.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/Takeoff/Takeoff.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_pos_control/MulticopterPositionControl.cpp
-              )
-# link libraries for this lib
-target_link_libraries(mc_pos_control 
-                  px4_lib)
-
-# add *.hpp header path for which use this lib
-target_include_directories(mc_pos_control PUBLIC
-            src/mavros_px4_quadrotor_sim)
-
-
-add_library(mc_att_control
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_att_control/AttitudeControl/AttitudeControl.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mc_att_control/mc_att_control_main.cpp
-              )
+add_library(tello_dynamics
+                src/quadrotor_dynamics.cpp)
 
 # link libraries for this lib
-target_link_libraries(mc_att_control 
-                  px4_lib)
-
-# add *.hpp header path for which use this lib
-target_include_directories(mc_att_control PUBLIC
-            src/mavros_px4_quadrotor_sim)
-
-
-add_library(commander
-            src/mavros_px4_quadrotor_sim/px4_modules/commander/Commander.cpp
-            src/mavros_px4_quadrotor_sim/px4_modules/commander/state_machine_helper.cpp
-            )
-
-# link libraries for this lib
-target_link_libraries(commander 
-                px4_lib)
-
-# add *.hpp header path for which use this lib
-target_include_directories(commander PUBLIC
-          src/mavros_px4_quadrotor_sim)
-
-
-add_library(px4_mavlink
-              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_msg_list.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_streamer.cpp
-              src/mavros_px4_quadrotor_sim/px4_modules/mavlink/mavlink_receiver.cpp
-            )
-
-# link libraries for this lib
-target_link_libraries(px4_mavlink 
-                px4_lib)
-
-# add *.hpp header path for which use this lib
-target_include_directories(px4_mavlink PUBLIC
-          src/mavros_px4_quadrotor_sim)
-
-# Supress the warnings of packed member in mavlink c_library_v2
-# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
-target_compile_options(px4_mavlink PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
-
-
-add_library(px4_sitl
-              src/mavros_px4_quadrotor_sim/px4_sitl.cpp
-            )
-
-# link libraries for this lib
-target_link_libraries(px4_sitl
-    ${catkin_LIBRARIES}
-    mc_att_control
-    mc_pos_control
-    commander
-    px4_mavlink
-)
-
-# Supress the warnings of packed member in mavlink c_library_v2
-# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
-target_compile_options(px4_sitl PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
-
-
-add_library(MavrosSim
-            src/mavros_px4_quadrotor_sim/mavros_sim/MavrosSim.cpp
-            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_data.cpp
-            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_stringify.cpp
-            src/mavros_px4_quadrotor_sim/mavros_sim/lib/uas_timesync.cpp
-          )
-
-# add *.hpp header path for which use this lib
-target_include_directories(MavrosSim PUBLIC
-            src/mavros_px4_quadrotor_sim)
-
-# link libraries for this lib
-target_link_libraries(MavrosSim
-  ${catkin_LIBRARIES}
-  # ${catkin_LIBRARIES} for libeigen_conversions.so from eigen_conversions ROS package
-  # ${catkin_LIBRARIES} for libmavros.so from eigen_conversions ROS package
-)
-
-# Supress the warnings of packed member in mavlink c_library_v2
-# Refer to http://mavlink.io/zh/mavgen_c/#build-warnings
-target_compile_options(MavrosSim PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
-
-
-add_library(drone_visualizer
-            src/mavros_px4_quadrotor_sim/drone_visualizer.cpp)
-
-# link libraries for this lib
-target_link_libraries(drone_visualizer
-  ${catkin_LIBRARIES}
-  px4_lib # for geo.cpp
-)
-
-
-add_executable(mavros_px4_quadrotor_sim_node
-                  src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
-
-# link libraries for this lib
-target_link_libraries(mavros_px4_quadrotor_sim_node
+target_link_libraries(tello_dynamics
    ${catkin_LIBRARIES}
-   px4_rotor_dynamics
-   px4_sitl
-   MavrosSim
-   drone_visualizer
 )
 
-add_library(mavros_px4_quadrotor_sim_nodelet
-            src/mavros_px4_quadrotor_sim/mavros_px4_quadrotor_sim_node.cpp)
+# add_library(drone_visualizer
+#             src/drone_visualizer.cpp)
+
+# # link libraries for this lib
+# target_link_libraries(drone_visualizer
+#   ${catkin_LIBRARIES}
+# )
+
+add_executable(tello_quadrotor_sim_node
+                  src/tello_quadrotor_sim_node.cpp)
 
 # link libraries for this lib
-target_link_libraries(mavros_px4_quadrotor_sim_nodelet
+target_link_libraries(tello_quadrotor_sim_node
    ${catkin_LIBRARIES}
-   px4_rotor_dynamics
-   px4_sitl
-   MavrosSim
-   drone_visualizer
+   tello_dynamics
+  #  drone_visualizer
 )
 
-add_executable(drone_visualizer_node
-                  src/mavros_px4_quadrotor_sim/drone_visualizer_node.cpp)
+
+add_library(tello_quadrotor_sim_nodelet
+                src/tello_quadrotor_sim_node.cpp)
 
 # link libraries for this lib
-target_link_libraries(drone_visualizer_node
+target_link_libraries(tello_quadrotor_sim_nodelet
    ${catkin_LIBRARIES}
-   drone_visualizer
+   tello_dynamics
+  #  drone_visualizer
 )
 
 ## System dependencies are found with CMake's conventions

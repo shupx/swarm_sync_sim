@@ -8,6 +8,7 @@
                 "./src/px4_rotor_sim/include/",
                 "./src/px4_rotor_sim/src/mavros_px4_quadrotor_sim/",
                 "./src/px4_rotor_sim/src/mavros_px4_quadrotor_sim/px4_modules/px4_lib",
+                "./src/tello_sim/include/",
                 "./devel/include/"
             ],
             "name":"ROS",
