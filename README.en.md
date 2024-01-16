@@ -8,7 +8,7 @@ A synchronized (lock-stepped) numerical simulation platform for multi-robot swar
 
 ```bash
 # Dependencies
-sudo apt install ros-noetic-mavros ros-noetic-mavros-extras
+sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-robot-state-publisher -y
 
 # Build
 git clone https://gitee.com/bhswift/swarm_sync_sim.git
