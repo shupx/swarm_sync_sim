@@ -1,3 +1,4 @@
+
 /**
  * @file tello_driver_sim.cpp
  * @author Peixuan Shu (shupeixuan@qq.com)
@@ -137,7 +138,7 @@ void TelloDriverSim::cb_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
     double v_z_body = linear_vel_scale_ * _limit(msg->linear.z * 0.5); // limit to [-1, 1] body up
     double w_down_body = angular_vel_scale_ * _limit(msg->angular.z * 0.5); // limit to [-1, 1] body down (turn right)
 
-    double yaw = dynamics_->getRPY()[2]; // get real yaw angle relative to the world frame
+    double yaw = dynamics_->getRPY()[2] - M_PI/2; // get real yaw angle relative to the world frame
 
     linear_vel_cmd_[0] = v_right_body * cos(yaw) - v_front_body * sin(yaw); // world x
     linear_vel_cmd_[1] = v_right_body * sin(yaw) + v_front_body * cos(yaw); // world y
