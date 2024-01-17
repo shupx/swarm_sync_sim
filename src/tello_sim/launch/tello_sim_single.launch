@@ -9,9 +9,10 @@
     <arg name="init_z_Up_metre" default="0.0"/>
     <arg name="init_roll_deg" default="0.0"/>
     <arg name="init_pitch_deg" default="0.0"/>
-    <arg name="init_yaw_deg" default="90.0"/>
-    <arg name="linear_vel_scale" default="2.0"/>
-    <arg name="angular_vel_scale" default="3.14"/>
+    <arg name="init_yaw_deg" default="0.0"/>
+
+    <arg name="linear_vel_scale" default="2.0"/> <!-- cmd_vel.linear.xyz [-2.0, 2.0] to linear velocity(m/s)  -->
+    <arg name="angular_vel_scale" default="3.14"/> <!-- cmd_vel.angular.z [-2.0, 2.0] to angular velocity(rad/s)  -->
     <arg name="use_imu_orientation" default="false"/>
 
     <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
@@ -52,18 +53,13 @@
             <param name="frame_id" value="$(arg namespace)"/>
         </node>
     </group>
-
-    <!-- Visualization -->
-    <param name="robot_description" textfile="$(find tello_sim)/model/iris.urdf" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
-        <param name="tf_prefix" value="$(arg namespace)"/>
-    </node>
-    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->  
-    <!-- joint states and base_link TF published by drone_visualizer already -->
-    <group if="$(arg open_rviz)">
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tello_sim)/launch/single_tello.rviz" required="false" />
-    </group>
 </group>
+
+<!-- Visualization -->
+<include file="$(find tello_sim)/launch/tello_visualizer_single.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="open_rviz" value="$(arg open_rviz)"/>
+</include>
 
 
 </launch>

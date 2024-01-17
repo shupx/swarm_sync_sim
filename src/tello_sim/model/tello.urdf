@@ -17,47 +17,33 @@
     <color rgba=".9 .1 .1 1"/>
   </material> 
 
-  <joint name="imu_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="imu_link"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
-  </joint>
   <joint name="rotor_0_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rotor_0"/>
-    <origin xyz="0.13  -0.22   0.023" rpy="0 0 0"/>
+    <origin xyz="0.0628  -0.0698   0.013" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-1e+16" upper="1e+16" effort="0.0" velocity="0.0"/>
   </joint>
   <joint name="rotor_1_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rotor_1"/>
-    <origin xyz="-0.13   0.2    0.023" rpy="0 0 0"/>
+    <origin xyz="-0.0698   0.0705    0.013" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-1e+16" upper="1e+16" effort="0.0" velocity="0.0"/>
   </joint>
   <joint name="rotor_2_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rotor_2"/>
-    <origin xyz="0.13  0.22  0.023" rpy="0 0 0"/>
+    <origin xyz="0.0628  0.0698  0.013" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-1e+16" upper="1e+16" effort="0.0" velocity="0.0"/>
   </joint>
   <joint name="rotor_3_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rotor_3"/>
-    <origin xyz="-0.13  -0.2    0.023" rpy="0 0 0"/>
+    <origin xyz="-0.0688  -0.0698   0.013" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-1e+16" upper="1e+16" effort="0.0" velocity="0.0"/>
-  </joint>
-  <joint name="gps0_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="gps0__link"/>
-    <origin xyz="0.1 0  0" rpy="0 0 0"/>
-    <axis xyz="0 0 0"/>
-    <limit lower="0" upper="0" effort="0" velocity="0"/>
   </joint>
   <link name="base_link">
     <!-- <inertial>
@@ -66,25 +52,19 @@
       <inertia ixx="0.029125" ixy="0" ixz="0" iyy="0.029125" iyz="0" izz="0.055225"/>
     </inertial> -->
     <collision name="base_link_inertia_collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.015" rpy="0 0 0"/>
       <geometry>
-        <box size="0.47 0.47 0.11"/>
+        <box size="0.10 0.04 0.03"/>
       </geometry>
     </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model/meshes/iris.stl" scale="1 1 1"/>
+        <!-- <mesh filename="package://tello_sim/model/meshes/tello_bo dy.stl" scale="1 1 1"/> -->
+        <mesh filename="package://tello_sim/model/meshes/tello_body.dae" scale="1 1 1"/>
       </geometry>
       <material name="red"/> <!-- Added by Peixuan Shu -->
     </visual>
-  </link>
-  <link name="imu_link">
-    <inertial>
-      <mass value="0.015"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="1e-05" ixy="0" ixz="0" iyy="1e-05" iyz="0" izz="1e-05"/>
-    </inertial>
   </link>
   <link name="rotor_0">
     <inertial>
@@ -95,13 +75,14 @@
     <collision name="rotor_0_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.128" length="0.005"/>
+        <cylinder radius="0.04" length="0.005"/>
       </geometry>
     </collision>
     <visual name="rotor_0_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model/meshes/iris_prop_ccw.stl" scale="1 1 1"/>
+        <mesh filename="package://tello_sim/model/meshes/tello_prop_ccw.stl" scale="1 1 1"/>
+        <!-- <mesh filename="package://tello_sim/model/meshes/tello_prop_ccw.dae" scale="1 1 1"/> -->
       </geometry>
       <material name="red"/> <!-- Added by Peixuan Shu -->
     </visual>
@@ -115,13 +96,14 @@
     <collision name="rotor_1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.128" length="0.005"/>
+        <cylinder radius="0.04" length="0.005"/>
       </geometry>
     </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model/meshes/iris_prop_ccw.stl" scale="1 1 1"/>
+        <mesh filename="package://tello_sim/model/meshes/tello_prop_ccw.stl" scale="1 1 1"/>
+        <!-- <mesh filename="package://tello_sim/model/meshes/tello_prop_ccw.dae" scale="1 1 1"/> -->
       </geometry>
       <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
@@ -135,13 +117,14 @@
     <collision name="rotor_2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.128" length="0.005"/>
+        <cylinder radius="0.04" length="0.005"/>
       </geometry>
     </collision>
     <visual name="rotor_2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model/meshes/iris_prop_cw.stl" scale="1 1 1"/>
+        <mesh filename="package://tello_sim/model/meshes/tello_prop_cw.stl" scale="1 1 1"/>
+        <!-- <mesh filename="package://tello_sim/model/meshes/tello_prop_cw.dae" scale="1 1 1"/> -->
       </geometry>
       <material name="red"/> <!-- Added by Peixuan Shu -->
     </visual>
@@ -155,28 +138,16 @@
     <collision name="rotor_3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.128" length="0.005"/>
+        <cylinder radius="0.04" length="0.005"/>
       </geometry>
     </collision>
     <visual name="rotor_3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model/meshes/iris_prop_cw.stl" scale="1 1 1"/>
+        <mesh filename="package://tello_sim/model/meshes/tello_prop_cw.stl" scale="1 1 1"/>
+        <!-- <mesh filename="package://tello_sim/model/meshes/tello_prop_cw.dae" scale="1 1 1"/> -->
       </geometry>
       <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
-  </link>
-  <link name="gps0__link">
-    <inertial>
-      <mass value="0.015"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="1e-05" ixy="0" ixz="0" iyy="1e-05" iyz="0" izz="1e-05"/>
-    </inertial>
-    <!-- <visual name="gps0__visual">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="0.01" length="0.002"/>
-      </geometry>
-    </visual> -->
   </link>
 </robot>

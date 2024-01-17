@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   sss_sim_env # for sss_utils
   nodelet # for nodelet
+  tf2_ros # for tf
 )
 
 #uncomment the following 4 lines to use the Eigen library
@@ -68,6 +69,14 @@ target_link_libraries(tello_quadrotor_sim_nodelet
    ${catkin_LIBRARIES}
    tello_dynamics
    tello_driver_sim
+)
+
+add_executable(tello_visualizer_node
+            src/drone_visualizer_node.cpp)
+
+# link libraries for this lib
+target_link_libraries(tello_visualizer_node
+  ${catkin_LIBRARIES}
 )
 
 ## System dependencies are found with CMake's conventions

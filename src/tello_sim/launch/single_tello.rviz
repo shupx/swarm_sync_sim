@@ -6,8 +6,11 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Pose1
-      Splitter Ratio: 0.5
+        - /Axes1
+        - /tello11
+        - /tello11/RobotModel1/Links1
+        - /tello11/RobotModel1/Links1/base_link1
+      Splitter Ratio: 0.6147704720497131
     Tree Height: 965
   - Class: rviz/Selection
     Name: Selection
@@ -35,7 +38,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1
+      Cell Size: 0.20000000298023224
       Class: rviz/Grid
       Color: 136; 138; 133
       Enabled: true
@@ -49,34 +52,87 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 30
+      Plane Cell Count: 300
       Reference Frame: <Fixed Frame>
       Value: true
     - Alpha: 0.5
       Class: rviz/Axes
       Enabled: true
-      Length: 0.20000000298023224
+      Length: 0.07999999821186066
       Name: Axes
-      Radius: 0.019999999552965164
+      Radius: 0.00800000037997961
       Reference Frame: <Fixed Frame>
       Show Trail: false
       Value: true
-    - Alpha: 1
-      Axes Length: 0.20000000298023224
-      Axes Radius: 0.019999999552965164
-      Class: rviz/Pose
-      Color: 255; 25; 0
+    - Class: rviz/Group
+      Displays:
+        - Alpha: 0.5
+          Buffer Length: 1
+          Class: rviz/Path
+          Color: 239; 41; 41
+          Enabled: true
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
+          Line Style: Billboards
+          Line Width: 0.009999999776482582
+          Name: HistoryPath
+          Offset:
+            X: 0
+            Y: 0
+            Z: 0
+          Pose Color: 255; 85; 255
+          Pose Style: None
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
+          Topic: /tello1/history_path
+          Unreliable: false
+          Value: true
+        - Alpha: 1
+          Class: rviz/RobotModel
+          Collision Enabled: false
+          Enabled: true
+          Links:
+            All Links Enabled: true
+            Expand Joint Details: false
+            Expand Link Details: false
+            Expand Tree: false
+            Link Tree Style: Links in Alphabetic Order
+            base_link:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_0:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_1:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_2:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rotor_3:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+          Name: RobotModel
+          Robot Description: tello1/robot_description
+          TF Prefix: tello1
+          Update Interval: 0
+          Value: true
+          Visual Enabled: true
       Enabled: true
-      Head Length: 0.30000001192092896
-      Head Radius: 0.10000000149011612
-      Name: Pose
-      Queue Size: 10
-      Shaft Length: 1
-      Shaft Radius: 0.05000000074505806
-      Shape: Axes
-      Topic: /tello1/pose
-      Unreliable: false
-      Value: true
+      Name: tello1
   Enabled: true
   Global Options:
     Background Color: 238; 238; 236
@@ -105,7 +161,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.2630438804626465
+      Distance: 0.6651163101196289
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -113,17 +169,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.7124633193016052
-        Y: 0.6168753504753113
-        Z: 0.40516990423202515
-      Focal Shape Fixed Size: true
+        X: 0.11444183439016342
+        Y: 0.01622644253075123
+        Z: -0.1274397075176239
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3403973579406738
+      Pitch: 1.0347968339920044
       Target Frame: <Fixed Frame>
-      Yaw: 4.5635786056518555
+      Yaw: 3.4485833644866943
     Saved: ~
 Window Geometry:
   Displays:
@@ -141,5 +197,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 2300
-  X: 1353
-  Y: 468
+  X: 8718
+  Y: 150

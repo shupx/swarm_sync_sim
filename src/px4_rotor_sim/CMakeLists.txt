@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   mavros # for mavros_sim mavros::ftf::
   mavros_msgs
   eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
+  tf2_ros # for tf
   sss_sim_env # for sss_utils
   nodelet # for mavros_px4_quadrotor_sim_node.cpp nodelet
 )
@@ -148,11 +149,11 @@ target_link_libraries(MavrosSim
 target_compile_options(MavrosSim PUBLIC -Wno-address-of-packed-member -Wno-cast-align)
 
 
-add_library(drone_visualizer
+add_library(px4_rotor_visualizer
             src/mavros_px4_quadrotor_sim/drone_visualizer.cpp)
 
 # link libraries for this lib
-target_link_libraries(drone_visualizer
+target_link_libraries(px4_rotor_visualizer
   ${catkin_LIBRARIES}
   px4_lib # for geo.cpp
 )
@@ -167,7 +168,7 @@ target_link_libraries(mavros_px4_quadrotor_sim_node
    px4_rotor_dynamics
    px4_sitl
    MavrosSim
-   drone_visualizer
+   px4_rotor_visualizer
 )
 
 add_library(mavros_px4_quadrotor_sim_nodelet
@@ -179,16 +180,16 @@ target_link_libraries(mavros_px4_quadrotor_sim_nodelet
    px4_rotor_dynamics
    px4_sitl
    MavrosSim
-   drone_visualizer
+   px4_rotor_visualizer
 )
 
-add_executable(drone_visualizer_node
+add_executable(px4_rotor_visualizer_node
                   src/mavros_px4_quadrotor_sim/drone_visualizer_node.cpp)
 
 # link libraries for this lib
-target_link_libraries(drone_visualizer_node
+target_link_libraries(px4_rotor_visualizer_node
    ${catkin_LIBRARIES}
-   drone_visualizer
+   px4_rotor_visualizer
 )
 
 ## System dependencies are found with CMake's conventions

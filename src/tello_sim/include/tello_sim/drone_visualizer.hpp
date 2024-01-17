@@ -3,10 +3,10 @@
  * @author Peixuan Shu (shupeixuan@qq.com)
  * @brief Publish rotor propeller joint position and base_link tf states for the robot model visualization in rviz
  * 
- * Note: This program relies on mavros, px4 geo.h
+ * Note: This program relies on
  * 
  * @version 1.0
- * @date 2023-12-29
+ * @date 2024-1-17
  * 
  * @license BSD 3-Clause License
  * @copyright (c) 2023, Peixuan Shu
@@ -18,14 +18,11 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <mavros_msgs/State.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/JointState.h>
-#include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Path.h>
 #include <tf2_ros/transform_broadcaster.h>
 
-#include <geo/geo.h> // for px4 gps->NED utils
 
 #include <cmath>
 // Wrap to [-pi, pi)
@@ -34,7 +31,7 @@ inline double WrapToPi1(double theta) { return theta - 2 * M_PI * std::floor((th
 inline double WrapToPi2(double theta) { return theta - 2 * M_PI * std::ceil((theta - M_PI)/(2 * M_PI)); }
 
 
-namespace MavrosQuadSimulator
+namespace TelloQuadSimulator
 {
 
 /**
@@ -50,12 +47,7 @@ public:
     Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
     /* Publish rotor joint states, base link TF and history path for displaying in rviz */
-    void Run()
-    {
-        PublishRotorJointState();
-        PublishBaseLinkTF();
-        PublishPath();
-    }
+    void Run();
 
     /* Publish rotor/propeller joint states according to the arming state */
     void PublishRotorJointState();
@@ -70,30 +62,17 @@ private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
 
-    ros::Subscriber mavros_state_sub_;
-    ros::Subscriber mavros_local_pose_sub_;
-    ros::Subscriber mavros_global_pose_sub_;
+    ros::Subscriber tello_pose_sub_;
 
     ros::Publisher joint_pub_;
     ros::Publisher path_pub_;
 
-    tf2_ros::TransformBroadcaster tf2_broadcaster;
-
-    enum class position_mode : uint32_t {
-        MOCAP,
-        GPS
-    };
-    /* local_pos_source_: default 0 for mocap(use local_position/pose for visualization directly), 1 for GPS (use global_position/global relative to the world_origin_gps for x,y visualization, use local_position/pose for z and attitude visualization) */
-    position_mode local_pos_source_; 
-
-    double world_origin_lat_; // Reference point latitude (degrees). The world (0,0,0) point
-    double world_origin_lon_; // Reference point longitude (degrees). The world (0,0,0) point
-    float world_origin_asml_alt_; // Reference altitude AMSL (metres). The world (0,0,0) point
+    tf2_ros::TransformBroadcaster tf2_broadcaster_;
 
     float max_freq_; /* default 10Hz. Maximum base_link tf publishing rate */
     float history_path_time_; /* (s) displaying history path time */
     bool armed_;
-    float pos_x_, pos_y_, pos_z_;
+    double pos_x_, pos_y_, pos_z_;
     geometry_msgs::Quaternion quat_;
 
     std::string tf_frame_; // visualize_tf_frame
@@ -110,9 +89,7 @@ private:
     std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector_;
 
 
-    void cb_mavros_state(const mavros_msgs::State::ConstPtr& msg);
-    void cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr& msg);
-    void cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& msg);
+    void cb_tello_pose(const geometry_msgs::PoseStamped::ConstPtr& msg);
     
 };
 
