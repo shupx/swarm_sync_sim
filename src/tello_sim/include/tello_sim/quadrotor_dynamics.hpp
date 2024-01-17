@@ -62,7 +62,7 @@ class Dynamics
     Eigen::Quaterniond getQuat();
     /* angular velocity (Only yaw rate is valid) */
     Eigen::Vector3d getAngVel();
-    /* Z-Y-X order Euler angle，RPY */
+    /* Z-Y-X order，RPY, roll[-pi, pi], pitch[-pi/2, pi/2], yaw[-pi, pi] */
     Eigen::Vector3d getRPY();
 
     void differentialEquation(const StateVector& x, StateVector& dxdt, double t);

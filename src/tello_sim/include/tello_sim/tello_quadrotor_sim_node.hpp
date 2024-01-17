@@ -21,6 +21,7 @@
 #include <sss_sim_env/sss_utils.hpp>
 
 #include "tello_sim/quadrotor_dynamics.hpp"
+#include "tello_sim/tello_driver_sim.hpp"
 
 
 namespace TelloQuadSimulator
@@ -38,7 +39,7 @@ class Agent
 
         // std::shared_ptr<TelloDriverSim> tello_driver_sim_(nh_, nh_private_);
         std::shared_ptr<Dynamics> dynamics_;
-        // std::shared_ptr<Visualizer> visualizer_;
+        std::shared_ptr<TelloDriverSim> tello_driver_sim_;
 
         double mainloop_period_;
         double mainloop_last_time_ = 0;

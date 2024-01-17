@@ -144,7 +144,7 @@ void Dynamics::setRPY(const double& roll, const double& pitch, const double& yaw
     AngleAxisd rollAngle(AngleAxisd(roll,Vector3d::UnitX()));
     AngleAxisd pitchAngle(AngleAxisd(pitch,Vector3d::UnitY()));
     AngleAxisd yawAngle(AngleAxisd(yaw,Vector3d::UnitZ()));
-    state_.R = yawAngle * pitchAngle * rollAngle;
+    state_.R = yawAngle * pitchAngle * rollAngle; //@TODO make sure is RPY rather than YPR
 }
 
 void Dynamics::setInput(const Dynamics::Input &input)
@@ -207,7 +207,21 @@ Eigen::Vector3d Dynamics::getAngVel()
 
 Eigen::Vector3d Dynamics::getRPY()
 {
-    return state_.R.eulerAngles(2,1,0); // (Z-Y-X order，RPY)
+    // Z-Y-X order，RPY, roll[-pi, pi], pitch[-pi/2, pi/2], yaw[-pi, pi]
+
+    /* The Eigen conversion to euler angle is incorrect since the range of the output is always
+     * [0, pi], [-pi, pi], [-pi, pi] for the first, second, and third elements
+     */
+    // Eigen::Vector3d euler_angle = state_.R.eulerAngles(2,1,0);
+
+    // Correct conversion to ensure the correct range of roll, pitch and roll
+    Eigen::Vector3d eulerAngle_rpy; // Z-Y-X RPY
+    Eigen::Matrix3d rot = state_.R;
+    eulerAngle_rpy(0) = std::atan2(rot(2, 1), rot(2, 2)); // roll
+    eulerAngle_rpy(1) = std::atan2(-rot(2, 0), std::sqrt(rot(2, 1) * rot(2, 1) + rot(2, 2) * rot(2, 2))); //pitch
+    eulerAngle_rpy(2) = std::atan2(rot(1, 0), rot(0, 0)); //yaw
+    
+    return eulerAngle_rpy;
 }
 
 Dynamics::StateVector Dynamics::vectorizeState(const Dynamics::State& state)

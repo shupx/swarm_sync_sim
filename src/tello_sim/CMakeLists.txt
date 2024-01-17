@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp  # already installed with ros-noetic-desktop
   rospy  # already installed with ros-noetic-desktop
   std_msgs  # already installed with ros-noetic-desktop
+  sensor_msgs
+  geometry_msgs
   sss_sim_env # for sss_utils
   nodelet # for nodelet
 )
@@ -39,13 +41,13 @@ target_link_libraries(tello_dynamics
    ${catkin_LIBRARIES}
 )
 
-# add_library(drone_visualizer
-#             src/drone_visualizer.cpp)
+add_library(tello_driver_sim
+            src/tello_driver_sim.cpp)
 
-# # link libraries for this lib
-# target_link_libraries(drone_visualizer
-#   ${catkin_LIBRARIES}
-# )
+# link libraries for this lib
+target_link_libraries(tello_driver_sim
+  ${catkin_LIBRARIES}
+)
 
 add_executable(tello_quadrotor_sim_node
                   src/tello_quadrotor_sim_node.cpp)
@@ -54,7 +56,7 @@ add_executable(tello_quadrotor_sim_node
 target_link_libraries(tello_quadrotor_sim_node
    ${catkin_LIBRARIES}
    tello_dynamics
-  #  drone_visualizer
+   tello_driver_sim
 )
 
 
@@ -65,7 +67,7 @@ add_library(tello_quadrotor_sim_nodelet
 target_link_libraries(tello_quadrotor_sim_nodelet
    ${catkin_LIBRARIES}
    tello_dynamics
-  #  drone_visualizer
+   tello_driver_sim
 )
 
 ## System dependencies are found with CMake's conventions

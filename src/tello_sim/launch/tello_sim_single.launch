@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Different arguments for each vehicle -->
+
+    <arg name="namespace" default="tello1"/>
+
+    <arg name="init_x_East_metre" default="0.0"/>
+    <arg name="init_y_North_metre" default="0.0"/>
+    <arg name="init_z_Up_metre" default="0.0"/>
+    <arg name="init_roll_deg" default="0.0"/>
+    <arg name="init_pitch_deg" default="0.0"/>
+    <arg name="init_yaw_deg" default="90.0"/>
+    <arg name="linear_vel_scale" default="2.0"/>
+    <arg name="angular_vel_scale" default="3.14"/>
+    <arg name="use_imu_orientation" default="false"/>
+
+    <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
+    <arg name="open_rviz" default="true"/>
+    
+    <!-- if not use sim time, no need to use nodelet as there is no accelerating -->
+    <arg name="use_nodelet_manager" value="$(arg use_sim_time)"/>
+    <!-- <arg name="use_nodelet_manager" value="false"/> -->
+    <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+
+<group ns="$(arg namespace)">
+    <group if="$(arg use_nodelet_manager)">  <!-- /nodelet_manager should be lauched by sim_clock.launch -->
+        <node pkg="nodelet" type="nodelet" name="tello_quadrotor_sim_nodelet_$(arg namespace)" args="load tello_quadrotor_sim_nodelet /nodelet_manager" output="screen">
+            <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
+            <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
+            <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
+            <param name="linear_vel_scale" value="$(arg linear_vel_scale)"/>
+            <param name="angular_vel_scale" value="$(arg angular_vel_scale)"/>
+            <param name="use_imu_orientation" value="$(arg use_imu_orientation)"/>
+            <param name="frame_id" value="$(arg namespace)"/>
+        </node>
+    </group>
+
+    <group unless="$(arg use_nodelet_manager)">  <!--launched as a normal ROS node -->
+        <node pkg="nodelet" type="nodelet" name="tello_quadrotor_sim_nodelet_$(arg namespace)" args="standalone tello_quadrotor_sim_nodelet" output="screen">
+            <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
+            <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
+            <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
+            <param name="linear_vel_scale" value="$(arg linear_vel_scale)"/>
+            <param name="angular_vel_scale" value="$(arg angular_vel_scale)"/>
+            <param name="use_imu_orientation" value="$(arg use_imu_orientation)"/>
+            <param name="frame_id" value="$(arg namespace)"/>
+        </node>
+    </group>
+
+    <!-- Visualization -->
+    <param name="robot_description" textfile="$(find tello_sim)/model/iris.urdf" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+        <param name="tf_prefix" value="$(arg namespace)"/>
+    </node>
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->  
+    <!-- joint states and base_link TF published by drone_visualizer already -->
+    <group if="$(arg open_rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tello_sim)/launch/single_tello.rviz" required="false" />
+    </group>
+</group>
+
+
+</launch>
