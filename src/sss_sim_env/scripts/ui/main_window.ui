@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
+    <width>375</width>
     <height>499</height>
    </rect>
   </property>
@@ -83,7 +83,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>1</string>
+           <string>1x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -175,7 +175,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>0.5</string>
+           <string>0.5x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -198,7 +198,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>100</string>
+           <string>100x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -221,7 +221,7 @@
        </layout>
       </item>
       <item row="0" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1,5,1,3">
         <item>
          <spacer name="horizontalSpacer_6">
           <property name="orientation">
@@ -238,7 +238,7 @@
         <item>
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>2</string>
+           <string>2x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -261,7 +261,7 @@
         <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>10</string>
+           <string>10x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -301,7 +301,7 @@
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>20</string>
+           <string>20x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -359,7 +359,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>370</width>
+     <width>375</width>
      <height>22</height>
     </rect>
    </property>

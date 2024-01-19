@@ -3,6 +3,8 @@
     
     <arg name="max_speed_ratio" default="100"/>
     <arg name="auto_start" default="true"/>
+    <arg name="open_ui" default="true"/>
+
     <arg name="use_sim_time" value="true"/>
 
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
@@ -14,5 +16,9 @@
         <param name="max_speed_ratio" type="double" value="$(arg max_speed_ratio)"/>
         <param name="auto_start"  type="bool"  value="$(arg auto_start)"/>
     </node>
+
+    <group if="$(arg open_ui)">
+        <node name="sim_clock_ui" pkg="sss_sim_env" type="clock_ui.py" args="$(arg max_speed_ratio)"  output="screen" required="false" />
+    </group>
 
 </launch>
