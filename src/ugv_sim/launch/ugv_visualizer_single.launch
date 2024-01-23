@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- For visualization of tello -->
+
+<launch>
+    <arg name="namespace" default="ugv1"/>
+    <arg name="open_rviz" default="true"/>
+
+    <arg name="visualize_max_freq" default="20"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
+    <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
+    <arg name="visualize_path_time" default="30"/> <!-- (s) displaying history path time -->
+    <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->
+    <arg name="base_link_name" default="base_link"/> <!-- base link name in the robot urdf -->
+    <arg name="base_link_tf_prefix" default="$(arg namespace)"/> <!-- tf prefix added to the base_link_name -->
+    <arg name="rotor_0_joint_name" default="rotor_0_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_1_joint_name" default="rotor_1_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_2_joint_name" default="rotor_2_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_3_joint_name" default="rotor_3_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+
+<!-- For visualization in real experiments -->
+<group ns="$(arg namespace)">    
+    <param name="robot_description" textfile="$(find ugv_sim)/model/ugv.urdf" />
+    
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+        <param name="tf_prefix" value="$(arg namespace)"/>
+    </node>
+    
+    <node pkg="ugv_sim" type="ugv_visualizer_node" name="ugv_visualizer_node_$(arg namespace)" output="screen">
+        <param name="visualize_max_freq" value="$(arg visualize_max_freq)"/>
+        <param name="visualize_path_time" value="$(arg visualize_path_time)"/>
+        <param name="visualize_tf_frame" value="$(arg visualize_tf_frame)"/>
+        <param name="base_link_name" value="$(arg base_link_name)"/>
+        <param name="base_link_tf_prefix" value="$(arg base_link_tf_prefix)"/>
+        <param name="rotor_0_joint_name" value="$(arg rotor_0_joint_name)"/>
+        <param name="rotor_1_joint_name" value="$(arg rotor_1_joint_name)"/>
+        <param name="rotor_2_joint_name" value="$(arg rotor_2_joint_name)"/>
+        <param name="rotor_3_joint_name" value="$(arg rotor_3_joint_name)"/>
+    </node>
+    
+    <group if="$(arg open_rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ugv_sim)/launch/single_ugv.rviz" required="false" />
+    </group>
+</group>
+
+</launch>
