@@ -9,6 +9,7 @@ swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform fo
 ```bash
 # Dependencies
 sudo apt install ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-robot-state-publisher -y
+pip3 install PyQt5
 
 # Build
 git clone https://gitee.com/bhswift/swarm_sync_sim.git

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding:utf-8
 # @author: Peixuan Shu
 # @date: 2024-1-19
