@@ -84,8 +84,10 @@ class TelloDriverSim
 
         std::string frame_id_;
 
-        Eigen::Vector3d linear_vel_cmd_; // velocity commands (m/s) in world frame
-        double yaw_rate_cmd_; // yaw rate commands (rad/s) in world frame
+        double cmd_v_right_body_; // cmd_vel right (m/s)
+        double cmd_v_front_body_; // cmd_vel front (m/s)
+        double cmd_v_z_body_; // cmd_vel up (m/s)
+        double cmd_w_down_body_; // cmd_vel omega turn right (rad/s)
 
         double _limit(const double& x) {return std::max(std::min(x, 1.0), -1.0);}
 

@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Axes1
         - /tello11
         - /tello11/RobotModel1/Links1
         - /tello11/RobotModel1/Links1/base_link1
@@ -161,7 +160,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.6651163101196289
+      Distance: 2.235344409942627
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -169,17 +168,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.11444183439016342
-        Y: 0.01622644253075123
-        Z: -0.1274397075176239
+        X: 0.3563492000102997
+        Y: 0.03334146738052368
+        Z: 0.08871304988861084
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0347968339920044
+      Pitch: 0.9247965812683105
       Target Frame: <Fixed Frame>
-      Yaw: 3.4485833644866943
+      Yaw: 3.6135833263397217
     Saved: ~
 Window Geometry:
   Displays:
@@ -197,5 +196,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 2300
-  X: 8718
-  Y: 150
+  X: 7654
+  Y: 153

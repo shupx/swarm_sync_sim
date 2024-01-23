@@ -21,7 +21,7 @@ using namespace TelloQuadSimulator;
 /* For compile of node */
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "mavros_px4_quadrotor_sim_node");
+    ros::init(argc, argv, "tello_quadrotor_sim_node");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
 

@@ -42,8 +42,10 @@ TelloDriverSim::TelloDriverSim(const ros::NodeHandle &nh, const ros::NodeHandle 
     imu_quat_offset_ = AngleAxisd{init_yaw_, Vector3d::UnitZ()};
     use_imu_orientation_ = false;
 
-    linear_vel_cmd_ = Vector3d::Zero();
-    yaw_rate_cmd_ = 0.0;
+    cmd_v_right_body_ = 0.0;
+    cmd_v_front_body_ = 0.0;
+    cmd_v_z_body_ = 0.0;
+    cmd_w_down_body_ = 0.0;
 }
 
 void TelloDriverSim::PublishState()
@@ -94,8 +96,11 @@ Dynamics::Input TelloDriverSim::GetControlInputs()
     Dynamics::Input input;
     if (is_armed_)
     {
-        input.linear_vel = linear_vel_cmd_;
-        input.yaw_rate = yaw_rate_cmd_;
+        double yaw = dynamics_->getRPY()[2] - M_PI/2; // get real yaw angle relative to the world frame
+        input.linear_vel[0] = cmd_v_right_body_ * cos(yaw) - cmd_v_front_body_ * sin(yaw); // world x
+        input.linear_vel[1] = cmd_v_right_body_ * sin(yaw) + cmd_v_front_body_ * cos(yaw); // world y
+        input.linear_vel[2] = cmd_v_z_body_; // world z
+        input.yaw_rate = -cmd_w_down_body_;  // in dynamics, positive yaw rate is up
     }
     else
     {
@@ -133,17 +138,10 @@ void TelloDriverSim::UseImuOrientation(const bool& enable)
 void TelloDriverSim::cb_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
 {
     // 0.5 is the default scale in tello_driver_node
-    double v_right_body = linear_vel_scale_ * _limit(msg->linear.x * 0.5); // limit to [-1, 1] body right
-    double v_front_body = linear_vel_scale_ * _limit(msg->linear.y * 0.5); // limit to [-1, 1] body front
-    double v_z_body = linear_vel_scale_ * _limit(msg->linear.z * 0.5); // limit to [-1, 1] body up
-    double w_down_body = angular_vel_scale_ * _limit(msg->angular.z * 0.5); // limit to [-1, 1] body down (turn right)
-
-    double yaw = dynamics_->getRPY()[2] - M_PI/2; // get real yaw angle relative to the world frame
-
-    linear_vel_cmd_[0] = v_right_body * cos(yaw) - v_front_body * sin(yaw); // world x
-    linear_vel_cmd_[1] = v_right_body * sin(yaw) + v_front_body * cos(yaw); // world y
-    linear_vel_cmd_[2] = v_z_body; // world z
-    yaw_rate_cmd_ = -w_down_body;  // in dynamics positive yaw rate is up
+    cmd_v_right_body_ = linear_vel_scale_ * _limit(msg->linear.x * 0.5); // limit to [-1, 1] body right
+    cmd_v_front_body_ = linear_vel_scale_ * _limit(msg->linear.y * 0.5); // limit to [-1, 1] body front
+    cmd_v_z_body_ = linear_vel_scale_ * _limit(msg->linear.z * 0.5); // limit to [-1, 1] body up
+    cmd_w_down_body_ = angular_vel_scale_ * _limit(msg->angular.z * 0.5); // limit to [-1, 1] body down (turn right)
 }
 
 void TelloDriverSim::cb_takeoff(const std_msgs::Empty::ConstPtr& msg)
