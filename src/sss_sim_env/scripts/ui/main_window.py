@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.speed_dial.sizePolicy().hasHeightForWidth())
         self.speed_dial.setSizePolicy(sizePolicy)
-        self.speed_dial.setMinimumSize(QtCore.QSize(300, 300))
+        self.speed_dial.setMinimumSize(QtCore.QSize(0, 0))
         self.speed_dial.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.speed_dial.setMaximum(50)
         self.speed_dial.setSingleStep(2)
