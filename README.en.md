@@ -24,7 +24,7 @@ echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 
 A simulation clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes that register to the sim_clock and request time updates when they sleeps. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all the clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
 
-##### 1. clock side
+##### 1. Clock side
 
 ```bash
 ### 1. Launch sim clock
@@ -45,9 +45,9 @@ You can also tune the clock by the UI interface developed by PyQt5:
 
 <img src="pictures/sim_clock.png" align="left" alt="clock" style="zoom:50%;" />
 
-##### 2. ROS nodes side
+##### 2. ROS node side
 
-If a ROS node needs the clock to waite until it finishes executing a piece of codes (usually a loop), then it should register to the sim_clock first and request the clock update every time it finishes one loop or sleeps on one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs to those provided by this project.**
+If a ROS node needs the clock to wait until it finishes executing a piece of codes (usually a loop), then it should register to the sim_clock first and request the clock update every time it completes one loop or sleeps at one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs with those provided by this project.**
 
 For cpp ROS nodes:
 
