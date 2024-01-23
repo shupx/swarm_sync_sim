@@ -1,7 +1,7 @@
 ## swarm_sync_sim
 
 ### Introduction
-swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm system based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) simulation engine for various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments only with slight modifications.
+swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm systems based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) simulation engine for various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
 
 
 ### Installation
@@ -43,7 +43,7 @@ max_sim_speed: 0.0"
 
 You can also tune the clock by the UI interface developed by PyQt5:
 
-<img src="pictures/sim_clock.png" align="left" alt="clock" style="zoom:50%;" />
+<img src="pictures/sim_clock.png" alt="clock" style="zoom:50%;" />
 
 ##### 2. ROS node side
 
