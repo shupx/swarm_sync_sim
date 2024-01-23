@@ -63,6 +63,174 @@ Visualization Manager:
       Value: true
     - Class: rviz/Group
       Displays:
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object1
+              Robot Description: object1/robot_description
+              TF Prefix: object1
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object2
+              Robot Description: object2/robot_description
+              TF Prefix: object2
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object3
+              Robot Description: object3/robot_description
+              TF Prefix: object3
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object4
+              Robot Description: object4/robot_description
+              TF Prefix: object4
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object5
+              Robot Description: object5/robot_description
+              TF Prefix: object5
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object6
+              Robot Description: object6/robot_description
+              TF Prefix: object6
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object7
+              Robot Description: object7/robot_description
+              TF Prefix: object7
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object8
+              Robot Description: object8/robot_description
+              TF Prefix: object8
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object9
+              Robot Description: object9/robot_description
+              TF Prefix: object9
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+              Name: object10
+              Robot Description: object10/robot_description
+              TF Prefix: object10
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+          Enabled: true
+          Name: objects
+      Enabled: true
+      Name: env
+    - Class: rviz/Group
+      Displays:
         - Alpha: 0.5
           Buffer Length: 1
           Class: rviz/Path
@@ -97,27 +265,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -158,7 +375,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.940639853477478
+      Distance: 1.7001690864562988
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -166,9 +383,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.13170050084590912
-        Y: -0.12334101647138596
-        Z: -0.10960233956575394
+        X: 0.1156940683722496
+        Y: -0.05674775317311287
+        Z: -0.1111629456281662
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false

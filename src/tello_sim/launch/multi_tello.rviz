@@ -6,19 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /tello11
         - /tello11/RobotModel1/Links1
         - /tello11/RobotModel1/Links1/base_link1
-        - /tello21
-        - /tello31
-        - /tello41
-        - /tello51
-        - /tello61
-        - /tello71
-        - /tello81
-        - /tello91
-        - /tello101
-      Splitter Ratio: 0.6147704720497131
+      Splitter Ratio: 0.7904191613197327
     Tree Height: 965
   - Class: rviz/Selection
     Name: Selection
@@ -72,6 +62,224 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Show Trail: false
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object1
+              Robot Description: object1/robot_description
+              TF Prefix: object1
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object2
+              Robot Description: object2/robot_description
+              TF Prefix: object2
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object3
+              Robot Description: object3/robot_description
+              TF Prefix: object3
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object4
+              Robot Description: object4/robot_description
+              TF Prefix: object4
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object5
+              Robot Description: object5/robot_description
+              TF Prefix: object5
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object6
+              Robot Description: object6/robot_description
+              TF Prefix: object6
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object7
+              Robot Description: object7/robot_description
+              TF Prefix: object7
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object8
+              Robot Description: object8/robot_description
+              TF Prefix: object8
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object9
+              Robot Description: object9/robot_description
+              TF Prefix: object9
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object10
+              Robot Description: object10/robot_description
+              TF Prefix: object10
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+          Enabled: true
+          Name: objects
+      Enabled: true
+      Name: env
     - Class: rviz/Group
       Displays:
         - Alpha: 0.5
@@ -640,7 +848,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.457880973815918
+      Distance: 2.396381139755249
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -648,9 +856,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.21742932498455048
-        Y: 0.13540427386760712
-        Z: 0.21367955207824707
+        X: 0.476034015417099
+        Y: 0.1422690600156784
+        Z: 0.21592728793621063
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false

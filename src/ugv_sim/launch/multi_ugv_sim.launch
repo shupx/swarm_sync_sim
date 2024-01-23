@@ -6,7 +6,7 @@
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
         <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
         <arg name="namespace" value="ugv1"/>
-        <arg name="init_x_East_metre" value="0.0"/>
+        <arg name="init_x_East_metre" value="1.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
@@ -19,58 +19,6 @@
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
         <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
         <arg name="namespace" value="ugv2"/>
-        <arg name="init_x_East_metre" value="0.4"/>
-        <arg name="init_y_North_metre" value="0.0"/>
-        <arg name="init_z_Up_metre" value="0.0"/>
-        <arg name="init_roll_deg" value="0.0"/>
-        <arg name="init_pitch_deg" value="0.0"/>
-        <arg name="init_yaw_deg" value="0.0"/>
-        <arg name="open_rviz" value="false"/>
-        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-    </include>
-
-    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
-        <arg name="namespace" value="ugv3"/>
-        <arg name="init_x_East_metre" value="0.8"/>
-        <arg name="init_y_North_metre" value="0.0"/>
-        <arg name="init_z_Up_metre" value="0.0"/>
-        <arg name="init_roll_deg" value="0.0"/>
-        <arg name="init_pitch_deg" value="0.0"/>
-        <arg name="init_yaw_deg" value="0.0"/>
-        <arg name="open_rviz" value="false"/>
-        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-    </include>
-
-    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
-        <arg name="namespace" value="ugv4"/>
-        <arg name="init_x_East_metre" value="1.2"/>
-        <arg name="init_y_North_metre" value="0.0"/>
-        <arg name="init_z_Up_metre" value="0.0"/>
-        <arg name="init_roll_deg" value="0.0"/>
-        <arg name="init_pitch_deg" value="0.0"/>
-        <arg name="init_yaw_deg" value="0.0"/>
-        <arg name="open_rviz" value="false"/>
-        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-    </include>
-
-    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
-        <arg name="namespace" value="ugv5"/>
-        <arg name="init_x_East_metre" value="1.6"/>
-        <arg name="init_y_North_metre" value="0.0"/>
-        <arg name="init_z_Up_metre" value="0.0"/>
-        <arg name="init_roll_deg" value="0.0"/>
-        <arg name="init_pitch_deg" value="0.0"/>
-        <arg name="init_yaw_deg" value="0.0"/>
-        <arg name="open_rviz" value="false"/>
-        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-    </include>
-
-    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
-        <arg name="namespace" value="ugv6"/>
         <arg name="init_x_East_metre" value="2.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
@@ -83,8 +31,60 @@
 
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
         <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
+        <arg name="namespace" value="ugv3"/>
+        <arg name="init_x_East_metre" value="3.0"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="0.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="0.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
+        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
+        <arg name="namespace" value="ugv4"/>
+        <arg name="init_x_East_metre" value="4.0"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="0.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="0.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <!-- <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
+        <arg name="ugv_type" value="0"/>
+        <arg name="namespace" value="ugv5"/>
+        <arg name="init_x_East_metre" value="5.0"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="0.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="0.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
+        <arg name="ugv_type" value="0"/>
+        <arg name="namespace" value="ugv6"/>
+        <arg name="init_x_East_metre" value="6.0"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="0.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="0.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
+        <arg name="ugv_type" value="0"/>
         <arg name="namespace" value="ugv7"/>
-        <arg name="init_x_East_metre" value="2.4"/>
+        <arg name="init_x_East_metre" value="7.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
@@ -95,9 +95,9 @@
     </include>
 
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
+        <arg name="ugv_type" value="0"/>
         <arg name="namespace" value="ugv8"/>
-        <arg name="init_x_East_metre" value="2.8"/>
+        <arg name="init_x_East_metre" value="8.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
@@ -108,9 +108,9 @@
     </include>
 
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
+        <arg name="ugv_type" value="0"/>
         <arg name="namespace" value="ugv9"/>
-        <arg name="init_x_East_metre" value="3.2"/>
+        <arg name="init_x_East_metre" value="9.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
@@ -121,9 +121,9 @@
     </include>
 
     <include file="$(find ugv_sim)/launch/ugv_sim_single.launch">
-        <arg name="ugv_type" value="0"/> <!-- 0 mecanum, 1 unicycle, 2 ackermann -->
+        <arg name="ugv_type" value="0"/>
         <arg name="namespace" value="ugv10"/>
-        <arg name="init_x_East_metre" value="3.6"/>
+        <arg name="init_x_East_metre" value="10.0"/>
         <arg name="init_y_North_metre" value="0.0"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
@@ -131,7 +131,7 @@
         <arg name="init_yaw_deg" value="0.0"/>
         <arg name="open_rviz" value="false"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-    </include>
+    </include> -->
 
     <group if="$(arg open_rviz)">
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ugv_sim)/launch/multi_ugv.rviz" required="false" />

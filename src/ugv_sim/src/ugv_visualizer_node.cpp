@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Visualizer> visualizer(new Visualizer(nh, nh_private));
 
-    ros::Rate loop_rate(50); // Hz
+    ros::Rate loop_rate(200); // Hz
     while (ros::ok())
     {
         visualizer->Run();
@@ -66,15 +66,16 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     pose_sub_ = nh_.subscribe("pose", 1, &Visualizer::cb_pose, this);
     twist_sub_ = nh_.subscribe("twist", 1, &Visualizer::cb_twist, this);
 
-    joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1, true);
+    joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1);
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
 
     pos_x_ = 0.0; pos_y_ = 0.0; pos_z_ = 0.0;
-    linear_vel_ = 0.0;
+    v_front_ = 0.0; v_left_ = 0.0; omega_ = 0.0;
     quat_.w = 1.0;
     quat_.x = 0.0;
     quat_.y = 0.0;
     quat_.z = 0.0;
+    yaw_ = 0.0;
 }
 
 void Visualizer::Run()
@@ -94,7 +95,20 @@ void Visualizer::PublishRotorJointState()
         double dt = time_now - last_time_PublishRotorJointState_;
 
         float wheel_radius = 0.04;
-        float omega = linear_vel_ / wheel_radius; // rad/s
+        float length = 0.3; // front to rear wheel
+        float width = 0.216; // left to right wheel
+
+        /* Get the mecanum wheel angular speed */
+        float wheel_v[4];
+        wheel_v[0] = v_front_ - v_left_ - omega_ * (length/2+width/2); // upper left
+        wheel_v[1] = v_front_ + v_left_ + omega_ * (length/2+width/2); // upper right
+        wheel_v[2] = v_front_ + v_left_ - omega_ * (length/2+width/2); // lower left
+        wheel_v[3] = v_front_ - v_left_ + omega_ * (length/2+width/2); // lower right
+        float wheel_omega[4];
+        wheel_omega[0] = wheel_v[0] / wheel_radius;
+        wheel_omega[1] = - wheel_v[1] / wheel_radius;
+        wheel_omega[2] = wheel_v[2] / wheel_radius;
+        wheel_omega[3] = - wheel_v[3] / wheel_radius;
 
         sensor_msgs::JointStatePtr msg(new sensor_msgs::JointState);
         msg->header.stamp = ros::Time::now();
@@ -103,7 +117,7 @@ void Visualizer::PublishRotorJointState()
         msg->position.resize(joint_num);
         for (int i=0; i<joint_num; ++i)
         {
-            joint_pos_[i] = WrapToPi1(joint_pos_[i] + omega * dt);
+            joint_pos_[i] = WrapToPi1(joint_pos_[i] + wheel_omega[i] * dt);
             msg->name[i] = rotor_joints_name_[i];
             msg->position[i] = joint_pos_[i];
         }
@@ -180,13 +194,33 @@ void Visualizer::cb_pose(const geometry_msgs::PoseStamped::ConstPtr& msg)
     pos_y_ = msg->pose.position.y;
     pos_z_ = msg->pose.position.z;
     quat_ = msg->pose.orientation;
+
+    /* The Eigen conversion to euler angle is incorrect since the range of the output is always
+     * [0, pi], [-pi, pi], [-pi, pi] for the first, second, and third elements
+     */
+    // Eigen::Vector3d euler_angle = state_.R.eulerAngles(2,1,0);
+
+    // Z-Y-X order，RPY, roll[-pi, pi], pitch[-pi/2, pi/2], yaw[-pi, pi]
+    // Correct conversion to ensure the correct range of roll, pitch and roll
+    Eigen::Vector3d eulerAngle_rpy; // Z-Y-X RPY
+    Eigen::Quaterniond q{quat_.w, quat_.x, quat_.y, quat_.z};
+    Eigen::Matrix3d rot = Eigen::Matrix3d{q};
+    eulerAngle_rpy(0) = std::atan2(rot(2, 1), rot(2, 2)); // roll
+    eulerAngle_rpy(1) = std::atan2(-rot(2, 0), std::sqrt(rot(2, 1) * rot(2, 1) + rot(2, 2) * rot(2, 2))); //pitch
+    eulerAngle_rpy(2) = std::atan2(rot(1, 0), rot(0, 0)); //yaw
+    yaw_ = eulerAngle_rpy(2);
 }
 
 void Visualizer::cb_twist(const geometry_msgs::TwistStamped::ConstPtr& msg)
 {
-    double vx = msg->twist.linear.x;
-    double vy = msg->twist.linear.y;
-    linear_vel_ = std::sqrt(vx*vx + vy*vy);
+    double vx = msg->twist.linear.x; // world x
+    double vy = msg->twist.linear.y; // world y
+
+    /* World to body frame */
+    v_front_ = vx * cos(-yaw_) - vy * sin(-yaw_);
+    v_left_ = vx * sin(-yaw_) + vy * cos(-yaw_);
+
+    omega_ = msg->twist.angular.z; // rad/s
 }
 
 

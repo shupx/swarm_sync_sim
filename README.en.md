@@ -1,7 +1,7 @@
 ## swarm_sync_sim
 
 ### Introduction
-swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm system based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) simulation engine for various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments without any modification.
+swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm system based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) simulation engine for various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments only with slight modifications.
 
 
 ### Installation
@@ -20,29 +20,80 @@ echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 
 ### Usage
 
+#### Sim Clock
+
+A simulation clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes that register to the sim_clock and request time updates when they sleeps. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all the clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
+
+##### 1. clock side
+
+```bash
+### 1. Launch sim clock
+# You can also specify max_simulation_rate and auto_start in the launch file
+roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
+```
+
+To control the simulation clock:
+
+```bash
+# @param proceed: true(go on), false(stop)
+# @param max_sim_speed: 0.0 (keep unchanged)
+rosservice call /sss_clock_control "proceed: true
+max_sim_speed: 0.0"
+```
+
+You can also tune the clock by the UI interface developed by PyQt5:
+
+<img src="pictures/sim_clock.png" align="left" alt="clock" style="zoom:50%;" />
+
+##### 2. ROS nodes side
+
+If a ROS node needs the clock to waite until it finishes executing a piece of codes (usually a loop), then it should register to the sim_clock first and request the clock update every time it finishes one loop or sleeps on one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs to those provided by this project.**
+
+For cpp ROS nodes:
+
+```cpp
+#include <sss_sim_env/sss_utils.hpp>
+
+/* substitute nh::createTimer() with sss_utils::createTimer() */
+ros::NodeHandle nh;
+sss_utils::Timer timer
+timer = sss_utils::createTimer(nh, ros::Duration(0.1), &YourClass::cb_timer, this); // create a ROS timer with 0.1s period and cb_timer callback
+
+/* substitute ros::Duration().sleep() with sss_utils::Duration(0.2).sleep() */
+sss_utils::Duration(0.2).sleep(); // sleep for 0.2s ROS time
+
+/* substitute ros::Rate with sss_utils::Rate */
+sss_utils::Rate loop_rate(10);
+loop_rate.sleep(); // sleep for 10Hz in a loop
+```
+
+For python nodes: TODO.
+
+It is noted that these sss_utils APIs are equal to the original ROS APIs if the `use_sim_time` is false. So **switching between the simulation and real experiment can be easily realized by modifying the launch file**:
+
+```xml
+<launch>
+    <param name="/use_sim_time" value="true"/> <!-- simulation -->
+    <param name="/use_sim_time" value="false"/>  <!-- no simulation -->
+   
+    <node ... />
+</launch>
+```
+
+It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works if these nodes use ros::Time rather than the system time as the simulation time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
+
 #### PX4 Rotor Simulation
 
 Launch px4 rotor simulation nodes (mavros + px4 stil + quadrotor dynamics + visualization):
 
 ```bash
 ### 1. Launch sim clock
-# You can also specify max_simulation_rate and auto_start in the launch file
 roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
 
-### 2. Launch multiple mavros-px4-rotor sim nodes
-# Specify initial positions in the launch file
+### 2. Launch multiple mavros-px4-rotor sim nodes (Specify initial positions in the launch file)
 roslaunch px4_rotor_sim multi_px4_rotor_sim.launch
 ```
 ![image_name](pictures/multi-px4-rotor-sim.png)
-
-To control the simulation clock:
-
-```bash
-# @param proceed: true(go on), false(stop)
-# @param max_sim_speed: 0.0(keep unchanged)
-rosservice call /sss_clock_control "proceed: true
-max_sim_speed: 0.0"
-```
 
 Then you can launch your control algorithm nodes to communicate with the mavros topics and services.
 
@@ -72,6 +123,12 @@ custom_mode: 'OFFBOARD'"
 
 By the way, **it is highly recommended to launch the simulation by** [minigc](https://gitee.com/bhswift/minigc.git), which is a multi-UAV ground control UI.
 
+For drone visualization in real experiments:
+
+```bash
+roslaunch px4_rotor_sim drone_visualizer_multi.launch
+```
+
 
 
 #### Tello Drone Simulation
@@ -80,24 +137,13 @@ Tello is an educational drone developed by DJI. The [tello_driver](http://wiki.r
 
 ```bash
 ### 1. Launch sim clock
-# You can also specify max_simulation_rate and auto_start in the launch file
 roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true 
 
-### 2. Launch multiple tello sim nodes
-# Specify initial poses in the launch file
+### 2. Launch multiple tello sim nodes (Specify initial poses in the launch file)
 roslaunch tello_sim multi_tello_sim.launch
 ```
 
 ![img](pictures/multi-tello-sim.png)
-
-To control the simulation clock:
-
-```bash
-# @param proceed: true(go on), false(stop)
-# @param max_sim_speed: 0.0(keep unchanged) 10 (max 10 simulation acceleration)
-rosservice call /sss_clock_control "proceed: true
-max_sim_speed: 10.0" 
-```
 
 Then you can launch your control algorithm nodes to communicate with the tello ROS topics and services.
 
@@ -130,13 +176,59 @@ rostopic echo /tello1/imu
 rostopic echo /tello1/pose
 ```
 
+For tello visualization in real experiments:
+
+```bash
+roslaunch tello_sim visualize_tello_multi.launch
+```
 
 
-### Advanced
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+#### UGV simulation
+
+For UGVs with an onboard comupter that receives velocity commands and publishes imu states,  this part simulates the UGV ROS driver and dynamics. Mecanum / Unicycle / Ackermann UGVs are supported.
+
+```bash
+### 1. Launch sim clock
+roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true 
+
+### 2. Launch multiple ugv sim nodes (Specify initial poses, ugv types in the launch file)
+roslaunch ugv_sim multi_ugv_sim.launch
+```
+
+![img](pictures/multi-ugv-sim.png)
+
+Then you can launch your control algorithm nodes to communicate with the ugv ROS topics and services.
+
+Some useful commands:
+
+```bash
+### send velocity commands to UGV1
+rostopic pub /ugv1/cmd_vel geometry_msgs/Twist "linear:
+  x: 0.1 # body front (m/s)
+  y: 0.0 # body left (m/s) only for Mecanum UGV
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0" # rotation to left (rad/s)
+
+### Read Imu data (orientation relative to the magnetic East)
+rostopic echo /ugv1/imu
+
+### Read pose (orientation either from ground truth or imu depending on 'use_imu_orientation' parameter in ugv_sim_single.launch)
+rostopic echo /ugv1/pose
+
+### Read twist (simulates the mocap twist)
+rostopic echo /ugv1/twist
+```
+
+For ugv visualization in real experiments:
+
+```bash
+roslaunch ugv_sim visualize_ugv_multi.launch
+```
+
 
 
 ### Contributions

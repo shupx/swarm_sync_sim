@@ -6,16 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /ugv11
-        - /ugv21
-        - /ugv31
-        - /ugv41
-        - /ugv51
-        - /ugv61
-        - /ugv71
-        - /ugv81
-        - /ugv91
-        - /ugv101
       Splitter Ratio: 0.6866267323493958
     Tree Height: 764
   - Class: rviz/Selection
@@ -44,7 +34,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.20000000298023224
+      Cell Size: 0.5
       Class: rviz/Grid
       Color: 136; 138; 133
       Enabled: true
@@ -58,7 +48,7 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 300
+      Plane Cell Count: 200
       Reference Frame: <Fixed Frame>
       Value: true
     - Alpha: 0.5
@@ -70,6 +60,224 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Show Trail: false
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object1
+              Robot Description: object1/robot_description
+              TF Prefix: object1
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object2
+              Robot Description: object2/robot_description
+              TF Prefix: object2
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object3
+              Robot Description: object3/robot_description
+              TF Prefix: object3
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object4
+              Robot Description: object4/robot_description
+              TF Prefix: object4
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object5
+              Robot Description: object5/robot_description
+              TF Prefix: object5
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object6
+              Robot Description: object6/robot_description
+              TF Prefix: object6
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object7
+              Robot Description: object7/robot_description
+              TF Prefix: object7
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object8
+              Robot Description: object8/robot_description
+              TF Prefix: object8
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object9
+              Robot Description: object9/robot_description
+              TF Prefix: object9
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object10
+              Robot Description: object10/robot_description
+              TF Prefix: object10
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+          Enabled: true
+          Name: objects
+      Enabled: true
+      Name: env
     - Class: rviz/Group
       Displays:
         - Alpha: 0.5
@@ -106,27 +314,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -175,27 +432,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -244,27 +550,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -313,27 +668,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -382,27 +786,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -451,27 +904,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -520,27 +1022,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -589,27 +1140,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -658,27 +1258,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -727,27 +1376,76 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
+            base_footprint:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
             base_link:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_0:
+            front_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_1:
+            left_sensor:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_2:
+            lower_left_wheel:
               Alpha: 1
               Show Axes: false
               Show Trail: false
               Value: true
-            rotor_3:
+            lower_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            lower_right_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            rear_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            right_sensor:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            stereo_camera:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_left_wheel_shaft:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel:
+              Alpha: 1
+              Show Axes: false
+              Show Trail: false
+              Value: true
+            upper_right_wheel_shaft:
               Alpha: 1
               Show Axes: false
               Show Trail: false
@@ -788,7 +1486,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.65966796875
+      Distance: 6.334094047546387
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -796,17 +1494,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.3149672746658325
-        Y: 0.027090545743703842
-        Z: 0.296487033367157
+        X: 1.117926836013794
+        Y: 0.8282017707824707
+        Z: 0.8305619955062866
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4297964572906494
+      Pitch: 1.3147962093353271
       Target Frame: <Fixed Frame>
-      Yaw: 4.673590183258057
+      Yaw: 4.613591194152832
     Saved: ~
 Window Geometry:
   Displays:
@@ -824,5 +1522,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 2042
-  X: 1242
-  Y: 681
+  X: 6599
+  Y: 708

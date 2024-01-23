@@ -18,6 +18,41 @@
         <arg name="open_rviz" value="false"/>
     </include>
 
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav4"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav5"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav6"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav7"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav8"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav9"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
+    <include file="$(find px4_rotor_sim)/launch/drone_visualizer_single.launch">
+        <arg name="namespace" value="uav10"/>
+        <arg name="open_rviz" value="false"/>
+    </include>
+
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find px4_rotor_sim)/launch/multi_px4_rotor.rviz" required="true" />
 
 </launch>

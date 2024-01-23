@@ -5,15 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /uav11
-        - /uav21
-        - /uav31
-        - /uav41
-        - /uav51
-        - /uav61
-        - /uav71
-        - /uav81
-        - /uav91
         - /uav101/RobotModel1
       Splitter Ratio: 0.7305389046669006
     Tree Height: 1049
@@ -69,6 +60,224 @@ Visualization Manager:
       Plane Cell Count: 30
       Reference Frame: <Fixed Frame>
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object1
+              Robot Description: object1/robot_description
+              TF Prefix: object1
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object2
+              Robot Description: object2/robot_description
+              TF Prefix: object2
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object3
+              Robot Description: object3/robot_description
+              TF Prefix: object3
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object4
+              Robot Description: object4/robot_description
+              TF Prefix: object4
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object5
+              Robot Description: object5/robot_description
+              TF Prefix: object5
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object6
+              Robot Description: object6/robot_description
+              TF Prefix: object6
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object7
+              Robot Description: object7/robot_description
+              TF Prefix: object7
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object8
+              Robot Description: object8/robot_description
+              TF Prefix: object8
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object9
+              Robot Description: object9/robot_description
+              TF Prefix: object9
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+            - Alpha: 1
+              Class: rviz/RobotModel
+              Collision Enabled: false
+              Enabled: true
+              Links:
+                All Links Enabled: true
+                Expand Joint Details: false
+                Expand Link Details: false
+                Expand Tree: false
+                Link Tree Style: Links in Alphabetic Order
+                base_link:
+                  Alpha: 1
+                  Show Axes: false
+                  Show Trail: false
+                  Value: true
+              Name: object10
+              Robot Description: object10/robot_description
+              TF Prefix: object10
+              Update Interval: 0
+              Value: true
+              Visual Enabled: true
+          Enabled: true
+          Name: objects
+      Enabled: true
+      Name: env
     - Class: rviz/Group
       Displays:
         - Alpha: 0.5
@@ -336,39 +545,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav4/robot_description
           TF Prefix: uav4
@@ -413,39 +589,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav5/robot_description
           TF Prefix: uav5
@@ -490,39 +633,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav6/robot_description
           TF Prefix: uav6
@@ -567,39 +677,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav7/robot_description
           TF Prefix: uav7
@@ -644,39 +721,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav8/robot_description
           TF Prefix: uav8
@@ -721,39 +765,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav9/robot_description
           TF Prefix: uav9
@@ -798,39 +809,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            gps0__link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            imu_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            rotor_0:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_1:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_2:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rotor_3:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: uav10/robot_description
           TF Prefix: uav10

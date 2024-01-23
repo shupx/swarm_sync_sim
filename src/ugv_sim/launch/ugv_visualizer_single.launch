@@ -5,20 +5,20 @@
     <arg name="namespace" default="ugv1"/>
     <arg name="open_rviz" default="true"/>
 
-    <arg name="visualize_max_freq" default="20"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
+    <arg name="visualize_max_freq" default="30"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
     <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
     <arg name="visualize_path_time" default="30"/> <!-- (s) displaying history path time -->
     <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->
-    <arg name="base_link_name" default="base_link"/> <!-- base link name in the robot urdf -->
+    <arg name="base_link_name" default="base_footprint"/> <!-- base link name in the robot urdf -->
     <arg name="base_link_tf_prefix" default="$(arg namespace)"/> <!-- tf prefix added to the base_link_name -->
-    <arg name="rotor_0_joint_name" default="rotor_0_joint"/> <!-- rotor revolute joint name in the robot urdf -->
-    <arg name="rotor_1_joint_name" default="rotor_1_joint"/> <!-- rotor revolute joint name in the robot urdf -->
-    <arg name="rotor_2_joint_name" default="rotor_2_joint"/> <!-- rotor revolute joint name in the robot urdf -->
-    <arg name="rotor_3_joint_name" default="rotor_3_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_0_joint_name" default="upper_left_wheel_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_1_joint_name" default="upper_right_wheel_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_2_joint_name" default="lower_left_wheel_joint"/> <!-- rotor revolute joint name in the robot urdf -->
+    <arg name="rotor_3_joint_name" default="lower_right_wheel_joint"/> <!-- rotor revolute joint name in the robot urdf -->
 
 <!-- For visualization in real experiments -->
 <group ns="$(arg namespace)">    
-    <param name="robot_description" textfile="$(find ugv_sim)/model/ugv.urdf" />
+    <param name="robot_description" command="$(find xacro)/xacro $(find ugv_sim)/model/nexus_4wd_mecanum.xacro" />
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
         <param name="tf_prefix" value="$(arg namespace)"/>

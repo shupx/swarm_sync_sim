@@ -24,6 +24,8 @@
 #include <nav_msgs/Path.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 #include <cmath>
 // Wrap to [-pi, pi)
@@ -74,7 +76,8 @@ private:
     float max_freq_; /* default 10Hz. Maximum base_link tf publishing rate */
     float history_path_time_; /* (s) displaying history path time */
     double pos_x_, pos_y_, pos_z_;
-    double linear_vel_;
+    double v_front_, v_left_, omega_;
+    double yaw_;
     geometry_msgs::Quaternion quat_;
 
     std::string tf_frame_; // visualize_tf_frame
