@@ -74,11 +74,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object1
               Robot Description: object1/robot_description
               TF Prefix: object1
@@ -95,11 +90,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object2
               Robot Description: object2/robot_description
               TF Prefix: object2
@@ -116,11 +106,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object3
               Robot Description: object3/robot_description
               TF Prefix: object3
@@ -137,11 +122,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object4
               Robot Description: object4/robot_description
               TF Prefix: object4
@@ -158,11 +138,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object5
               Robot Description: object5/robot_description
               TF Prefix: object5
@@ -179,11 +154,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object6
               Robot Description: object6/robot_description
               TF Prefix: object6
@@ -200,11 +170,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object7
               Robot Description: object7/robot_description
               TF Prefix: object7
@@ -221,11 +186,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object8
               Robot Description: object8/robot_description
               TF Prefix: object8
@@ -242,11 +202,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object9
               Robot Description: object9/robot_description
               TF Prefix: object9
@@ -263,11 +218,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object10
               Robot Description: object10/robot_description
               TF Prefix: object10
@@ -786,80 +736,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv5/robot_description
           TF Prefix: ugv5
@@ -904,80 +780,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv6/robot_description
           TF Prefix: ugv6
@@ -1022,80 +824,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv7/robot_description
           TF Prefix: ugv7
@@ -1140,80 +868,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv8/robot_description
           TF Prefix: ugv8
@@ -1258,80 +912,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv9/robot_description
           TF Prefix: ugv9
@@ -1376,80 +956,6 @@ Visualization Manager:
             Expand Link Details: false
             Expand Tree: false
             Link Tree Style: Links in Alphabetic Order
-            base_footprint:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-            base_link:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            front_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            left_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            lower_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            rear_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            right_sensor:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            stereo_camera:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_left_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
-            upper_right_wheel_shaft:
-              Alpha: 1
-              Show Axes: false
-              Show Trail: false
-              Value: true
           Name: RobotModel
           Robot Description: ugv10/robot_description
           TF Prefix: ugv10
@@ -1486,7 +992,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.334094047546387
+      Distance: 6.242883205413818
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1494,17 +1000,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.117926836013794
-        Y: 0.8282017707824707
-        Z: 0.8305619955062866
+        X: 0.7458571195602417
+        Y: -0.2292984426021576
+        Z: 0.7541389465332031
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3147962093353271
+      Pitch: 1.3947964906692505
       Target Frame: <Fixed Frame>
-      Yaw: 4.613591194152832
+      Yaw: 3.1385834217071533
     Saved: ~
 Window Geometry:
   Displays:
@@ -1522,5 +1028,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 2042
-  X: 6599
-  Y: 708
+  X: 8072
+  Y: 302

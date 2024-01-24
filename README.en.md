@@ -22,7 +22,7 @@ echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 
 #### Sim Clock
 
-A simulation clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes that register to the sim_clock and request time updates when they sleeps. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all the clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
+A simulation clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes register to the sim_clock and request time updates when they sleeps. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
 
 ##### 1. Clock side
 
@@ -47,7 +47,7 @@ You can also tune the clock by the UI interface developed by PyQt5:
 
 ##### 2. ROS node side
 
-If a ROS node needs the clock to wait until it finishes executing a piece of codes (usually a loop), then it should register to the sim_clock first and request the clock update every time it completes one loop or sleeps at one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs with those provided by this project.**
+If a ROS node needs the clock to wait until it finishes executing a piece of code (usually a loop), then it should register to the sim_clock first and request the clock update every time it completes a loop or sleeps at one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs with those provided by this project.**
 
 For cpp ROS nodes:
 
@@ -82,6 +82,8 @@ It is noted that these sss_utils APIs are equal to the original ROS APIs if the 
 
 It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works if these nodes use ros::Time rather than the system time as the simulation time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
 
+We have developd some ROS sim nodes using sss_utils to accelerate the simulation:
+
 #### PX4 Rotor Simulation
 
 Launch px4 rotor simulation nodes (mavros + px4 stil + quadrotor dynamics + visualization):
@@ -93,6 +95,12 @@ roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
 ### 2. Launch multiple mavros-px4-rotor sim nodes (Specify initial positions in the launch file)
 roslaunch px4_rotor_sim multi_px4_rotor_sim.launch
 ```
+Or you can simply use the wallclock time without acceleration:
+
+```bash
+roslaunch px4_rotor_sim multi_px4_rotor_sim.launch use_sim_time:=false
+```
+
 ![image_name](pictures/multi-px4-rotor-sim.png)
 
 Then you can launch your control algorithm nodes to communicate with the mavros topics and services.
@@ -141,6 +149,12 @@ roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
 
 ### 2. Launch multiple tello sim nodes (Specify initial poses in the launch file)
 roslaunch tello_sim multi_tello_sim.launch
+```
+
+Or you can simply use the wallclock time without acceleration:
+
+```bash
+roslaunch tello_sim multi_tello_sim.launch use_sim_time:=false
 ```
 
 ![img](pictures/multi-tello-sim.png)
@@ -194,6 +208,12 @@ roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
 
 ### 2. Launch multiple ugv sim nodes (Specify initial poses, ugv types in the launch file)
 roslaunch ugv_sim multi_ugv_sim.launch
+```
+
+Or you can simply use the wallclock time without acceleration:
+
+```bash
+roslaunch ugv_sim multi_ugv_sim.launch use_sim_time:=false
 ```
 
 ![img](pictures/multi-ugv-sim.png)

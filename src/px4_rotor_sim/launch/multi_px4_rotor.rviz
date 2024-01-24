@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /uav101/RobotModel1
-      Splitter Ratio: 0.7305389046669006
+      Splitter Ratio: 0.8383233547210693
     Tree Height: 1049
   - Class: rviz/Selection
     Name: Selection
@@ -74,11 +74,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object1
               Robot Description: object1/robot_description
               TF Prefix: object1
@@ -95,11 +90,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object2
               Robot Description: object2/robot_description
               TF Prefix: object2
@@ -116,11 +106,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object3
               Robot Description: object3/robot_description
               TF Prefix: object3
@@ -137,11 +122,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object4
               Robot Description: object4/robot_description
               TF Prefix: object4
@@ -158,11 +138,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object5
               Robot Description: object5/robot_description
               TF Prefix: object5
@@ -179,11 +154,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object6
               Robot Description: object6/robot_description
               TF Prefix: object6
@@ -200,11 +170,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object7
               Robot Description: object7/robot_description
               TF Prefix: object7
@@ -221,11 +186,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object8
               Robot Description: object8/robot_description
               TF Prefix: object8
@@ -242,11 +202,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object9
               Robot Description: object9/robot_description
               TF Prefix: object9
@@ -263,11 +218,6 @@ Visualization Manager:
                 Expand Link Details: false
                 Expand Tree: false
                 Link Tree Style: Links in Alphabetic Order
-                base_link:
-                  Alpha: 1
-                  Show Axes: false
-                  Show Trail: false
-                  Value: true
               Name: object10
               Robot Description: object10/robot_description
               TF Prefix: object10
@@ -819,7 +769,7 @@ Visualization Manager:
       Name: uav10
   Enabled: true
   Global Options:
-    Background Color: 211; 215; 207
+    Background Color: 243; 243; 243
     Default Light: true
     Fixed Frame: map
     Frame Rate: 30
@@ -845,7 +795,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.231232643127441
+      Distance: 8.19508171081543
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -853,9 +803,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 3.137460231781006
-        Y: 0.999445915222168
-        Z: -0.5481306314468384
+        X: 2.775359869003296
+        Y: 1.2003501653671265
+        Z: -0.717038094997406
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -881,5 +831,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 2366
-  X: 7034
-  Y: 125
+  X: 1017
+  Y: 733
