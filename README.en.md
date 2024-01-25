@@ -80,7 +80,7 @@ It is noted that these sss_utils APIs are equal to the original ROS APIs if the 
 </launch>
 ```
 
-It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works if these nodes use ros::Time rather than the system time as the simulation time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
+**It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works** if these nodes use ros::Time rather than the system time as the simulation time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
 
 We have developd some ROS sim nodes using sss_utils to accelerate the simulation:
 
