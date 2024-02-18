@@ -130,7 +130,7 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     /* Set next callback expected time */
     TimerManagerExtra::global().add_next_cb_time(timer_handle_, next_time);
 
-    /* Request inifity next time in this thread as we do not know whether there will be callbacks in this spinner thread in the future)*/
+    /* Request infinite next time in this thread as we do not know whether there will be callbacks in this spinner thread in the future */
     clock_updater->request_clock_update(ros::TIME_MAX);
 
     /* print the real loop rate */

@@ -126,8 +126,9 @@ public:
         /* If no clockupdater exists on this thread, make a clockupdater */
         if(thread_clockupdater_map_.find(thread_id) == thread_clockupdater_map_.end())
         {
+            // std::cout << "[ThreadClockupdaters::get_clockupdater] Create a new clock updater on thread " << thread_id << std::endl;
+            ROS_INFO("[ThreadClockupdaters::get_clockupdater] Create a new clock updater on thread %s", std::to_string(*(unsigned int*)&thread_id).c_str()); 
             thread_clockupdater_map_[thread_id] = std::make_shared<ClockUpdater>();
-            std::cout << "[ThreadClockupdaters::get_clockupdater] Create a new clock updater on thread " << thread_id << std::endl;
         }
 
         return thread_clockupdater_map_[thread_id];

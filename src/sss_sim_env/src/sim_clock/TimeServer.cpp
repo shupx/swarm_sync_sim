@@ -64,7 +64,7 @@ TimeServer::TimeServer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     // clients_vector_[0]->request_time = ros::TIME_MAX;
 
     // update client 0 time in a wall timer with a seperate spinner thread
-    speed_regulator_period_ = 0.001; // (s) maximum sim step (crucial for timers on multi threads)
+    speed_regulator_period_ = 0.01; // (s) maximum sim step (crucial for timers on multi threads)
     speed_regulator_timer_ = nh_async_.createWallTimer(ros::WallDuration(speed_regulator_period_ / max_speed_ratio_), &TimeServer::cb_speed_regulator_timer, this);
     // speed_regulator_timer_ = nh_.createWallTimer(ros::WallDuration(speed_regulator_period_), &TimeServer::cb_speed_regulator_timer, this);
 
@@ -229,7 +229,7 @@ bool TimeServer::try_update_clock()
         }
         if (all_clients_has_infinity_request)
         {
-            // ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 have new infinite request time, which means they are inactive. Stop clock.");
+            ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 have new infinite request time, which means they are inactive. Stop clock.");
             return false;
         }
     }

@@ -72,7 +72,8 @@ bool Duration::sleep() const
                     return false;
                 }
             }
-            // Release the time client on this thread
+            // Release the time client on this thread (especically for topic subscriber callbacks, may be no more new callbacks in this thread)
+            //@TODO This release is unsafe as all clockupdaters may request infinity time, so clock will update at the maximum speed which may jump some timer callbacks?
             clock_updater->request_clock_update(ros::TIME_MAX);
 
             return true;

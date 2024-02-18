@@ -184,6 +184,7 @@ class TimerManagerExtra
                 nh_.setCallbackQueue(&callback_queue_);
                 async_spinner_.start(); // start a new thread to listen to clock updates
 
+                ROS_INFO("[TimerManagerExtra] Create a new clock updater for ROS internal timer manager thread"); 
                 clock_updater_ = std::make_shared<ClockUpdater>();
 
                 clock_sub_ = nh_.subscribe("/clock", 10, &TimerManagerExtra::cb_clock, this);
