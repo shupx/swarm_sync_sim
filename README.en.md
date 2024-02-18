@@ -43,7 +43,7 @@ max_sim_speed: 0.0"
 
 You can also tune the clock by the UI interface developed by PyQt5:
 
-<img src="pictures/sim_clock.png" alt="clock" style="zoom:50%;" />
+<img src="pictures/sim_clock.png" alt="clock" style="zoom:100%;" />
 
 ##### 2. ROS node side
 
