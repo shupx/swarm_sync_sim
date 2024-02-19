@@ -195,7 +195,7 @@ class ClockUI(QObject):
             speed_perct = max(min(speed_perct, 100), 0)
             # print("speed_pertc: {}".format(speed_perct))
             try:
-                self.signal_progressbar.emit([speed_perct, "{:.1f}x".format(speed)])
+                self.signal_progressbar.emit([speed_perct, "{:.2f}x".format(speed)])
             except Exception as e:
                 # print(e)
                 pass

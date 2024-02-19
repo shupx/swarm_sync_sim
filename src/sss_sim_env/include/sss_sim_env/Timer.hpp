@@ -279,15 +279,17 @@ class TimerManagerExtra
             }
             
             /* If this timer request inifite time, publish infinite time to unblock this time client */
-            if (next_time == ros::TIME_MAX)
-            {
-                bool ret;
-                ret = clock_updater_->request_clock_update(next_time);
+            /* @TODO may not be necessary */
+            // @TODO check if other timers are blocked by this uncertain timer
+            // if (next_time == ros::TIME_MAX)
+            // {
+            //     bool ret;
+            //     ret = clock_updater_->request_clock_update(next_time);
 
-                // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << next_time.toSec() << std::endl;
+            //     // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << next_time.toSec() << std::endl;
 
-                return ret;
-            }
+            //     return ret;
+            // }
 
             /* If all timers have next expected times, request the smallest one */
             if (all_timers_have_next_expected_time)
@@ -296,7 +298,10 @@ class TimerManagerExtra
                 ros::Time request_time = timer_info_list_[0].next_expected_time;
 
                 bool ret;
+                
+                std::lock_guard<std::mutex> lockGuard(last_request_time_mutex_);
                 ret = clock_updater_->request_clock_update(request_time);
+                last_request_time_ = request_time;
 
                 // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << request_time.toSec() << std::endl;
 
@@ -308,10 +313,12 @@ class TimerManagerExtra
 
                 bool ret = true;
                 
-                /* Publish now time request for this clockupdater (recover from the last infinite reqeust) */
+                /* Publish now time request for this clockupdater (recover from the last infinite reqeust to avoid all thread requesting TIME_MAX) */
                 if (clock_updater_->get_request_time() == ros::TIME_MAX)
                 {
+                    std::lock_guard<std::mutex> lockGuard(last_request_time_mutex_);
                     ret = clock_updater_->request_clock_update(ros::Time::now());
+                    last_request_time_ = ros::Time::now();
 
                     // std::cout << "[TimerManagerExtra::add_next_cb_time] clock_updater_->request_clock_update " << ros::Time::now().toSec() << std::endl;
                 }
@@ -320,10 +327,24 @@ class TimerManagerExtra
             }
         }
 
+        /* clock updater requests last requesting time */
+        bool request_last_time()
+        {
+            std::lock_guard<std::mutex> lockGuard(last_request_time_mutex_);
+            if (last_request_time_ == ros::TIME_MAX)
+            {
+                last_request_time_ = ros::Time::now();
+            }
+            return clock_updater_->request_clock_update(last_request_time_);
+        }
+
         ClockUpdaterPtr clock_updater_;
 
     private:
         bool use_sim_time_;
+
+        ros::Time last_request_time_ = ros::TIME_MAX;
+        std::mutex last_request_time_mutex_;
 
         ros::NodeHandle nh_;
         ros::CallbackQueue callback_queue_;

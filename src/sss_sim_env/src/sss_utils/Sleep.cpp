@@ -49,8 +49,11 @@ bool Duration::sleep() const
             std::cout << "[sss_utils::Duration::sleep] Sim clock not online. Repeat clock_updater->request_clock_update " << (ros::Time::now() + ros::Duration(sec, nsec)).toSec() << std::endl;
         }
 
-        /* Release the time client of the TimerManagerExtra */
-        while(!TimerManagerExtra::global().clock_updater_->request_clock_update(ros::TIME_MAX))
+        /* Release the time client of the TimerManagerExtra since it may not be updated until this sleep finishes
+           , which may cause block when there is a sleep in a callback which has not released timer manager before */
+        /* @TODO This release is unsafe in multi thread spinner mode, as other idle threads may not be fast enough to take over other callbacks, 
+            so time elapses to 'end' as fast as possible purely depending on the speed regulator.*/
+        while(!TimerManagerExtra::global().clock_updater_->request_clock_update(ros::TIME_MAX)) // assmue that all timers wait in this thread (compromise)
         {
             // block until publishing successfully
             ros::WallDuration(0.5).sleep();
@@ -60,8 +63,8 @@ bool Duration::sleep() const
 
         /* Block until the duration is satisfied */
         {
-            // This allows sim time to run up to 200x real-time even for very short sleep durations.
-            const uint32_t sleep_nsec = (sec != 0) ? 1000000 : (std::min)(1000000, nsec/200);
+            // This allows sim time to run up to 150x real-time even for very short sleep durations.
+            const uint32_t sleep_nsec = (sec != 0) ? 1000000 : (std::min)(1000000, nsec/150);
             while (ros::Time::now() < end)
             {
                 ros::WallDuration(0, sleep_nsec).sleep();
@@ -73,7 +76,8 @@ bool Duration::sleep() const
                 }
             }
             // Release the time client on this thread (especically for topic subscriber callbacks, may be no more new callbacks in this thread)
-            //@TODO This release is unsafe as all clockupdaters may request infinity time, so clock will update at the maximum speed which may jump some timer callbacks?
+            /* @TODO This release is unsafe, as this thread and timer manager extra both request TIME_MAX */
+            TimerManagerExtra::global().request_last_time();  //@FixTODO resume timer manager thread clock request to avoid all threads requesting TIME_MAX
             clock_updater->request_clock_update(ros::TIME_MAX);
 
             return true;

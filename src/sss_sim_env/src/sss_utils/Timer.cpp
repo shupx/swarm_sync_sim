@@ -95,7 +95,14 @@ void Timer::Impl::sim_timer_callback(const ros::TimerEvent &event)
     }
     
     /* Set next callback expected time as infinity as we are not sure the next expected time now */
-    //@TODO check if other timers in timer_manager are blocked by this thread. If blocked, add its next time as infinity too.
+    // @TODO In multi spinner thread mode, check if other timers in timer_manager are blocked by this thread especially when this callback contains a sleep. If blocked, add its next time as infinity too.
+    /** @bug:
+        [Condition] Multi thread spinner mode & multiple timers & There is a sleep in this callback & max_speed_ratio>1.
+        [Description] It may cause the sim_clock directly jumps to the sleep end in the speed of speed regulator directly regardless of other timers in other threads,
+            which may lead to some lose of other timer callbacks (frequency decreases)
+        [Possible Solutions] Manage all timer callback thread IDs. Check if other timers in timer_manager are blocked by this thread. If blocked, add its next_cb_time as infinity too.
+     */
+    /* This bug does not cause much bad effect if in single thread mode or the speed regulator steps with the minimum timer period (time-wasting) */
     while(!TimerManagerExtra::global().add_next_cb_time(timer_handle_, ros::TIME_MAX))
     {
         // block until publishing successfully
