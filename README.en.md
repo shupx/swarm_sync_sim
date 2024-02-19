@@ -1,7 +1,7 @@
 ## swarm_sync_sim
 
 ### Introduction
-swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm systems based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) simulation engine for various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
+swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm systems based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple seperate nodes) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments only with slight modifications.
 
 
 ### Installation
@@ -80,13 +80,13 @@ It is noted that these sss_utils APIs are equal to the original ROS APIs if the 
 </launch>
 ```
 
-**It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works** if these nodes use ros::Time rather than the system time as the simulation time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
+**It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works** if these nodes use ros::Time rather than the system time as the simulation clock time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
 
 We have developd some ROS sim nodes using sss_utils to accelerate the simulation:
 
 #### PX4 Rotor Simulation
 
-Launch px4 rotor simulation nodes (mavros + px4 stil + quadrotor dynamics + visualization):
+We rewrite the mavros and px4 core modules (based on px4 v1.13.3) to adapt to this simulation platform and provide the acceleration capacity. Launch px4 rotor simulation nodes (mavros + px4 stil + quadrotor dynamics + visualization):
 
 ```bash
 ### 1. Launch sim clock
@@ -102,6 +102,8 @@ roslaunch px4_rotor_sim multi_px4_rotor_sim.launch use_sim_time:=false
 ```
 
 ![image_name](pictures/multi-px4-rotor-sim.png)
+
+The drone head is on the side with red propellers.
 
 Then you can launch your control algorithm nodes to communicate with the mavros topics and services.
 
@@ -251,6 +253,6 @@ roslaunch ugv_sim visualize_ugv_multi.launch
 
 
 
-### Contributions
+### Acknowledgement
 
-This project is developed by Peixuan Shu from December 2023.
+This project is developed and maintained by Dr Peixuan Shu (shupeixuan@qq.com) since December 2023.

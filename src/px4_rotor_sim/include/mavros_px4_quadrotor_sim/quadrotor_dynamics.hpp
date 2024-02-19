@@ -51,6 +51,7 @@ class Dynamics
 
     void setState(const Dynamics::State &state);
     void setPos(const double& pos_x, const double& pos_y, const double& pos_z);
+    void setRPY(const double& roll, const double& pitch, const double& yaw);
     void setInput(const Dynamics::Input &input);
     void setSimStep(const double& dt);
     void setMass(const double& m);

@@ -6,6 +6,9 @@
     <arg name="init_x_East_metre" default="0.0"/>
     <arg name="init_y_North_metre" default="0.0"/>
     <arg name="init_z_Up_metre" default="0.0"/>
+    <arg name="init_roll_deg" default="0.0"/>
+    <arg name="init_pitch_deg" default="0.0"/>
+    <arg name="init_yaw_deg" default="0.0"/>
 
     <!-- Same arguments for each vehicle that needs set -->
 
@@ -34,6 +37,9 @@
             <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
             <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
             <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
             <!-- load px4 param -->
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
             <!-- for robot TF visualizer -->
@@ -51,6 +57,9 @@
             <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
             <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
             <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
             <!-- load px4 param -->
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
             <!-- for robot TF visualizer -->

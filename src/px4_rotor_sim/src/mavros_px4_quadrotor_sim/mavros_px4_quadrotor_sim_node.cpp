@@ -98,17 +98,20 @@ Agent::Agent(int agent_id, const ros::NodeHandle &nh, const ros::NodeHandle &nh_
         ROS_WARN("[Agent] /use_sim_time is false! Maybe real time is used.");
     }
 
-    float init_x, init_y, init_z;
+    float init_x, init_y, init_z, init_roll, init_pitch, init_yaw;
     nh_private_.param<float>("init_x_East_metre", init_x, 0.0);
     nh_private_.param<float>("init_y_North_metre", init_y, 0.0);
     nh_private_.param<float>("init_z_Up_metre", init_z, 0.0);
-
+    nh_private_.param<float>("init_roll_deg", init_roll, 0.0);
+    nh_private_.param<float>("init_pitch_deg", init_pitch, 0.0);
+    nh_private_.param<float>("init_yaw_deg", init_yaw, 0.0);
 
     /* init sim modules */
 
     dynamics_ = std::make_shared<Dynamics>();
     dynamics_->setSimStep(0.01); // set odeint integration step
     dynamics_->setPos(init_x, init_y, init_z);
+    dynamics_->setRPY(init_roll*M_PI/180, init_pitch*M_PI/180, init_yaw*M_PI/180);
 
     px4sitl_ = std::make_shared<PX4SITL>(agent_id_, nh_, nh_private_, dynamics_);
 

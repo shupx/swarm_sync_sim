@@ -141,6 +141,15 @@ void Dynamics::setPos(const double& pos_x, const double& pos_y, const double& po
     state_.pos << pos_x, pos_y, pos_z;
 }
 
+void Dynamics::setRPY(const double& roll, const double& pitch, const double& yaw)
+{
+    using namespace Eigen;
+    AngleAxisd rollAngle(AngleAxisd(roll,Vector3d::UnitX()));
+    AngleAxisd pitchAngle(AngleAxisd(pitch,Vector3d::UnitY()));
+    AngleAxisd yawAngle(AngleAxisd(yaw,Vector3d::UnitZ()));
+    state_.R = yawAngle * pitchAngle * rollAngle; //@TODO make sure is RPY rather than YPR
+}
+
 void Dynamics::setInput(const Dynamics::Input &input)
 {
     omega_ = input.omega; //@TODO the yaw rate setpoint can not be responsed immediately
