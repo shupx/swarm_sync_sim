@@ -44,6 +44,8 @@
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
             <!-- for robot TF visualizer -->
             <param name="base_link_tf_prefix" value="$(arg namespace)"/>
+            <!-- for marker name visualize -->
+            <param name="visualize_marker_name" value="$(arg namespace)"/>
             <!-- load mavros plugin config (Not mandatory ) -->
             <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /--> 
         </node>
@@ -64,6 +66,8 @@
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
             <!-- for robot TF visualizer -->
             <param name="base_link_tf_prefix" value="$(arg namespace)"/>
+            <!-- for marker name visualize -->
+            <param name="visualize_marker_name" value="$(arg namespace)"/>
             <!-- load mavros plugin config (Not mandatory ) -->
             <!-- rosparam command="load" file="$(arg mavros_sim_plugin_config_yaml)" /-->      
         </node>

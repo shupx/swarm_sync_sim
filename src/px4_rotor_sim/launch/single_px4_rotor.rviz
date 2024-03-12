@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /uav11
-      Splitter Ratio: 0.6676470637321472
+      Splitter Ratio: 0.7176470756530762
     Tree Height: 384
   - Class: rviz/Selection
     Name: Selection
@@ -303,6 +303,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /uav1/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
         - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
           Covariance:
@@ -384,7 +392,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.264858245849609
+      Distance: 6.2504377365112305
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -392,17 +400,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.8365570902824402
-        Y: 0.9491344094276428
-        Z: -1.0020034313201904
+        X: 1.3293617963790894
+        Y: -0.10249773412942886
+        Z: -0.6746402382850647
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0347970724105835
+      Pitch: 1.1147971153259277
       Target Frame: <Fixed Frame>
-      Yaw: 4.395423412322998
+      Yaw: 3.0654232501983643
     Saved: ~
 Window Geometry:
   Displays:
@@ -421,4 +429,4 @@ Window Geometry:
     collapsed: true
   Width: 1313
   X: 869
-  Y: 195
+  Y: 158

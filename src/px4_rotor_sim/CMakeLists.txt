@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros # for tf
   sss_sim_env # for sss_utils
   nodelet # for mavros_px4_quadrotor_sim_node.cpp nodelet
+  visualization_msgs # for marker visualize
 )
 
 #uncomment the following 4 lines to use the Eigen library
