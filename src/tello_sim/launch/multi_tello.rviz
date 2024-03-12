@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 138
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -8,8 +8,10 @@ Panels:
         - /Status1
         - /tello11/RobotModel1/Links1
         - /tello11/RobotModel1/Links1/base_link1
-      Splitter Ratio: 0.6294117569923401
-    Tree Height: 387
+        - /tello71/Marker1
+        - /tello101/Marker1
+      Splitter Ratio: 0.6499999761581421
+    Tree Height: 525
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -297,6 +299,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello1/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello1
     - Class: rviz/Group
@@ -366,6 +376,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello2/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello2
     - Class: rviz/Group
@@ -435,6 +453,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello3/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello3
     - Class: rviz/Group
@@ -504,6 +530,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello4/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello4
     - Class: rviz/Group
@@ -573,6 +607,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello5/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello5
     - Class: rviz/Group
@@ -642,6 +684,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello6/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello6
     - Class: rviz/Group
@@ -711,6 +761,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello7/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello7
     - Class: rviz/Group
@@ -780,6 +838,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello8/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello8
     - Class: rviz/Group
@@ -849,6 +915,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello9/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello9
     - Class: rviz/Group
@@ -918,6 +992,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello10/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello10
   Enabled: true
@@ -948,7 +1030,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.25907826423645
+      Distance: 2.542980909347534
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -956,17 +1038,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.476034015417099
-        Y: 0.1422690600156784
-        Z: 0.21592728793621063
+        X: 0.9128331542015076
+        Y: -0.021056873723864555
+        Z: 0.09344573318958282
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3997966051101685
+      Pitch: 0.924796462059021
       Target Frame: <Fixed Frame>
-      Yaw: 4.688592433929443
+      Yaw: 4.093591690063477
     Saved: ~
 Window Geometry:
   Displays:
@@ -984,5 +1066,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1217
-  X: 742
-  Y: 135
+  X: 328
+  Y: 75

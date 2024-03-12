@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sss_sim_env # for sss_utils
   nodelet # for nodelet
   tf2_ros # for tf
+  visualization_msgs # for marker visualize
 )
 
 #uncomment the following 4 lines to use the Eigen library

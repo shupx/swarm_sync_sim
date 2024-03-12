@@ -9,6 +9,7 @@
     <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
     <arg name="visualize_path_time" default="30"/> <!-- (s) displaying history path time -->
     <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->
+    <arg name="visualize_marker_name" default="$(arg namespace)"/> <!-- visualize_marker_name -->
     <arg name="base_link_name" default="base_link"/> <!-- base link name in the robot urdf -->
     <arg name="base_link_tf_prefix" default="$(arg namespace)"/> <!-- tf prefix added to the base_link_name -->
     <arg name="rotor_0_joint_name" default="rotor_0_joint"/> <!-- rotor revolute joint name in the robot urdf -->
@@ -28,6 +29,7 @@
         <param name="visualize_max_freq" value="$(arg visualize_max_freq)"/>
         <param name="visualize_path_time" value="$(arg visualize_path_time)"/>
         <param name="visualize_tf_frame" value="$(arg visualize_tf_frame)"/>
+        <param name="visualize_marker_name" value="$(arg visualize_marker_name)"/>
         <param name="base_link_name" value="$(arg base_link_name)"/>
         <param name="base_link_tf_prefix" value="$(arg base_link_tf_prefix)"/>
         <param name="rotor_0_joint_name" value="$(arg rotor_0_joint_name)"/>

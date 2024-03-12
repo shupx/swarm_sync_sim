@@ -298,6 +298,14 @@ Visualization Manager:
           Update Interval: 0
           Value: true
           Visual Enabled: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tello1/marker_name
+          Name: Marker
+          Namespaces:
+            my_namespace: true
+          Queue Size: 100
+          Value: true
       Enabled: true
       Name: tello1
   Enabled: true
@@ -328,7 +336,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.288707733154297
+      Distance: 2.0140628814697266
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -336,9 +344,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.3563492000102997
-        Y: 0.03334146738052368
-        Z: 0.08871304988861084
+        X: 0.30581119656562805
+        Y: 0.007543227635324001
+        Z: 0.045934755355119705
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -365,4 +373,4 @@ Window Geometry:
     collapsed: true
   Width: 1183
   X: 864
-  Y: 153
+  Y: 116
