@@ -51,13 +51,7 @@ public:
     Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
 
     /* Publish rotor joint states, base link TF and history path for displaying in rviz */
-    void Run()
-    {
-        PublishRotorJointState();
-        PublishBaseLinkTF();
-        PublishPath();
-        PublishMarkerName();
-    }
+    void Run();
 
     /* Publish rotor/propeller joint states according to the arming state */
     void PublishRotorJointState();
@@ -108,6 +102,7 @@ private:
     std::string rotor_joints_name_[4]; // rotor joints name
 
     bool enable_history_path_;
+    bool pose_valid_;
 
     double last_time_PublishRotorJointState_ = 0.0;
     double last_time_PublishBaseLinkTF_ = 0.0;

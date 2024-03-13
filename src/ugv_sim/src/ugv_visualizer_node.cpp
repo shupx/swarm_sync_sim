@@ -44,7 +44,8 @@ namespace UgvSimulator
 
 Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private) : 
     nh_(nh), 
-    nh_private_(nh_private)
+    nh_private_(nh_private),
+    pose_valid_(false)
 {
     nh_private_.param<float>("visualize_max_freq", max_freq_, 10);
     nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
@@ -84,16 +85,18 @@ void Visualizer::Run()
 {
     PublishRotorJointState();
     PublishBaseLinkTF();
-    PublishPath();
     PublishMarkerName();
+    if (pose_valid_) // avoid jumping from (0,0) to the initial points
+    {
+        PublishPath();
+    }
 }
 
 void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 10.0; // 10Hz fixed
-    if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
+    if (time_now - last_time_PublishRotorJointState_ > 1.0 / max_freq_)
     {
         double dt = time_now - last_time_PublishRotorJointState_;
 
@@ -227,6 +230,7 @@ void Visualizer::PublishMarkerName()
 
 void Visualizer::cb_pose(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
+    pose_valid_ = true;
     pos_x_ = msg->pose.position.x;
     pos_y_ = msg->pose.position.y;
     pos_z_ = msg->pose.position.z;
