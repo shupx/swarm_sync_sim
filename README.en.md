@@ -110,10 +110,10 @@ Then you can launch your control algorithm nodes to communicate with the mavros 
 Some useful commands:
 
 ```bash
-### Arm UAV1
+### [First Step] Arm UAV1
 rosservice call /uav1/mavros/cmd/arming "value: true" 
 
-### Send position setpoints to UAV1
+### [Second Step] Keep sending position setpoints to UAV1
 rostopic pub /uav1/mavros/setpoint_raw/local mavros_msgs/PositionTarget "header:
   seq: 0
   stamp: {secs: 0, nsecs: 0}
@@ -126,7 +126,7 @@ acceleration_or_force: {x: 0.0, y: 0.0, z: 0.0}
 yaw: 0.0
 yaw_rate: 0.0" -r 10
 
-### Switch UAV1 into offboard mode:
+### [Third Step] In anthor terminal, switch UAV1 into offboard mode:
 rosservice call /uav1/mavros/set_mode "base_mode: 0 
 custom_mode: 'OFFBOARD'"
 ```

@@ -227,10 +227,19 @@ bool TimeServer::try_update_clock()
                 break;
             }
         }
+        static int ros_warn_cout = 0;
         if (all_clients_has_infinity_request)
         {
-            ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 have new infinite request time, which means they are inactive. Stop clock temporarily.");
+            if (ros_warn_cout == 0) // Warn only once
+            {
+                ROS_WARN("[TimeServer::try_update_clock] All time clients >=1 have new infinite request time, which means they are inactive. Stop clock temporarily.");
+                ros_warn_cout = 1; 
+            }
             return false;
+        }
+        else
+        {
+            ros_warn_cout = 0;
         }
     }
 
