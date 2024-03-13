@@ -275,7 +275,7 @@ class TimerManagerExtra
             if (!timer_handle_found)
             {
                 std::cout << "[TimerManagerExtra::add_next_cb_time] No timer with handle " << handle << std::endl;
-                return false;
+                return true;
             }
             
             /* If this timer request inifite time, publish infinite time to unblock this time client */
