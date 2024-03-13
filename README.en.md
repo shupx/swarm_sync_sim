@@ -255,4 +255,4 @@ roslaunch ugv_sim visualize_ugv_multi.launch
 
 ### Acknowledgement
 
-This project is developed and maintained by Dr Peixuan Shu (shupeixuan@qq.com) since December 2023.
+This project has been developed and maintained by Dr Peixuan Shu (shupeixuan@qq.com) since December 2023.

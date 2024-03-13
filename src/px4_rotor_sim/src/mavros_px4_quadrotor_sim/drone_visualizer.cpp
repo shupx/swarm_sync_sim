@@ -176,9 +176,9 @@ void Visualizer::PublishMarkerName()
         marker->id = 0;
         marker->type = visualization_msgs::Marker::TEXT_VIEW_FACING;
         marker->action = visualization_msgs::Marker::ADD;
-        marker->pose.position.x = pos_x_ + 0.2;
-        marker->pose.position.y = pos_y_;
-        marker->pose.position.z = pos_z_ + 0.3;
+        marker->pose.position.x = pos_x_ + 0.27;
+        marker->pose.position.y = pos_y_ + 0.27;
+        marker->pose.position.z = pos_z_ + 0.27;
         marker->pose.orientation = quat_;
         marker->scale.x = 0.2;
         marker->scale.y = 0.2;

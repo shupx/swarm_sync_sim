@@ -24,7 +24,6 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
 
-
 #include <cmath>
 // Wrap to [-pi, pi)
 inline double WrapToPi1(double theta) { return theta - 2 * M_PI * std::floor((theta + M_PI)/(2 * M_PI)); }
@@ -94,7 +93,6 @@ private:
     
     float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
     std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector_;
-
 
     void cb_tello_pose(const geometry_msgs::PoseStamped::ConstPtr& msg);
     

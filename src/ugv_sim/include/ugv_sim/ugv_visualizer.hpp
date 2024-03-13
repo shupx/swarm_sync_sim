@@ -23,6 +23,7 @@
 #include <sensor_msgs/JointState.h>
 #include <nav_msgs/Path.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <visualization_msgs/Marker.h>
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
@@ -61,6 +62,9 @@ public:
     /* Publish the robot base link history path for displaying in rviz */
     void PublishPath();
 
+    /* Publish marker name */
+    void PublishMarkerName();
+
 private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
@@ -70,6 +74,7 @@ private:
 
     ros::Publisher joint_pub_;
     ros::Publisher path_pub_;
+    ros::Publisher marker_name_pub_;
 
     tf2_ros::TransformBroadcaster tf2_broadcaster_;
 
@@ -80,6 +85,7 @@ private:
     double yaw_;
     geometry_msgs::Quaternion quat_;
 
+    std::string marker_name_; // visualize_marker_name
     std::string tf_frame_; // visualize_tf_frame
     std::string tf_child_frame_; // visualize_tf_child_frame
     std::string rotor_joints_name_[4]; // rotor joints name
@@ -89,6 +95,7 @@ private:
     double last_time_PublishRotorJointState_ = 0.0;
     double last_time_PublishBaseLinkTF_ = 0.0;
     double last_time_PublishPath_ = 0.0;
+    double last_time_PublishMarkerName_ = 0.0;
 
     float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
     std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector_;

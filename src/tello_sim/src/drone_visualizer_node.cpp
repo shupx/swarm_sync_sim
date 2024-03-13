@@ -192,12 +192,12 @@ void Visualizer::PublishMarkerName()
         marker->action = visualization_msgs::Marker::ADD;
         marker->pose.position.x = pos_x_ + 0.11;
         marker->pose.position.y = pos_y_ + 0.11;
-        marker->pose.position.z = pos_z_ + 0.1;
+        marker->pose.position.z = pos_z_ + 0.11;
         marker->pose.orientation = quat_;
-        marker->scale.x = 0.1;
-        marker->scale.y = 0.1;
-        marker->scale.z = 0.1;
-        marker->color.a = 0.9; // Don't forget to set the alpha!
+        marker->scale.x = 0.15; // metre
+        marker->scale.y = 0.15; // metre
+        marker->scale.z = 0.15; // metre
+        marker->color.a = 1.0; // Don't forget to set the alpha!
         marker->color.r = 0; // [0,1]
         marker->color.g = 0; // [0,1]
         marker->color.b = 0; // [0,1]

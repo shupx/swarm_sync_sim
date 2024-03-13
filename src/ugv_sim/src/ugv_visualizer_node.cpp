@@ -48,6 +48,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 {
     nh_private_.param<float>("visualize_max_freq", max_freq_, 10);
     nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
+    nh_private_.param<std::string>("visualize_marker_name", marker_name_, "ugv");
     nh_private_.param<std::string>("visualize_tf_frame", tf_frame_, "map");
     nh_private_.param<std::string>("base_link_name", tf_child_frame_, "base_link");
     nh_private_.param<std::string>("rotor_0_joint_name", rotor_joints_name_[0], "rotor_0_joint");
@@ -68,6 +69,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
     joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1);
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
+    marker_name_pub_ = nh_.advertise<visualization_msgs::Marker>("marker_name", 1, true);
 
     pos_x_ = 0.0; pos_y_ = 0.0; pos_z_ = 0.0;
     v_front_ = 0.0; v_left_ = 0.0; omega_ = 0.0;
@@ -83,6 +85,7 @@ void Visualizer::Run()
     PublishRotorJointState();
     PublishBaseLinkTF();
     PublishPath();
+    PublishMarkerName();
 }
 
 void Visualizer::PublishRotorJointState()
@@ -184,6 +187,40 @@ void Visualizer::PublishPath()
                 last_time_PublishPath_ = time_now;
             }
         }
+    }
+}
+
+void Visualizer::PublishMarkerName()
+{
+    // static double last_time = 0.0;
+    double time_now = ros::Time::now().toSec();
+    if (time_now - last_time_PublishMarkerName_ > 1.0 / max_freq_)
+    {
+        visualization_msgs::Marker::Ptr marker(new visualization_msgs::Marker);
+        marker->header.frame_id = tf_frame_;
+        marker->header.stamp = ros::Time();
+        marker->ns = "my_namespace";
+        marker->id = 0;
+        marker->type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+        marker->action = visualization_msgs::Marker::ADD;
+        marker->pose.position.x = pos_x_ + 0.25;
+        marker->pose.position.y = pos_y_ + 0.25;
+        marker->pose.position.z = pos_z_ + 0.25;
+        marker->pose.orientation = quat_;
+        marker->scale.x = 0.17; // metre
+        marker->scale.y = 0.17; // metre
+        marker->scale.z = 0.17; // metre
+        marker->color.a = 1.0; // Don't forget to set the alpha!
+        marker->color.r = 0; // [0,1]
+        marker->color.g = 0; // [0,1]
+        marker->color.b = 0; // [0,1]
+        //only if using a MESH_RESOURCE marker type:
+        // marker->mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+        //only if using a TEXT_VIEW_FACING marker type:
+        marker->text = marker_name_;
+        marker_name_pub_.publish( marker );
+
+        last_time_PublishMarkerName_ = time_now;
     }
 }
 
