@@ -23,10 +23,11 @@
     <arg name="world_origin_latitude_deg" default="39.978861"/> <!-- degree -->
     <arg name="world_origin_longitude_deg" default="116.339803"/> <!-- degree -->
     <arg name="world_origin_AMSL_alt_metre" default="53.0"/> <!-- metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS) -->
+    <arg name="urdf_model_path" default="$(find px4_rotor_sim)/model/iris.urdf"/>
 
 <!-- For visualization in real experiments -->
 <group ns="$(arg namespace)">    
-    <param name="robot_description" textfile="$(find px4_rotor_sim)/model/iris.urdf" />
+    <param name="robot_description" textfile="$(arg urdf_model_path)" />
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
         <param name="tf_prefix" value="$(arg namespace)"/>
