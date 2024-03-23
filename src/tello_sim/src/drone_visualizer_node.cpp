@@ -194,9 +194,9 @@ void Visualizer::PublishMarkerName()
         marker->id = 0;
         marker->type = visualization_msgs::Marker::TEXT_VIEW_FACING;
         marker->action = visualization_msgs::Marker::ADD;
-        marker->pose.position.x = pos_x_ + 0.11;
-        marker->pose.position.y = pos_y_ + 0.11;
-        marker->pose.position.z = pos_z_ + 0.11;
+        marker->pose.position.x = pos_x_ + 0.15;
+        marker->pose.position.y = pos_y_ + 0.15;
+        marker->pose.position.z = pos_z_ + 0.15;
         marker->pose.orientation = quat_;
         marker->scale.x = 0.15; // metre
         marker->scale.y = 0.15; // metre
