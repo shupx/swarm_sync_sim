@@ -13,7 +13,7 @@
 
     <arg name="linear_vel_scale" default="2.0"/> <!-- cmd_vel.linear.xyz [-2.0, 2.0] to linear velocity(m/s)  -->
     <arg name="angular_vel_scale" default="3.14"/> <!-- cmd_vel.angular.z [-2.0, 2.0] to angular velocity(rad/s)  -->
-    <arg name="use_imu_orientation" default="false"/>
+    <arg name="use_imu_orientation" default="false"/> <!-- The imu quaternion will be forwarded to /pose, in which case yaw=0 is the initial heading --> 
 
     <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
     <arg name="open_rviz" default="true"/>
