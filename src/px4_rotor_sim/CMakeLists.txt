@@ -372,6 +372,38 @@ target_link_libraries(px4_rotor_visualizer_node
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
+# targets
+install(TARGETS 
+	mavros_px4_quadrotor_sim_node
+	px4_rotor_visualizer_node
+	px4_rotor_dynamics
+	px4_lib
+	mc_pos_control
+	mc_att_control
+	commander
+	px4_mavlink
+	px4_sitl
+	MavrosSim
+	px4_rotor_visualizer
+	mavros_px4_quadrotor_sim_nodelet
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# directory
+install(DIRECTORY plugins
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY launch
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY model
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############

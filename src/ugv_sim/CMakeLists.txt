@@ -259,6 +259,32 @@ target_link_libraries(ugv_visualizer_node
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
+# targets
+install(TARGETS 
+	wheeltec_ugv_sim_node
+	ugv_visualizer_node
+	ugv_dynamics
+	wheeltec_driver_sim
+	wheeltec_ugv_sim_nodelet
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# directory
+install(DIRECTORY plugins
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY launch
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY model
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+
 #############
 ## Testing ##
 #############

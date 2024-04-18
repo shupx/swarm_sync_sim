@@ -1,6 +1,7 @@
 # git ignore the following folders:
 /build
 /devel
+/install
 # /logs
 # src/CMakeLists.txt
 /.catkin_workspace
