@@ -259,6 +259,31 @@ target_link_libraries(tello_visualizer_node
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
+# targets
+install(TARGETS 
+	tello_quadrotor_sim_node
+	tello_visualizer_node
+	tello_dynamics
+	tello_driver_sim
+	tello_quadrotor_sim_nodelet
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# directory
+install(DIRECTORY plugins
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY launch
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY model
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############
