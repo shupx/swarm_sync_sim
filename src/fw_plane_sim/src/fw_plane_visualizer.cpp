@@ -243,6 +243,7 @@ void Visualizer::cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr
 
 void Visualizer::cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
+    pose_valid_ = true;
     switch (local_pos_source_)
     {
         case position_mode::MOCAP:
