@@ -34,7 +34,7 @@
   <joint name="rotor_puller_joint" type="revolute">
     <parent link="base_link"/>
     <child link="rotor_puller"/>
-    <origin xyz="0.3   0    0.246" rpy="0   1.57 0"/>
+    <origin xyz="1.57   0    1.0" rpy="0   1.57 0"/>
     <axis xyz="7.9e-04 0.0e+00 1.0e+00"/>
     <limit lower="-1e+16" upper="1e+16" effort="0.0" velocity="0.0"/>
   </joint>
@@ -96,7 +96,7 @@
     <visual name="base_link_visual">
       <origin xyz="0.07  0    0.166" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/body.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/body.dae" scale="1 1 1"/>
       </geometry>
       <material name="red"/> <!-- Added by Peixuan Shu -->
     </visual>
@@ -123,7 +123,7 @@
     <visual name="rotor_puller_visual">
       <origin xyz="0    0   -0.09" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/iris_prop_ccw.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/iris_prop_ccw.dae" scale="10 10 10"/>
       </geometry>
     </visual>
   </link>
@@ -136,7 +136,7 @@
     <visual name="left_elevon_visual">
       <origin xyz="0.14 -0.4  -0.16" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/left_aileron.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/left_aileron.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -149,7 +149,7 @@
     <visual name="right_elevon_visual">
       <origin xyz="0.14  0.4  -0.16" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/right_aileron.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/right_aileron.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -162,7 +162,7 @@
     <visual name="left_flap_visual">
       <origin xyz="0.14 -0.2  -0.16" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/left_flap.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/left_flap.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -175,7 +175,7 @@
     <visual name="right_flap_visual">
       <origin xyz="0.14  0.2  -0.16" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/right_flap.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/right_flap.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -188,7 +188,7 @@
     <visual name="elevator_visual">
       <origin xyz="0.56999  0      -0.08" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/elevators.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/elevators.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -201,7 +201,7 @@
     <visual name="rudder_visual">
       <origin xyz="0.56999  0      -0.13" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://px4_rotor_sim/model_plane/meshes/rudder.dae" scale="0.1 0.1 0.1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/rudder.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
