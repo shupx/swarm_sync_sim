@@ -66,7 +66,9 @@ target_link_libraries(fw_plane_visualizer_node
 
 
 install(TARGETS 
+	px4_lib_fw
 	fw_plane_visualizer
+	fw_plane_visualizer_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
