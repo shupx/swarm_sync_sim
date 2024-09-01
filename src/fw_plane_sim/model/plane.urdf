@@ -96,9 +96,9 @@
     <visual name="base_link_visual">
       <origin xyz="0.07  0    0.166" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/body.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/body.stl" scale="0.025 0.025 0.025"/>
       </geometry>
-      <material name="red"/> <!-- Added by Peixuan Shu -->
+      <!--material name="red"/--> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="plane/imu_link">
@@ -121,10 +121,11 @@
       </geometry>
     </collision>
     <visual name="rotor_puller_visual">
-      <origin xyz="0    0   -0.09" rpy="0 0 0"/>
+      <origin xyz="0    0   -0.09" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/iris_prop_ccw.dae" scale="10 10 10"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/iris_prop_ccw.stl" scale="10 10 10"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="left_elevon">
@@ -134,10 +135,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="left_elevon_visual">
-      <origin xyz="0.14 -0.4  -0.16" rpy="0 0 0"/>
+      <origin xyz="0.14 -0.4  -0.16" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/left_aileron.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/left_aileron.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="right_elevon">
@@ -147,10 +149,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="right_elevon_visual">
-      <origin xyz="0.14  0.4  -0.16" rpy="0 0 0"/>
+      <origin xyz="0.14  0.4  -0.16" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/right_aileron.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/right_aileron.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="left_flap">
@@ -160,10 +163,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="left_flap_visual">
-      <origin xyz="0.14 -0.2  -0.16" rpy="0 0 0"/>
+      <origin xyz="0.14 -0.2  -0.16" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/left_flap.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/left_flap.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="right_flap">
@@ -173,10 +177,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="right_flap_visual">
-      <origin xyz="0.14  0.2  -0.16" rpy="0 0 0"/>
+      <origin xyz="0.14  0.2  -0.16" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/right_flap.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/right_flap.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="elevator">
@@ -186,10 +191,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="elevator_visual">
-      <origin xyz="0.56999  0      -0.08" rpy="0 0 0"/>
+      <origin xyz="0.56999  0      -0.08" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/elevators.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/elevators.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="rudder">
@@ -199,10 +205,11 @@
       <inertia ixx="0.000001" ixy="0.0" ixz="0.0" iyy="0.000001" iyz="0.0" izz="0.000001"/>
     </inertial>
     <visual name="rudder_visual">
-      <origin xyz="0.56999  0      -0.13" rpy="0 0 0"/>
+      <origin xyz="0.56999  0      -0.13" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://fw_plane_sim/model/meshes/rudder.dae" scale="1 1 1"/>
+        <mesh filename="package://fw_plane_sim/model/meshes/rudder.stl" scale="0.025 0.025 0.025"/>
       </geometry>
+      <material name="grey"/> <!-- Added by Peixuan Shu -->
     </visual>
   </link>
   <link name="airspeed__link">
