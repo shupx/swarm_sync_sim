@@ -216,7 +216,7 @@ void Visualizer::cb_mavros_state(const mavros_msgs::State::ConstPtr& msg)
 
 void Visualizer::cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
-    pose_valid_ = true;
+    // pose_valid_ = true;
     switch (local_pos_source_)
     {
         case position_mode::MOCAP:
