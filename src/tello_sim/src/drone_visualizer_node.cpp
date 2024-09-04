@@ -66,7 +66,12 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 
     nh_private_.param<bool>("enable_history_path", enable_history_path_, true);
 
-    tello_pose_sub_ = nh_.subscribe("pose", 1, &Visualizer::cb_tello_pose, this);
+    /* Setting tcpNoNelay tells the subscriber to ask publishers that connect
+        to set TCP_NODELAY on their side. This prevents some state messages
+        from being bundled together, increasing the latency of one of the messages. */
+    ros::TransportHints transport_hints;
+    transport_hints.tcpNoDelay(true);
+    tello_pose_sub_ = nh_.subscribe("pose", 1, &Visualizer::cb_tello_pose, this, transport_hints);
 
     joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1, true);
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
@@ -94,7 +99,7 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 10.0; // 10Hz fixed
+    float rotor_joint_update_freq = 100.0; // 100Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
         double dt = time_now - last_time_PublishRotorJointState_;

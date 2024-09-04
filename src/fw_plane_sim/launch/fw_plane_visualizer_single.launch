@@ -5,7 +5,7 @@
     <arg name="namespace" default="uav1"/>
     <arg name="open_rviz" default="true"/>
 
-    <arg name="visualize_max_freq" default="20"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
+    <arg name="visualize_max_freq" default="100"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
     <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
     <arg name="visualize_path_time" default="60"/> <!-- (s) displaying history path time -->
     <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->
@@ -28,6 +28,7 @@
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
         <param name="tf_prefix" value="$(arg namespace)"/>
+        <param name="ignore_timestamp" value="true"/>
     </node>
     
     <node pkg="fw_plane_sim" type="fw_plane_visualizer_node" name="fw_plane_visualizer_node_$(arg namespace)" output="screen">

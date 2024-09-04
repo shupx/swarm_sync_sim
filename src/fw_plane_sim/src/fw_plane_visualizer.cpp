@@ -26,7 +26,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     armed_(false),
     pose_valid_(false)
 {
-    nh_private_.param<float>("visualize_max_freq", max_freq_, 10);
+    nh_private_.param<float>("visualize_max_freq", max_freq_, 100);
     nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
     nh_private_.param<std::string>("visualize_marker_name", marker_name_, "uav");
     nh_private_.param<std::string>("visualize_tf_frame", tf_frame_, "map");
@@ -52,9 +52,14 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
     nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 53.0);
 
-    mavros_state_sub_ = nh_.subscribe("mavros/state", 1, &Visualizer::cb_mavros_state, this);
-    mavros_local_pose_sub_ = nh_.subscribe("mavros/local_position/pose", 1, &Visualizer::cb_mavros_local_pose, this);
-    mavros_global_pose_sub_ = nh_.subscribe("mavros/global_position/global", 1, &Visualizer::cb_mavros_global_pose, this);
+    /* Setting tcpNoNelay tells the subscriber to ask publishers that connect
+        to set TCP_NODELAY on their side. This prevents some state messages
+        from being bundled together, increasing the latency of one of the messages. */
+    ros::TransportHints transport_hints;
+    transport_hints.tcpNoDelay(true);
+    mavros_state_sub_ = nh_.subscribe("mavros/state", 1, &Visualizer::cb_mavros_state, this, transport_hints);
+    mavros_local_pose_sub_ = nh_.subscribe("mavros/local_position/pose", 1, &Visualizer::cb_mavros_local_pose, this, transport_hints);
+    mavros_global_pose_sub_ = nh_.subscribe("mavros/global_position/global", 1, &Visualizer::cb_mavros_global_pose, this, transport_hints);
 
     joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1, true);
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
@@ -81,7 +86,7 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 10.0; // 10Hz fixed
+    float rotor_joint_update_freq = 100.0; // 100Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
         double dt = time_now - last_time_PublishRotorJointState_;
@@ -243,6 +248,8 @@ void Visualizer::cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr
 
 void Visualizer::cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& msg)
 {
+    // ros::Time tic = ros::Time::now();
+
     pose_valid_ = true;
     switch (local_pos_source_)
     {
@@ -263,8 +270,10 @@ void Visualizer::cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& m
             break;
         }
     }
-}
 
+    // double toc = (ros::Time::now() - tic).toSec();
+    // ROS_INFO("toc: %f", toc);
+}
 
 
 }
