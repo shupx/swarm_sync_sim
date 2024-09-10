@@ -92,7 +92,7 @@ void Visualizer::PublishRotorJointState()
         double dt = time_now - last_time_PublishRotorJointState_;
 
         // static float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
-        float RPM = 1000; // revolutions per minute
+        float RPM = 100; // revolutions per minute
         float omega = RPM * 2 * M_PI / 60; // rad/s
         if (!armed_) {omega = 0.0;}
 
@@ -143,7 +143,7 @@ void Visualizer::PublishPath()
         {
             // static double last_time = 0.0;
             double time_now = ros::Time::now().toSec();
-            float history_path_update_freq = 5.0; // 5Hz fixed
+            float history_path_update_freq = 10.0; // 10Hz fixed
             if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
             {
                 geometry_msgs::PoseStamped TrajPose_;
@@ -184,18 +184,20 @@ void Visualizer::PublishMarkerName()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    if (time_now - last_time_PublishMarkerName_ > 1.0 / max_freq_)
+    float marker_name_freq = 10;
+    if (time_now - last_time_PublishMarkerName_ > 1.0 / marker_name_freq)
     {
         visualization_msgs::Marker::Ptr marker(new visualization_msgs::Marker);
-        marker->header.frame_id = tf_frame_;
+        // marker->header.frame_id = tf_frame_;
+        marker->header.frame_id = tf_child_frame_;
         marker->header.stamp = ros::Time();
         marker->ns = "my_namespace";
         marker->id = 0;
         marker->type = visualization_msgs::Marker::TEXT_VIEW_FACING;
         marker->action = visualization_msgs::Marker::ADD;
-        marker->pose.position.x = pos_x_ + 5.7;
-        marker->pose.position.y = pos_y_ + 4.7;
-        marker->pose.position.z = pos_z_ + 1.0;
+        marker->pose.position.x = 5.7;
+        marker->pose.position.y = 4.7;
+        marker->pose.position.z = 1.0;
         marker->pose.orientation = quat_;
         marker->scale.x = 6;
         marker->scale.y = 6;
@@ -204,6 +206,7 @@ void Visualizer::PublishMarkerName()
         marker->color.r = 0; // [0,1]
         marker->color.g = 0; // [0,1]
         marker->color.b = 0; // [0,1]
+        marker->frame_locked = true;
         //only if using a MESH_RESOURCE marker type:
         // marker->mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
         //only if using a TEXT_VIEW_FACING marker type:
