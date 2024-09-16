@@ -40,9 +40,9 @@
         <param name="base_link_tf_prefix" value="$(arg base_link_tf_prefix)"/>
         <param name="rotor_0_joint_name" value="$(arg rotor_0_joint_name)"/>
         <param name="local_pos_source" value="$(arg local_pos_source)"/>
-        <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)"/>
-        <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)"/>
-        <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)"/>
+        <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)" type="double"/>
+        <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
+        <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
     </node>
     
     <group if="$(arg open_rviz)">

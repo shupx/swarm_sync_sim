@@ -52,6 +52,9 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     nh_private_.param<double>("world_origin_longitude_deg", world_origin_lon_, 116.339803);
     nh_private_.param<float>("world_origin_AMSL_alt_metre", world_origin_asml_alt_, 53.0);
 
+    ROS_WARN("[visualizer] world_origin_latitude_deg %f", world_origin_lat_);
+    ROS_WARN("[visualizer] world_origin_longitude_deg %f", world_origin_lon_);
+
     /* Setting tcpNoNelay tells the subscriber to ask publishers that connect
         to set TCP_NODELAY on their side. This prevents some state messages
         from being bundled together, increasing the latency of one of the messages. */
@@ -265,6 +268,8 @@ void Visualizer::cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& m
             MapProjection global_local_proj_ref{world_origin_lat_, world_origin_lon_, 0}; // MapProjection from PX4 geo.h
             // calculate pos x,y based on the lat/lon and world origin ref lat/lon
             global_local_proj_ref.project(lat, lon, pos_y_, pos_x_); // pos_x_: East; pos_y_: North
+            // ROS_WARN("lat %f", lat);
+            // ROS_WARN("lon %f", lon);
             break;
         }
         default:
