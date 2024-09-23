@@ -9,7 +9,11 @@
     <arg name="init_roll_deg" default="0.0"/>
     <arg name="init_pitch_deg" default="0.0"/>
     <arg name="init_yaw_deg" default="0.0"/>
-
+    <!-- world origin gps values if local_pos_source = 1 -->
+    <arg name="world_origin_latitude_deg" default="39.978861"/> <!-- degree -->
+    <arg name="world_origin_longitude_deg" default="116.339803"/> <!-- degree -->
+    <arg name="world_origin_AMSL_alt_metre" default="53.0"/> <!-- metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS) -->
+    
     <!-- Same arguments for each vehicle that needs set -->
 
     <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
@@ -25,11 +29,10 @@
     
  <!-- if not use sim time, no need to use nodelet as there is no accelerating -->
 <arg name="use_nodelet_manager" value="$(arg use_sim_time)"/>
-<!-- <arg name="use_nodelet_manager" value="false"/> -->
-<param name="/use_sim_time" value="$(arg use_sim_time)"/>
 
 <group ns="$(arg namespace)">
     <group if="$(arg use_nodelet_manager)">  <!-- /nodelet_manager should be lauched by sim_clock.launch -->
+    	<param name="/use_sim_time" value="true"/>
         <node pkg="nodelet" type="nodelet" name="mavros_px4_quadrotor_sim_nodelet_$(arg namespace)" args="load mavros_px4_quadrotor_sim_nodelet /nodelet_manager" output="screen">
             <!-- load local position source -->
             <param name="local_pos_source" value="$(arg local_pos_source)"/>
@@ -40,6 +43,9 @@
             <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
             <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
             <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
+            <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)" type="double"/>
+            <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
+            <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
             <!-- load px4 param -->
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
             <!-- for robot TF visualizer -->

@@ -47,9 +47,9 @@ rotor_3_joint_name: rotor_3_joint # rotor revolute joint name in the robot urdf
 # local_pos_source: 0  # simulated local_position/pose source
 
 ## world origin gps values as the ref of calculting the simulated gps coordinates
-world_origin_latitude_deg: 39.978861  # degree
-world_origin_longitude_deg: 116.339803  # degree
-world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS)
+# world_origin_latitude_deg: 39.978861  # degree
+# world_origin_longitude_deg: 116.339803  # degree
+# world_origin_AMSL_alt_metre: 53.0  # metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS)
 
 ## For px4 parameters, refer to https://docs.px4.io/v1.13/en/advanced_config/parameter_reference.html
 

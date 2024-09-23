@@ -6,6 +6,10 @@
     <arg name="init_x_East_metre" default="0.0"/>
     <arg name="init_y_North_metre" default="0.0"/>
     <arg name="init_z_Up_metre" default="0.0"/>
+    <!-- world origin gps values if local_pos_source = 1 -->
+    <arg name="world_origin_latitude_deg" default="39.978861"/> <!-- degree -->
+    <arg name="world_origin_longitude_deg" default="116.339803"/> <!-- degree -->
+    <arg name="world_origin_AMSL_alt_metre" default="53.0"/> <!-- metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS) -->
 
     <!-- Same arguments for each vehicle that needs set -->
 
@@ -20,7 +24,7 @@
     <arg name="mavros_sim_plugin_config_yaml" default="$(find px4_rotor_sim)/launch/mavros_px4_config.yaml"/>
     <arg name="px4_rotor_sim_param_config_yaml" default="$(find px4_rotor_sim)/launch/px4_rotor_sim_param.yaml"/>
     
-<param name="/use_sim_time" value="$(arg use_sim_time)"/>
+<!--param name="/use_sim_time" value="$(arg use_sim_time)"/-->
 
 <group ns="$(arg namespace)">
     <node pkg="px4_rotor_sim" type="mavros_px4_quadrotor_sim_node" name="mavros_px4_quadrotor_sim_node_$(arg namespace)" output="screen">
@@ -30,6 +34,9 @@
         <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
         <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
         <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+        <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)" type="double"/>
+        <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
+        <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
         <!-- load px4 param -->
         <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
         <!-- for robot TF visualizer -->
