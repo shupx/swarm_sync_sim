@@ -57,7 +57,7 @@
 
 #ifndef PX4_ERR
 #include <iostream> // added by Peixuan Shu
-#define PX4_ERR(x) std::cout << #x << std::endl
+#define PX4_ERR(x) std::cerr << #x << std::endl
 #endif
 /********************************************/
 

@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Visualizer> visualizer(new Visualizer(nh, nh_private));
 
-    ros::Rate loop_rate(30); // Hz
+    ros::Rate loop_rate(50); // Hz
     while (ros::ok())
     {
         visualizer->Run();

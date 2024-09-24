@@ -265,7 +265,7 @@ Commander::handle_command(const vehicle_command_s &cmd)
 							// events::send(events::ID("commander_unsupported_auto_mode"), events::Log::Error,
 							// 	     "Unsupported auto mode");
 
-							std::cout << "[PX4 Commander::handle_command] Unsupported auto mode" << std::endl; //added by Peixuan Shu
+							std::cerr << "[PX4 Commander::handle_command] Unsupported auto mode" << std::endl; //added by Peixuan Shu
 
 							break;
 						}
@@ -283,7 +283,7 @@ Commander::handle_command(const vehicle_command_s &cmd)
 				} else if (custom_main_mode == PX4_CUSTOM_MAIN_MODE_OFFBOARD) {
 					desired_main_state = commander_state_s::MAIN_STATE_OFFBOARD;
 
-					// std::cout << "[PX4 Commander::handle_command] desired_main_state = commander_state_s::MAIN_STATE_OFFBOARD;" << std::endl; //added by Peixuan Shu
+					// std::cerr << "[PX4 Commander::handle_command] desired_main_state = commander_state_s::MAIN_STATE_OFFBOARD;" << std::endl; //added by Peixuan Shu
 				}
 
 			} else {
@@ -314,14 +314,14 @@ Commander::handle_command(const vehicle_command_s &cmd)
 			} else {
 				cmd_result = vehicle_command_s::VEHICLE_CMD_RESULT_TEMPORARILY_REJECTED;
 
-				std::cout << "[PX4 Commander::handle_command] Mode transition denied" << std::endl; //added by Peixuan Shu
+				std::cerr << "[PX4 Commander::handle_command] Mode transition denied" << std::endl; //added by Peixuan Shu
 			}
 		}
 		break;
 
 	case vehicle_command_s::VEHICLE_CMD_COMPONENT_ARM_DISARM: {
 
-			// std::cout << "[PX4 Commander::handle_command] receive VEHICLE_CMD_COMPONENT_ARM_DISARM" << std::endl; //added by Peixuan Shu
+			// std::cerr << "[PX4 Commander::handle_command] receive VEHICLE_CMD_COMPONENT_ARM_DISARM" << std::endl; //added by Peixuan Shu
 
 			// Adhere to MAVLink specs, but base on knowledge that these fundamentally encode ints
 			// for logic state parameters
@@ -333,7 +333,7 @@ Commander::handle_command(const vehicle_command_s &cmd)
 				// events::send<float>(events::ID("commander_unsupported_arm_disarm_param"), events::Log::Error,
 				// 		    "Unsupported ARM_DISARM param: {1:.3}", cmd.param1);
 				
-				std::cout << "[PX4 Commander::handle_command] Unsupported ARM_DISARM param: {1:" << cmd.param1 << "}" << std::endl; //added by Peixuan Shu
+				std::cerr << "[PX4 Commander::handle_command] Unsupported ARM_DISARM param: {1:" << cmd.param1 << "}" << std::endl; //added by Peixuan Shu
 
 			} else {
 				// Arm is forced (checks skipped) when param2 is set to a magic number.
@@ -401,7 +401,7 @@ Commander::handle_command(const vehicle_command_s &cmd)
 		 * to this component ID (or all) are passed by mavlink. */
 		answer_command(cmd, vehicle_command_s::VEHICLE_CMD_RESULT_UNSUPPORTED);
 
-		std::cout << "[PX4 Commander::handle_command] Unsupported Vehicle command: " << cmd.command << std::endl;
+		std::cerr << "[PX4 Commander::handle_command] Unsupported Vehicle command: " << cmd.command << std::endl;
 		break; // added by Peixuan Shu
 	}
 
@@ -1620,13 +1620,13 @@ if (!run_inited_)  // added by Peixuan Shu
 				// mavlink_log_info(&_mavlink_log_pub, "Failsafe mode activated\t");
 				// events::send(events::ID("commander_failsafe_activated"), events::Log::Info, "Failsafe mode activated");
 
-				std::cout << "[PX4 Commander.cpp] Failsafe mode activated" << std::endl; // added by Peixuan Shu
+				std::cerr << "[PX4 Commander.cpp] Failsafe mode activated" << std::endl; // added by Peixuan Shu
 
 			} else {
 				// mavlink_log_info(&_mavlink_log_pub, "Failsafe mode deactivated\t");
 				// events::send(events::ID("commander_failsafe_deactivated"), events::Log::Info, "Failsafe mode deactivated");
 
-				std::cout << "[PX4 Commander.cpp] Failsafe mode deactivated" << std::endl; // added by Peixuan Shu
+				std::cerr << "[PX4 Commander.cpp] Failsafe mode deactivated" << std::endl; // added by Peixuan Shu
 			}
 
 			_failsafe_old = _status.failsafe;
@@ -2207,7 +2207,7 @@ void Commander::estimator_check()
 			check_posvel_validity(xy_valid, lpos.eph, lpos_eph_threshold_adj, lpos.timestamp,
 					      _last_lpos_fail_time_us, _status_flags.local_position_valid);
 		
-		// std::cout << "_status_flags.local_position_valid: " << _status_flags.local_position_valid << std::endl; // added by Peixuan Shu
+		// std::cerr << "_status_flags.local_position_valid: " << _status_flags.local_position_valid << std::endl; // added by Peixuan Shu
 
 		_status_flags.local_velocity_valid =
 			check_posvel_validity(v_xy_valid, lpos.evh, _param_com_vel_fs_evh.get(), lpos.timestamp,
@@ -2235,7 +2235,7 @@ void Commander::estimator_check()
 
 	if (_status_flags.attitude_valid && !attitude_valid) {
 		// PX4_ERR("attitude estimate no longer valid");
-		std::cout << "[PX4 Commander.cpp] attitude estimate no longer valid" << std::endl; // modified by Peixuan Shu
+		std::cerr << "[PX4 Commander.cpp] attitude estimate no longer valid" << std::endl; // modified by Peixuan Shu
 	}
 
 	_status_flags.attitude_valid = attitude_valid;
@@ -2256,11 +2256,11 @@ void Commander::estimator_check()
 
 		if (!condition_angular_velocity_time_valid) {
 			// PX4_ERR("%s (timeout)", err_str);
-			std::cout << "[PX4 Commander.cpp] angular velocity no longer valid (timeout)" << std::endl; // modified by Peixuan Shu
+			std::cerr << "[PX4 Commander.cpp] angular velocity no longer valid (timeout)" << std::endl; // modified by Peixuan Shu
 
 		} else if (!condition_angular_velocity_finite) {
 			// PX4_ERR("%s (non-finite values)", err_str);
-			std::cout << "[PX4 Commander.cpp] angular velocity no longer valid (non-finite values)" << std::endl; // modified by Peixuan Shu
+			std::cerr << "[PX4 Commander.cpp] angular velocity no longer valid (non-finite values)" << std::endl; // modified by Peixuan Shu
 		}
 	}
 
@@ -2299,7 +2299,7 @@ void Commander::estimator_check()
 
 	if (condition_gps_position_was_valid && !_status_flags.gps_position_valid) {
 		// PX4_DEBUG("GPS no longer valid");
-		std::cout << "[PX4 Commander.cpp] GPS no longer valid" << std::endl; // modified by Peixuan Shu
+		std::cerr << "[PX4 Commander.cpp] GPS no longer valid" << std::endl; // modified by Peixuan Shu
 	}
 }
 

@@ -48,7 +48,7 @@
 /************* Added by Peixuan Shu **********/
 #ifndef PX4_WARN
 #include <iostream> // added by Peixuan Shu
-#define PX4_WARN(x) std::cout << #x << std::endl
+#define PX4_WARN(x) std::cerr << #x << std::endl
 #endif
 /********************************************/
 

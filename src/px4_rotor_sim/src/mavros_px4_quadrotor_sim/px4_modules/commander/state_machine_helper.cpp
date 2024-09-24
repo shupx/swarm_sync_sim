@@ -148,7 +148,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] ALTCTL mode transition denied. Because no valid local or global position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] ALTCTL mode transition denied. Because no valid local or global position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -162,7 +162,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] POSCTL mode transition denied. Because no valid local or global position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] POSCTL mode transition denied. Because no valid local or global position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -175,7 +175,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] LOITER mode transition denied. Because no valid global position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] LOITER mode transition denied. Because no valid global position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -207,7 +207,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] MISSION mode transition denied. Because no valid mission available or global position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] MISSION mode transition denied. Because no valid mission available or global position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -220,7 +220,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Return mode transition denied. Because no valid global position and home position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] Return mode transition denied. Because no valid global position and home position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -234,7 +234,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Land mode transition denied. Because no valid local position." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] Land mode transition denied. Because no valid local position." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -250,7 +250,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else // added by Peixuan Shu
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] PRECLAND mode transition denied. Because no valid local position or global position, or not rotor wing." << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] PRECLAND mode transition denied. Because no valid local position or global position, or not rotor wing." << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -264,7 +264,7 @@ main_state_transition(const vehicle_status_s &status, const main_state_t new_mai
 		}
 		else
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Offboard mode transition denied. Because no valid offboard control setpoints input (or <2Hz)" << std::endl; //added by Peixuan Shu
+			std::cerr << "[PX4 state_machine_helper.cpp] Offboard mode transition denied. Because no valid offboard control setpoints input (or <2Hz)" << std::endl; //added by Peixuan Shu
 		}
 
 		break;
@@ -378,7 +378,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 			{
 				if (!printed)
 				{
-					std::cout << "[PX4 state_machine_helper.cpp] Fail to switch to manual mode! Require RC for all manual modes." << std::endl;
+					std::cerr << "[PX4 state_machine_helper.cpp] Fail to switch to manual mode! Require RC for all manual modes." << std::endl;
 					printed = true;
 				}
 			}
@@ -551,7 +551,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 		/* added by Peixuan Shu  */
 		if (nav_state_old != status.nav_state)
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to RETURN mode but does not simulate the return process." << std::endl;
+			std::cerr << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to RETURN mode but does not simulate the return process." << std::endl;
 		}
 
 		break;
@@ -662,7 +662,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 		/* added by Peixuan Shu  */
 		if (nav_state_old != status.nav_state)
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to TAKEOFF mode but does not simulate the takeoff process. Taking off with offboard mode is recommended." << std::endl;
+			std::cerr << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to TAKEOFF mode but does not simulate the takeoff process. Taking off with offboard mode is recommended." << std::endl;
 		}
 
 		break;
@@ -686,7 +686,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 		/* added by Peixuan Shu  */
 		if (nav_state_old != status.nav_state)
 		{
-			std::cout << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to LAND mode but does not simulate the land process. Landing with offboard mode is recommended." << std::endl;
+			std::cerr << "[PX4 state_machine_helper.cpp] Warn! px4_sitl has switched to LAND mode but does not simulate the land process. Landing with offboard mode is recommended." << std::endl;
 		}
 
 		break;
@@ -734,7 +734,7 @@ bool set_nav_state(vehicle_status_s &status, actuator_armed_s &armed, commander_
 			/* added by Peixuan Shu  */
 			if (nav_state_old != status.nav_state)
 			{
-				std::cout << "[PX4 state_machine_helper.cpp] Warn! Offboard control signal losts (<2Hz). Switch to POSCTL mode by failsafe." << std::endl;
+				std::cerr << "[PX4 state_machine_helper.cpp] Warn! Offboard control signal losts (<2Hz). Switch to POSCTL mode by failsafe." << std::endl;
 			}
 
 		// } else if (status.rc_signal_lost && !(param_com_rcl_except & RCLossExceptionBits::RCL_EXCEPT_OFFBOARD)) {

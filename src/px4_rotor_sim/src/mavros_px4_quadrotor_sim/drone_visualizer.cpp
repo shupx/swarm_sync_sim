@@ -143,7 +143,7 @@ void Visualizer::PublishPath()
         {
             // static double last_time = 0.0;
             double time_now = ros::Time::now().toSec();
-            float history_path_update_freq = 5.0; // 5Hz fixed
+            float history_path_update_freq = 10.0; // 10Hz fixed
             if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
             {
                 geometry_msgs::PoseStamped TrajPose_;
