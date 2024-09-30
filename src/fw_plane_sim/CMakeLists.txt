@@ -30,6 +30,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 include_directories(
   include   
   src/px4_lib # for px4_modules build
+  BHDynamic
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -42,7 +43,7 @@ add_library(px4_lib_fw
 
 catkin_package(
   #  CATKIN_DEPENDS sss_sim_env
-   INCLUDE_DIRS include
+   INCLUDE_DIRS include BHDynamic
 )
 
 
@@ -65,13 +66,28 @@ target_link_libraries(fw_plane_visualizer_node
 )
 
 
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic)
+add_executable(BHDynamics_node
+                  src/BHDynamics.cpp)
+
+target_link_libraries(BHDynamics_node
+   ${catkin_LIBRARIES}
+   ${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic/libBHDynamic.so
+)
+
+
 install(TARGETS 
 	px4_lib_fw
 	fw_plane_visualizer
 	fw_plane_visualizer_node
+	BHDynamics_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic/libBHDynamic.so
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
 # directory
