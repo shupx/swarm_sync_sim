@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Visualizer> visualizer(new Visualizer(nh, nh_private));
 
-    ros::Rate loop_rate(200); // Hz
+    ros::Rate loop_rate(50); // Hz
     while (ros::ok())
     {
         visualizer->Run();
@@ -99,7 +99,7 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 100.0; // 100Hz max
+    float rotor_joint_update_freq = 10.0; // 10Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
         double dt = time_now - last_time_PublishRotorJointState_;

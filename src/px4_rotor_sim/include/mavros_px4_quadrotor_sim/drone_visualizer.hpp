@@ -65,6 +65,9 @@ public:
     /* Publish marker name */
     void PublishMarkerName();
 
+    /* Publish simpilfied robot marker */
+    void PublishMarkerRobot();
+
 private:
     ros::NodeHandle nh_;
     ros::NodeHandle nh_private_;
@@ -76,6 +79,7 @@ private:
     ros::Publisher joint_pub_;
     ros::Publisher path_pub_;
     ros::Publisher marker_name_pub_;
+    ros::Publisher marker_robot_pub_;
 
     tf2_ros::TransformBroadcaster tf2_broadcaster;
 
@@ -108,6 +112,7 @@ private:
     double last_time_PublishBaseLinkTF_ = 0.0;
     double last_time_PublishPath_ = 0.0;
     double last_time_PublishMarkerName_ = 0.0;
+    double last_time_PublishMarkerRobot_ = 0.0;
 
     float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
     std::vector<geometry_msgs::PoseStamped> TrajPoseHistory_vector_;

@@ -10,30 +10,21 @@
     <arg name="group_id" default="0"/>
 
     <arg name="id1" value="$(eval arg('group_id')*10+1)"/>
-    <arg name="namespace1" value="uav$(arg id1)"/>
     <arg name="id2" value="$(eval arg('group_id')*10+2)"/>
-    <arg name="namespace2" value="uav$(arg id2)"/>
     <arg name="id3" value="$(eval arg('group_id')*10+3)"/>
-    <arg name="namespace3" value="uav$(arg id3)"/>
     <arg name="id4" value="$(eval arg('group_id')*10+4)"/>
-    <arg name="namespace4" value="uav$(arg id4)"/>
     <arg name="id5" value="$(eval arg('group_id')*10+5)"/>
-    <arg name="namespace5" value="uav$(arg id5)"/>
     <arg name="id6" value="$(eval arg('group_id')*10+6)"/>
-    <arg name="namespace6" value="uav$(arg id6)"/>
     <arg name="id7" value="$(eval arg('group_id')*10+7)"/>
-    <arg name="namespace7" value="uav$(arg id7)"/>
     <arg name="id8" value="$(eval arg('group_id')*10+8)"/>
-    <arg name="namespace8" value="uav$(arg id8)"/>
     <arg name="id9" value="$(eval arg('group_id')*10+9)"/>
-    <arg name="namespace9" value="uav$(arg id9)"/>
     <arg name="id10" value="$(eval arg('group_id')*10+10)"/>
-    <arg name="namespace10" value="uav$(arg id10)"/>
+
     
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace1)"/>
+        <arg name="namespace" value="uav$(arg id1)"/>
         <arg name="init_x_East_metre" value="1.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -45,9 +36,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace2)"/>
+        <arg name="namespace" value="uav$(arg id2)"/>
         <arg name="init_x_East_metre" value="2.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -59,9 +50,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace3)"/>
+        <arg name="namespace" value="uav$(arg id3)"/>
         <arg name="init_x_East_metre" value="3.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -73,9 +64,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace4)"/>
+        <arg name="namespace" value="uav$(arg id4)"/>
         <arg name="init_x_East_metre" value="4.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -87,9 +78,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace5)"/>
+        <arg name="namespace" value="uav$(arg id5)"/>
         <arg name="init_x_East_metre" value="5.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -101,9 +92,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace6)"/>
+        <arg name="namespace" value="uav$(arg id6)"/>
         <arg name="init_x_East_metre" value="6.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -115,9 +106,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace7)"/>
+        <arg name="namespace" value="uav$(arg id7)"/>
         <arg name="init_x_East_metre" value="7.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -129,9 +120,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace8)"/>
+        <arg name="namespace" value="uav$(arg id8)"/>
         <arg name="init_x_East_metre" value="8.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -143,9 +134,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace9)"/>
+        <arg name="namespace" value="uav$(arg id9)"/>
         <arg name="init_x_East_metre" value="9.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>
@@ -157,9 +148,9 @@
     </include>
 
     <include file="$(find px4_rotor_sim)/launch/px4_rotor_sim_single.launch">
-        <arg name="namespace" value="$(arg namespace10)"/>
+        <arg name="namespace" value="uav$(arg id10)"/>
         <arg name="init_x_East_metre" value="10.0"/>
-        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_y_North_metre" value="$(arg group_id)"/>
         <arg name="init_z_Up_metre" value="0.0"/>
         <arg name="init_roll_deg" value="0.0"/>
         <arg name="init_pitch_deg" value="0.0"/>

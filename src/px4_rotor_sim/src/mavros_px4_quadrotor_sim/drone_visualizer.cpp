@@ -64,6 +64,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     joint_pub_ = nh_.advertise<sensor_msgs::JointState>("joint_states", 1, true);
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
     marker_name_pub_ = nh_.advertise<visualization_msgs::Marker>("marker_name", 1, true);
+    marker_robot_pub_ = nh_.advertise<visualization_msgs::Marker>("marker_robot", 1, true);
 
     quat_.w = 1.0;
     quat_.x = 0.0;
@@ -76,6 +77,7 @@ void Visualizer::Run()
     PublishRotorJointState();
     PublishBaseLinkTF();
     PublishMarkerName();
+    // PublishMarkerRobot();
     if (pose_valid_)  // avoid jumping from (0,0) to the initial points
     {
         PublishPath();
@@ -86,13 +88,14 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 100.0; // 100Hz max
+    float rotor_joint_update_freq = 10.0; // 10Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
-        double dt = time_now - last_time_PublishRotorJointState_;
+        // double dt = time_now - last_time_PublishRotorJointState_;
+        double dt = 1.0 / rotor_joint_update_freq;
 
         // static float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
-        float RPM = 300; // revolutions per minute
+        float RPM = 100; // revolutions per minute
         float omega = RPM * 2 * M_PI / 60; // rad/s
         if (!armed_) {omega = 0.0;}
 
@@ -143,7 +146,7 @@ void Visualizer::PublishPath()
         {
             // static double last_time = 0.0;
             double time_now = ros::Time::now().toSec();
-            float history_path_update_freq = 10.0; // 10Hz fixed
+            float history_path_update_freq = 5.0; // 5Hz fixed
             if (time_now - last_time_PublishPath_ > 1.0 / history_path_update_freq)
             {
                 geometry_msgs::PoseStamped TrajPose_;
@@ -212,6 +215,44 @@ void Visualizer::PublishMarkerName()
         marker_name_pub_.publish( marker );
 
         last_time_PublishMarkerName_ = time_now;
+    }
+}
+
+void Visualizer::PublishMarkerRobot()
+{
+    // static double last_time = 0.0;
+    double time_now = ros::Time::now().toSec();
+    if (time_now - last_time_PublishMarkerRobot_ > 1.0 / max_freq_)
+    {
+        visualization_msgs::Marker::Ptr marker(new visualization_msgs::Marker);
+        marker->header.frame_id = tf_child_frame_;
+        marker->header.stamp = ros::Time();
+        marker->ns = "my_namespace";
+        marker->id = 0;
+        marker->type = visualization_msgs::Marker::MESH_RESOURCE;
+        marker->action = visualization_msgs::Marker::ADD;
+        marker->pose.position.x = 0.0;
+        marker->pose.position.y = 0.0;
+        marker->pose.position.z = 0.0;
+        marker->pose.orientation.x = 0.0;
+        marker->pose.orientation.y = 0.0;
+        marker->pose.orientation.z = 0.0;
+        marker->pose.orientation.w = 1.0;
+        marker->scale.x = 1.0;
+        marker->scale.y = 1.0;
+        marker->scale.z = 1.0;
+        marker->color.a = 0.9; // Don't forget to set the alpha!
+        marker->color.r = 1.0; // [0,1]
+        marker->color.g = 0; // [0,1]
+        marker->color.b = 0; // [0,1]
+        marker->frame_locked = true;
+        //only if using a MESH_RESOURCE marker type:
+        marker->mesh_resource = "package://px4_rotor_sim/model/meshes/iris.stl";
+        //only if using a TEXT_VIEW_FACING marker type:
+        // marker->text = marker_name_;
+        marker_robot_pub_.publish( marker );
+
+        last_time_PublishMarkerRobot_ = time_now;
     }
 }
 
