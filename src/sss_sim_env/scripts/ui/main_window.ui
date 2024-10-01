@@ -175,7 +175,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>0.5x</string>
+           <string>0.1x</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

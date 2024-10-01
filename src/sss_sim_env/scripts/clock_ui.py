@@ -84,7 +84,7 @@ class RosCommNode(QObject):
     def dialvalue2speed(self, dial_value):
         speed = 0.0
         if dial_value < 10:
-            speed = 0.5 + (dial_value - 0) / 10 * (1 - 0.5)
+            speed = 0.1 + (dial_value - 0) / 10 * (1 - 0.1)
         elif dial_value < 20:
             speed = 1 + (dial_value - 10) / 10 * (2 - 1)
         elif dial_value < 30:
@@ -97,10 +97,10 @@ class RosCommNode(QObject):
 
     def speed2dialvalue(self, speed):
         dialvalue = 0
-        if speed < 0.5:
+        if speed < 0.1:
             dialvalue = 0
         elif speed < 1:
-            dialvalue = 0 + (speed - 0.5) / (1 - 0.5) * 10
+            dialvalue = 0 + (speed - 0.1) / (1 - 0.1) * 10
         elif speed < 2:
             dialvalue = 10 + (speed - 1) / (2 - 1) * 10
         elif speed < 10:

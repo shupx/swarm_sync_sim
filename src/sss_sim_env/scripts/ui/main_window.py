@@ -156,7 +156,7 @@ class Ui_MainWindow(object):
         self.startButton.setText(_translate("MainWindow", "Start"))
         self.pauseButton.setText(_translate("MainWindow", "Pause"))
         self.label_3.setText(_translate("MainWindow", "1x"))
-        self.label.setText(_translate("MainWindow", "0.5x"))
+        self.label.setText(_translate("MainWindow", "0.1x"))
         self.label_2.setText(_translate("MainWindow", "100x"))
         self.label_5.setText(_translate("MainWindow", "2x"))
         self.label_6.setText(_translate("MainWindow", "10x"))
