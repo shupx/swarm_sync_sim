@@ -102,10 +102,11 @@ void Visualizer::PublishRotorJointState()
     float rotor_joint_update_freq = 10.0; // 10Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
-        double dt = time_now - last_time_PublishRotorJointState_;
+        // double dt = time_now - last_time_PublishRotorJointState_;
+        double dt = 1.0 / rotor_joint_update_freq;
 
         // static float joint_pos_[4] = {0.0, 0.5, 2.6, 1.4};
-        float RPM = 300; // revolutions per minute
+        float RPM = 100; // revolutions per minute
         float omega = RPM * 2 * M_PI / 60; // rad/s
         if (!armed_) {omega = 0.0;}
 
