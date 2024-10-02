@@ -36,8 +36,8 @@ typedef struct
     double beteState;     // 侧滑角，输出暂为0
 } State_Output;           // 输出状态结构体
 
-State_Init baseState;
-State_Output GS_state;
+// State_Init baseState;
+// State_Output GS_state;
 
 void InitState(State_Init baseState);
 State_Output OutLoopCtrl_1(double High_input, double Vel_input, double Roll_input);

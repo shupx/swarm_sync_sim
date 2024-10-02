@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   eigen_conversions # for mavros_sim tf:: #already installed with ros-noetic-desktop
   tf2_ros # for tf
   sss_sim_env # for sss_utils
-  nodelet # for mavros_px4_quadrotor_sim_node.cpp nodelet
+  nodelet # for sim_node.cpp nodelet
   visualization_msgs # for marker visualize
 )
 
@@ -30,7 +30,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 include_directories(
   include   
   src/px4_lib # for px4_modules build
-  BHDynamic
+  src/fw_sim/BHDynamic # for BHDynamic.so
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -43,7 +43,7 @@ add_library(px4_lib_fw
 
 catkin_package(
   #  CATKIN_DEPENDS sss_sim_env
-   INCLUDE_DIRS include BHDynamic
+   INCLUDE_DIRS include
 )
 
 
@@ -66,13 +66,29 @@ target_link_libraries(fw_plane_visualizer_node
 )
 
 
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic)
-add_executable(BHDynamics_node
-                  src/BHDynamics.cpp)
 
-target_link_libraries(BHDynamics_node
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/fw_sim/BHDynamic)
+
+add_library(fw_sim_nodelet
+            src/fw_sim/fw_sim_node.cpp
+            src/fw_sim/fw_driver_sim.cpp)
+
+# link libraries for this lib
+target_link_libraries(fw_sim_nodelet
    ${catkin_LIBRARIES}
-   ${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic/libBHDynamic.so
+   px4_lib_fw # for geo.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/fw_sim/BHDynamic/libBHDynamic.so
+)
+
+add_executable(fw_sim_node
+                  src/fw_sim/fw_sim_node.cpp
+                  src/fw_sim/fw_driver_sim.cpp)
+
+target_link_libraries(fw_sim_node
+   ${catkin_LIBRARIES}
+   px4_lib_fw # for geo.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/fw_sim/BHDynamic/libBHDynamic.so
 )
 
 
@@ -80,13 +96,14 @@ install(TARGETS
 	px4_lib_fw
 	fw_plane_visualizer
 	fw_plane_visualizer_node
-	BHDynamics_node
+	fw_sim_node
+	fw_sim_nodelet
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/BHDynamic/libBHDynamic.so
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/fw_sim/BHDynamic/libBHDynamic.so
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
