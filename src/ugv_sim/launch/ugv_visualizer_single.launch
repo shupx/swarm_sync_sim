@@ -23,7 +23,7 @@
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
         <param name="tf_prefix" value="$(arg namespace)"/>
-        <param name="ignore_timestamp" value="true"/>
+        <!-- <param name="ignore_timestamp" value="true"/> -->
     </node>
     
     <node pkg="ugv_sim" type="ugv_visualizer_node" name="ugv_visualizer_node_$(arg namespace)" output="screen">
