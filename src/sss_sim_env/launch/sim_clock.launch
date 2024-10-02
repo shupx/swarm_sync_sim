@@ -8,6 +8,7 @@
     <arg name="use_sim_time" value="true"/>
 
     <param name="/use_sim_time" value="$(arg use_sim_time)"/>
+    <param name="/use_sss_sim_time" value="$(arg use_sim_time)"/>
 
     <node pkg="nodelet" type="nodelet" name="nodelet_manager"  args="manager" output="screen">
     </node>

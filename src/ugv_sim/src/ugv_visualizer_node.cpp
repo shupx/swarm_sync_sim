@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     //Use unique_ptr to auto-destory the object when exiting.
     std::unique_ptr<Visualizer> visualizer(new Visualizer(nh, nh_private));
 
-    ros::Rate loop_rate(200); // Hz
+    ros::Rate loop_rate(50); // Hz
     while (ros::ok())
     {
         visualizer->Run();
@@ -84,7 +84,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 void Visualizer::Run()
 {
     PublishRotorJointState();
-    PublishBaseLinkTF();
+    // PublishBaseLinkTF();
     PublishMarkerName();
     if (pose_valid_) // avoid jumping from (0,0) to the initial points
     {
@@ -96,14 +96,19 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 100.0; // 100Hz max
+    float rotor_joint_update_freq = 10.0; // 5Hz max for 100 agents
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
-        double dt = time_now - last_time_PublishRotorJointState_;
+        PublishBaseLinkTF(); // keep base link tf and rotor joint state synchronized
+
+        // double dt = time_now - last_time_PublishRotorJointState_;
+        double dt = 1.0 / rotor_joint_update_freq;
 
         float wheel_radius = 0.04;
         float length = 0.3; // front to rear wheel
         float width = 0.216; // left to right wheel
+        // float length = 0.4; // front to rear wheel
+        // float width = 0.3; // left to right wheel
 
         /* Get the mecanum wheel angular speed */
         float wheel_v[4];
