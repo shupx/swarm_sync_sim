@@ -84,7 +84,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 void Visualizer::Run()
 {
     PublishRotorJointState();
-    PublishBaseLinkTF();
+    // PublishBaseLinkTF();
     PublishMarkerName();
     if (pose_valid_) // avoid jumping from (0,0) to the initial points
     {
@@ -96,14 +96,19 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 20.0; // 20Hz max
+    float rotor_joint_update_freq = 15.0; // 15Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
-        double dt = time_now - last_time_PublishRotorJointState_;
+        PublishBaseLinkTF(); // keep base link tf and rotor joint state synchronized
+
+        // double dt = time_now - last_time_PublishRotorJointState_;
+        double dt = 1.0 / rotor_joint_update_freq;
 
         float wheel_radius = 0.04;
-        float length = 0.3; // front to rear wheel
-        float width = 0.216; // left to right wheel
+        // float length = 0.3; // front to rear wheel
+        // float width = 0.216; // left to right wheel
+        float length = 0.4; // front to rear wheel
+        float width = 0.3; // left to right wheel
 
         /* Get the mecanum wheel angular speed */
         float wheel_v[4];
@@ -112,10 +117,10 @@ void Visualizer::PublishRotorJointState()
         wheel_v[2] = v_front_ + v_left_ - omega_ * (length/2+width/2); // lower left
         wheel_v[3] = v_front_ - v_left_ + omega_ * (length/2+width/2); // lower right
         float wheel_omega[4];
-        wheel_omega[0] = wheel_v[0] / wheel_radius;
-        wheel_omega[1] = - wheel_v[1] / wheel_radius;
-        wheel_omega[2] = wheel_v[2] / wheel_radius;
-        wheel_omega[3] = - wheel_v[3] / wheel_radius;
+        wheel_omega[0] = - wheel_v[0] / wheel_radius;
+        wheel_omega[1] = wheel_v[1] / wheel_radius;
+        wheel_omega[2] = - wheel_v[2] / wheel_radius;
+        wheel_omega[3] = wheel_v[3] / wheel_radius;
 
         sensor_msgs::JointStatePtr msg(new sensor_msgs::JointState);
         msg->header.stamp = ros::Time::now();

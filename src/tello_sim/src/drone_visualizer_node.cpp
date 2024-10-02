@@ -87,7 +87,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
 void Visualizer::Run()
 {
     PublishRotorJointState();
-    PublishBaseLinkTF();
+    // PublishBaseLinkTF();
     PublishMarkerName();
     if (pose_valid_)  // avoid jumping from (0,0) to the initial points
     {
@@ -99,9 +99,11 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 10.0; // 10Hz max
+    float rotor_joint_update_freq = 15.0; // 10Hz max
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
+        PublishBaseLinkTF(); // keep base link tf and rotor joint state synchronized
+        
         // double dt = time_now - last_time_PublishRotorJointState_;
         double dt = 1.0 / rotor_joint_update_freq;
 
