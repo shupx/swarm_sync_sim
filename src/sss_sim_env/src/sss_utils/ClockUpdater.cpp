@@ -23,10 +23,10 @@ namespace sss_utils
 ClockUpdater::ClockUpdater()
     : inited_(false)
 {
-    nh_async_.param<bool>("/use_sim_time", use_sim_time, false);
+    nh_async_.param<bool>("/use_sss_sim_time", use_sim_time, false);
 
     if (use_sim_time){
-        // ROS_INFO("[ClockUpdater] use_sim_time == true. Init. Waiting for sim_clock online.");
+        // ROS_INFO("[ClockUpdater] use_sss_sim_time == true. Init. Waiting for sim_clock online.");
 
         nh_async_.setCallbackQueue(&callback_queue_);
         async_spinner_.start(); // start a new thread to listen to sim clock online
@@ -38,7 +38,7 @@ ClockUpdater::ClockUpdater()
         UpdateClockPublisher::global(); // Create a global update_clock_publisher if has not been created
     }
     else{
-        ROS_INFO("[ClockUpdater] use_sim_time == false. Skip!");
+        ROS_INFO("[ClockUpdater] use_sss_sim_time == false. Skip!");
     }
 }
 

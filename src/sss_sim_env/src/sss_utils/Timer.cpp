@@ -37,14 +37,14 @@ Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const 
     nh_simclock.setCallbackQueue(&simclock_callback_queue_);
     async_spinner_.start();  // start a new thread to communicate with sim clock
 
-    nh_.param<bool>("/use_sim_time", use_sim_time_, false);
+    nh_.param<bool>("/use_sss_sim_time", use_sim_time_, false);
 
-    /* If use_sim_time, create a ROS timer with modified callback function*/
+    /* If use_sss_sim_time, create a ROS timer with modified callback function*/
     if (use_sim_time_)
     {
-        ROS_INFO("[sss_utils::Timer] use_sim_time is true. Init");
+        ROS_INFO("[sss_utils::Timer] use_sss_sim_time is true. Init");
 
-        /* If use_sim_time, create a ROS timer with modified callback function 
+        /* If use_sss_sim_time, create a ROS timer with modified callback function 
         (add request_clock_update() each loop*/
         timer_ = nh_.createTimer(period_, &Timer::Impl::sim_timer_callback, this, oneshot_, autostart_); 
 
@@ -64,7 +64,7 @@ Timer::Impl::Impl(const ros::NodeHandle &nh, const ros::Duration &period, const 
     }
     else
     {        
-        /*If not use_sim_time, create a normal ROS timer */
+        /*If not use_sss_sim_time, create a normal ROS timer */
         timer_ = nh_.createTimer(period_, callback_, oneshot_, autostart_); 
     }
 

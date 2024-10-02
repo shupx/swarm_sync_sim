@@ -27,10 +27,11 @@
     <!-- if not use sim time, no need to use nodelet as there is no accelerating -->
     <arg name="use_nodelet_manager" value="$(arg use_sim_time)"/>
     <!-- <arg name="use_nodelet_manager" value="false"/> -->
-    <param name="/use_sim_time" value="$(arg use_sim_time)"/>
 
 <group ns="$(arg namespace)">
     <group if="$(arg use_nodelet_manager)">  <!-- /nodelet_manager should be lauched by sim_clock.launch -->
+    	<param name="/use_sim_time" value="true"/>
+        <param name="/use_sss_sim_time" value="true"/>
         <node pkg="nodelet" type="nodelet" name="wheeltec_ugv_sim_nodelet_$(arg namespace)" args="load wheeltec_ugv_sim_nodelet /nodelet_manager" output="screen">
             <param name="ugv_type" value="$(arg ugv_type)"/>
             <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>

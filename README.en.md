@@ -70,12 +70,15 @@ loop_rate.sleep(); // sleep for 10Hz in a loop
 
 For python nodes: TODO.
 
-It is noted that these sss_utils APIs are equal to the original ROS APIs if the `use_sim_time` is false. So **switching between the simulation and real experiment can be easily realized by modifying the launch file**:
+It is noted that these sss_utils APIs are equal to the original ROS APIs if the ROS parameter `/use_sss_sim_time` and `/use_sim_time` is false. So **switching between the simulation and real experiment can be easily realized by modifying the launch file**:
 
 ```xml
 <launch>
-    <param name="/use_sim_time" value="true"/> <!-- simulation -->
-    <param name="/use_sim_time" value="false"/>  <!-- no simulation -->
+    <param name="/use_sim_time" value="true"/> <!-- use sss sim time -->
+    <param name="/use_sss_sim_time" value="true"/> <!-- use sss sim time -->
+    
+    <param name="/use_sim_time" value="false"/>  <!-- use original ROS time -->
+    <param name="/use_sss_sim_time" value="false"/> <!-- use original ROS time -->
    
     <node ... />
 </launch>
