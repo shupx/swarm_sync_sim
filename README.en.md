@@ -287,7 +287,7 @@ rostopic pub /uav1/cmd_vel geometry_msgs/Twist "linear:
   z: 30.0 # roll setpoint (m)
 angular:
   x: 0.0
-  y: 4.0 # target mode (4 for offboard control)
+  y: 1.0 # target mode (1 for offboard control)
   z: 0.0" -r 10
 ```
 
