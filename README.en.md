@@ -255,7 +255,49 @@ For ugv visualization in real experiments:
 roslaunch ugv_sim visualize_ugv_multi.launch
 ```
 
+#### Fixed-wing UAV Simulation
 
+We offer a  simulation library for fixed-wing UAVs with autopilots which receives onboard ROS setpoint commands (Roll, height, and airspeed). Launch fixed-wing UAV simulation nodes (ROS driver + UAV with autopilot simulation library + visualization):
+
+```bash
+### 1. Launch sim clock
+roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
+
+### 2. Launch multiple fixed-wing UAV simulation nodes (Specify initial positions in the launch file)
+roslaunch fw_plane_sim multi_fw_sim.launch
+```
+
+Or you can simply use the wallclock time without acceleration, **although it is not recommended because the  time of the UAVs may not be synchronized**:
+
+```bash
+roslaunch fw_plane_sim multi_fw_sim.launch use_sim_time:=false
+```
+
+![image_name](pictures/multi-fw-sim.png)
+
+Then you can launch your control algorithm nodes with the ROS topics and services.
+
+Some useful commands:
+
+```bash
+### sending position setpoints to UAV1
+rostopic pub /uav1/cmd_vel geometry_msgs/Twist "linear:
+  x: 25.0 # airspeed setpoint (m/s)
+  y: 20.0 # height setpoint (m)
+  z: 30.0 # roll setpoint (m)
+angular:
+  x: 0.0
+  y: 4.0 # target mode (4 for offboard control)
+  z: 0.0" -r 10
+```
+
+It is noted that the ROS topics states follow the NED (for local states) and FRD (for body states) coordinates.
+
+For fixed-wing UAV visualization in real experiments:
+
+```bash
+roslaunch fw_plane_sim fw_plane_visualizer_single.launch
+```
 
 ### Acknowledgement
 
