@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
+    <arg name="open_rviz" default="true"/>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav1"/>
+        <arg name="init_x_East_metre" value="15.0"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/> <!-- initial heading to the World Y axis -->
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav2"/>
+        <arg name="init_x_East_metre" value="30"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav3"/>
+        <arg name="init_x_East_metre" value="45"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav4"/>
+        <arg name="init_x_East_metre" value="60"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav5"/>
+        <arg name="init_x_East_metre" value="75"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/> 
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav6"/>
+        <arg name="init_x_East_metre" value="90"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav7"/>
+        <arg name="init_x_East_metre" value="105"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav8"/>
+        <arg name="init_x_East_metre" value="120"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav9"/>
+        <arg name="init_x_East_metre" value="135"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <include file="$(find fw_plane_sim)/launch/fw_sim_single.launch">
+        <arg name="namespace" value="uav10"/>
+        <arg name="init_x_East_metre" value="150"/>
+        <arg name="init_y_North_metre" value="0.0"/>
+        <arg name="init_z_Up_metre" value="20.0"/>
+        <arg name="init_roll_deg" value="0.0"/>
+        <arg name="init_pitch_deg" value="0.0"/>
+        <arg name="init_yaw_deg" value="90.0"/>
+        <arg name="open_rviz" value="false"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    </include>
+
+    <group if="$(arg open_rviz)">
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find fw_plane_sim)/launch/multi_fw_plane.rviz" required="false" />
+    </group>
+
+</launch>

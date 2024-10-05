@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Different arguments for each vehicle -->
+
+    <arg name="namespace" default="uav1"/>
+    <arg name="init_x_East_metre" default="20.0"/>
+    <arg name="init_y_North_metre" default="0.0"/>
+    <arg name="init_z_Up_metre" default="10.0"/>
+    <arg name="init_roll_deg" default="0.0"/>
+    <arg name="init_pitch_deg" default="0.0"/>
+    <arg name="init_yaw_deg" default="0.0"/>
+    <arg name="init_vel_m_per_s" default="30.0"/>
+
+    <arg name="enable_mavros_topic" default="true"/>
+    <arg name="dynamics_period_ms" default="25.0"/>
+
+    <arg name="world_origin_latitude_deg" default="39.978861"/> <!-- degree -->
+    <arg name="world_origin_longitude_deg" default="116.339803"/> <!-- degree -->
+    <arg name="world_origin_AMSL_alt_metre" default="53.0"/> <!-- metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS) -->
+    
+    <!-- Same arguments for each vehicle that needs set -->
+
+    <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
+    <arg name="open_rviz" default="true"/>
+
+
+<group ns="$(arg namespace)">
+    <group if="$(arg use_sim_time)">
+    	<param name="/use_sim_time" value="true"/>
+        <param name="/use_sss_sim_time" value="true"/>
+        <!--launched as a normal ROS node -->
+        <node pkg="nodelet" type="nodelet" name="fw_sim_nodelet_$(arg namespace)" args="standalone fw_sim_nodelet" output="screen">
+            <!-- load init position -->
+            <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
+            <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
+            <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
+            <param name="init_vel_m_per_s" value="$(arg init_vel_m_per_s)"/>
+            <param name="dynamics_period_ms" value="$(arg dynamics_period_ms)"/>
+            <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)" type="double"/>
+            <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
+            <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
+        </node>
+    </group>
+
+    <group unless="$(arg use_sim_time)">  <!-- not recommended -->
+        <!--launched as a normal ROS node -->
+        <node pkg="nodelet" type="nodelet" name="fw_sim_nodelet_$(arg namespace)" args="standalone fw_sim_nodelet" output="screen">
+            <!-- load init position -->
+            <param name="init_x_East_metre" value="$(arg init_x_East_metre)"/>
+            <param name="init_y_North_metre" value="$(arg init_y_North_metre)"/>
+            <param name="init_z_Up_metre" value="$(arg init_z_Up_metre)"/>
+            <param name="init_roll_deg" value="$(arg init_roll_deg)"/>
+            <param name="init_pitch_deg" value="$(arg init_pitch_deg)"/>
+            <param name="init_yaw_deg" value="$(arg init_yaw_deg)"/>
+            <param name="init_vel_m_per_s" value="$(arg init_vel_m_per_s)"/>
+            <param name="dynamics_period_ms" value="$(arg dynamics_period_ms)"/>
+            <param name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)" type="double"/>
+            <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
+            <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
+        </node>
+    </group>
+
+</group>
+
+
+<!-- Visualization -->
+<include file="$(find fw_plane_sim)/launch/fw_plane_visualizer_single.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="open_rviz" value="$(arg open_rviz)"/>
+    <arg name="local_pos_source" value="1"/>
+    <arg name="world_origin_latitude_deg" value="$(arg world_origin_latitude_deg)"/>
+    <arg name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)"/>
+    <arg name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)"/>
+</include>
+
+
+</launch>

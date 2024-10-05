@@ -96,9 +96,9 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     baseState.posiEInit = init_x;  // 东向初始位置，m
     baseState.posiDInit = -init_z; // 地向初始位置，m
     baseState.velInit = init_vel;  // 初始速度，m/s
-    baseState.pitchInit = init_pitch*M_PI/180; // 初始俯仰角，rad
-    baseState.yawInit = init_yaw*M_PI/180;   // 初始偏航角，rad
-    baseState.rollInit = init_roll*M_PI/180;  // 初始滚转角，rad
+    baseState.pitchInit = -init_pitch*M_PI/180; // 初始俯仰角(Right)，rad
+    baseState.yawInit = -init_yaw*M_PI/180+M_PI_2;  // 初始偏航角(Down)，rad
+    baseState.rollInit = init_roll*M_PI/180;  // 初始滚转角(Front)，rad
     InitState(baseState); // from BHDynamics.h
 
     /* init driver */
@@ -118,7 +118,7 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     fw_driver_sim_->UpdateDynamicState(init_dynamic_state);
 
     /* Create the main loop timer */
-    mainloop_period_ = dynamics_period_ms; // 
+    mainloop_period_ = dynamics_period_ms/1000; // 
     mainloop_timer_ = sss_utils::createTimer(nh_, ros::Duration(mainloop_period_), &Agent::mainloop, this);
 }
 
@@ -136,7 +136,7 @@ void Agent::mainloop(const ros::TimerEvent &event)
     fw_driver_sim_->PublishState();
 
     /* Set control inputs and step forward (ode integrate the numerical model) */
-    if (fw_driver_sim_->GetStage() == 4 || fw_driver_sim_->GetArmed()) // 4 for offboard
+    if (fw_driver_sim_->GetStage() == 4 && fw_driver_sim_->GetArmed()) // 4 for offboard
     {
         Input input = fw_driver_sim_->GetControlInputs();
         State_Output new_dynamic_state = OutLoopCtrl_1(input.High_input, input.Vel_input, input.Roll_input);

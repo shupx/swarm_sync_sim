@@ -26,6 +26,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Vector3.h>
+#include <mavros_msgs/State.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include "BHDynamic.h"
 #include <geo/geo.h> // for px4 gps->NED utils
@@ -71,6 +73,9 @@ class FwDriverSim
         ros::Publisher ias_pub_;
         ros::Publisher pos_pub_;
         ros::Publisher baro_pub_;
+        ros::Publisher local_pose_pub_;
+        ros::Publisher global_pos_pub_;
+        ros::Publisher mavros_state_pub_;
 
         ros::Subscriber cmd_vel_sub_;
 
@@ -83,6 +88,7 @@ class FwDriverSim
         double world_origin_lat_;
         double world_origin_lon_;
         float world_origin_asml_alt_;
+        bool enable_mavros_topic_;
 
         Input input_;
 
