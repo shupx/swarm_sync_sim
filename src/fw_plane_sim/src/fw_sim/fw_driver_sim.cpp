@@ -176,14 +176,36 @@ void FwDriverSim::PublishState()
 
 void FwDriverSim::cb_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
 {
-    is_armed_ = true;
-    input_.Vel_input = msg->linear.x; // m/s
-    input_.High_input = msg->linear.y; // m
-    input_.Roll_input = msg->linear.z; // deg
-    // Pitch_input = msg->angular.x; // deg
-    // input_.Yaw_input = 0.0; // deg
-    
-    stage_ = int(msg->angular.y);
+    int stage_cmd = int(msg->angular.y);
+    if (stage_cmd == 1) // setpoints
+    {
+        is_armed_ = true;
+        input_.Vel_input = msg->linear.x; // m/s
+        input_.High_input = msg->linear.y; // m
+        input_.Roll_input = msg->linear.z; // deg
+        // Pitch_input = msg->angular.x; // deg
+        // input_.Yaw_input = 0.0; // deg
+    }
+    else if (stage_cmd == 2) // 航线
+    {
+        stage_ = 6; // 航线
+    }
+    else if (stage_cmd == 3) // 目标盘旋
+    {
+        stage_ = 8; // 航点
+    }
+    else if (stage_cmd == 4) // 返回盘旋
+    {
+        stage_ = 6; // 航线
+    }
+    else if (stage_cmd == 5) // 就地盘旋
+    {
+        stage_ = 3; // 盘旋
+    }
+    else if (stage_cmd == 1999) // 进入编队模式（只用于仿真）
+    {
+        stage_ = 4; // 盘旋
+    }
 }
 
 Input FwDriverSim::GetControlInputs()
