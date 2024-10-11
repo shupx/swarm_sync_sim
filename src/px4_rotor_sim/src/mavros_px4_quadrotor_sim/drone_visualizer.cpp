@@ -88,7 +88,8 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 10.0; // 5Hz max for 100 agents
+    // float rotor_joint_update_freq = 10.0; // 5Hz max for 100 agents
+    float rotor_joint_update_freq = max_freq_;
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
         PublishBaseLinkTF(); // keep base link tf and rotor joint state synchronized

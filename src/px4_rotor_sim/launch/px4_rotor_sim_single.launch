@@ -15,7 +15,7 @@
     <arg name="world_origin_AMSL_alt_metre" default="53.0"/> <!-- metre (Above Mean Sea Level) (not WGS84/ELlipsoid of GPS) -->
     
     <!-- Same arguments for each vehicle that needs set -->
-
+    <arg name="visualize_max_freq" default="20"/>
     <arg name="use_sim_time" default="true"/> <!-- Note that 'use_sim_time' param is global. All nodes in all launch files will use sim time if use_sim_time is set true in any launch file -->
     <arg name="local_pos_source" default="0"/> <!-- 0 is mocap/uwb, 1 is GPS -->
     <!-- 0: mavros/local_position/pose will output the world coordinates of the drone -->
@@ -48,7 +48,8 @@
             <param name="world_origin_longitude_deg" value="$(arg world_origin_longitude_deg)" type="double"/>
             <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
             <!-- load px4 param -->
-            <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
+            <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />    
+            <param name="visualize_max_freq" value="$(arg visualize_max_freq)"/> 
             <!-- for robot TF visualizer -->
             <param name="base_link_tf_prefix" value="$(arg namespace)"/>
             <!-- for marker name visualize -->
@@ -74,6 +75,7 @@
             <param name="world_origin_AMSL_alt_metre" value="$(arg world_origin_AMSL_alt_metre)" type="double"/>
             <!-- load px4 param -->
             <rosparam command="load" file="$(arg px4_rotor_sim_param_config_yaml)" />   
+            <param name="visualize_max_freq" value="$(arg visualize_max_freq)"/> 
             <!-- for robot TF visualizer -->
             <param name="base_link_tf_prefix" value="$(arg namespace)"/>
             <!-- for marker name visualize -->

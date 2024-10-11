@@ -5,7 +5,7 @@
     <arg name="namespace" default="tello1"/>
     <arg name="open_rviz" default="true"/>
 
-    <arg name="visualize_max_freq" default="50"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
+    <arg name="visualize_max_freq" default="20"/> <!-- (Hz) Maximum  Maximum base_link tf publishing rate  -->
     <arg name="enable_history_path" default="true"/> <!-- Enable visualizing history path  -->
     <arg name="visualize_path_time" default="30"/> <!-- (s) displaying history path time -->
     <arg name="visualize_tf_frame" default="map"/> <!-- tf world frame name -->

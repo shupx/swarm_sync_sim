@@ -26,7 +26,7 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     armed_(false),
     pose_valid_(false)
 {
-    nh_private_.param<float>("visualize_max_freq", max_freq_, 100);
+    nh_private_.param<float>("visualize_max_freq", max_freq_, 20);
     nh_private_.param<float>("visualize_path_time", history_path_time_, 5.0);
     nh_private_.param<std::string>("visualize_marker_name", marker_name_, "uav");
     nh_private_.param<std::string>("visualize_tf_frame", tf_frame_, "map");
@@ -89,7 +89,8 @@ void Visualizer::PublishRotorJointState()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    float rotor_joint_update_freq = 25.0; // 5Hz max for 100 agents
+    // float rotor_joint_update_freq = 25.0; // 5Hz max for 100 agents
+    float rotor_joint_update_freq = max_freq_;
     if (time_now - last_time_PublishRotorJointState_ > 1.0 / rotor_joint_update_freq)
     {
         PublishBaseLinkTF(); // keep base link tf and rotor joint state synchronized
@@ -122,7 +123,7 @@ void Visualizer::PublishBaseLinkTF()
 {
     // static double last_time = 0.0;
     double time_now = ros::Time::now().toSec();
-    if (time_now - last_time_PublishBaseLinkTF_ > 1.0 / max_freq_)
+    // if (time_now - last_time_PublishBaseLinkTF_ > 1.0 / max_freq_)
     {
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.frame_id = tf_frame_;
