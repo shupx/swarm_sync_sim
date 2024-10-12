@@ -1535,9 +1535,13 @@ MavlinkReceiver::handle_message_odometry(mavlink_message_t *msg)
 
 void MavlinkReceiver::fill_thrust(float *thrust_body_array, uint8_t vehicle_type, float thrust)
 {
+	/* added by Peixuan Shu */
+	int system_type = MAV_TYPE_QUADROTOR;
+
 	// Fill correct field by checking frametype
 	// TODO: add as needed
-	switch (_mavlink->get_system_type()) {
+	// switch (_mavlink->get_system_type()) {
+	switch (system_type) { //modified by Peixuan Shu
 	case MAV_TYPE_GENERIC:
 		break;
 
@@ -1564,7 +1568,7 @@ void MavlinkReceiver::fill_thrust(float *thrust_body_array, uint8_t vehicle_type
 	case MAV_TYPE_VTOL_TILTROTOR:
 	case MAV_TYPE_VTOL_FIXEDROTOR:
 	case MAV_TYPE_VTOL_TAILSITTER:
-	case MAV_TYPE_VTOL_RESERVED4:
+	// case MAV_TYPE_VTOL_RESERVED4: //modified by Peixuan Shu
 	case MAV_TYPE_VTOL_RESERVED5:
 		switch (vehicle_type) {
 		case vehicle_status_s::VEHICLE_TYPE_FIXED_WING:
