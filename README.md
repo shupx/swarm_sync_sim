@@ -4,6 +4,7 @@
 ### Introduction
 swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm systems based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple separate nodes) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
 
+![sss-framework](pictures/sss-framework.png)
 
 ### Installation
 
