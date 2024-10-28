@@ -2,12 +2,14 @@
 ## swarm_sync_sim <img src="pictures/sss-logo.png" alt="sss-log" align="right" height="40" />
 
 ### Introduction
-swarm_sync_sim is a synchronized (lock-stepped) numerical simulation platform for multi-robot swarm systems based on ROS. It provides a **lightweight** (low cpu consumption), **scalable** (multiple separate nodes) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for simulating motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
+Swarm_sync_sim (sss) is a synchronized (lock-stepped) simulation platform for multi-robot swarm systems based on ROS developed by Dr. Peixuan Shu from Beihang University, China. It provides a **lightweight** (low cpu consumption), **scalable** (multiple separate nodelets, 100+ tested) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for verifying motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
 
 ![sss-framework](pictures/sss-framework.png)
 ![gif-4uav-4ugv](pictures/gif-4uav-4ugv.gif) ![px4rotor-100](pictures/px4rotor-100.gif)
 
 ### Installation
+
+We assume you have already installed `ROS noetic` on `ubuntu20`. If not, refer to [https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md](https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md) or [https://wiki.ros.org/noetic/Installation/Ubuntu](https://wiki.ros.org/noetic/Installation/Ubuntu)
 
 ```bash
 # Dependencies
@@ -25,7 +27,7 @@ echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 
 #### Sim Clock
 
-A simulation clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes register to the sim_clock and request time updates when they sleeps. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
+To achieve the simulation acceleration, a sim clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes (clients) register to the sim_clock and request the next time updates when they sleeps and waits for the next loop step. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
 
 ##### 1. Clock side
 
@@ -46,7 +48,7 @@ max_sim_speed: 0.0"
 
 You can also tune the clock by the UI interface developed by PyQt5:
 
-<img src="pictures/sim_clock.png" alt="clock" style="zoom:100%;" />
+<img src="pictures/sim_clock.png" alt="clock" style="zoom:50%;" />
 
 ##### 2. ROS node side
 
@@ -137,7 +139,7 @@ rosservice call /uav1/mavros/set_mode "base_mode: 0
 custom_mode: 'OFFBOARD'"
 ```
 
-By the way, **it is highly recommended to launch the simulation by** [minigc](https://gitee.com/bhswift/minigc.git), which is a multi-UAV ground control UI.
+By the way, **it is highly recommended to launch the simulation by** [minigc](https://gitee.com/shu-peixuan/minigc.git), which is a multi-UAV ground control UI.
 
 For drone visualization in real experiments:
 
