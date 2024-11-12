@@ -111,8 +111,8 @@ Agent::Agent(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private)
     init_dynamic_state.pitchState = baseState.pitchInit;
     init_dynamic_state.yawState = baseState.yawInit;
     init_dynamic_state.rollState = baseState.rollInit;
-    // init_dynamic_state.velalphaState = 0;
-    // init_dynamic_state.velbeteState = 0;
+    init_dynamic_state.velalphaState = 0;
+    init_dynamic_state.velbeteState = 0;
     // init_dynamic_state.alphaState = 0;
     // init_dynamic_state.beteState = 0;
     fw_driver_sim_->UpdateDynamicState(init_dynamic_state);
@@ -139,8 +139,28 @@ void Agent::mainloop(const ros::TimerEvent &event)
     if (fw_driver_sim_->GetStage() == 4 && fw_driver_sim_->GetArmed()) // 4 for offboard
     {
         Input input = fw_driver_sim_->GetControlInputs();
-        State_Output new_dynamic_state = OutLoopCtrl_1(input.High_input, input.Vel_input, input.Roll_input);
-        fw_driver_sim_->UpdateDynamicState(new_dynamic_state);
+
+        if (input.Pitch_input == 0.0 && input.High_input != 0.0)
+        {   /* formation mode */ // ODE integrate for one step (25ms);
+            State_Output new_dynamic_state = OutLoopCtrl_1(
+                                input.High_input, input.Vel_input, input.Roll_input);
+            fw_driver_sim_->UpdateDynamicState(new_dynamic_state);
+        }
+        else if (input.Pitch_input != 999.0 && input.High_input == 0.0)
+        {   /* guidance mode */ // ODE integrate for one step (25ms)
+            State_Output new_dynamic_state = OutLoopCtrl_3(
+                                input.Pitch_input, input.Vel_input, input.Roll_input);
+            fw_driver_sim_->UpdateDynamicState(new_dynamic_state);
+        }
+        else if (input.Pitch_input == 999.0 && input.High_input == 0.0)
+        {
+            // ROS_WARN("[fw_sim_node] Waiting for inputs");
+        }
+        else if (input.Pitch_input != 0.0 && input.High_input != 0.0)
+        {
+            ROS_WARN("[fw_sim_node] Invalid inputs! Pitch and Height inputs" 
+                                    " can not be nonzeros at the same time!");
+        }
     }
 
     mainloop_last_time_ = next_time;

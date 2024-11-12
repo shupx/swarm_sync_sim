@@ -37,10 +37,11 @@ namespace FwSimulator
 
 typedef struct
 {
-    double High_input;
-    double Vel_input;
-    double Roll_input;
-    double Yaw_input;
+    double High_input; // m
+    double Vel_input; // m/s
+    double Roll_input; // deg
+    double Pitch_input; // deg
+    double Yaw_input; // deg
 } Input; 
 
 class FwDriverSim

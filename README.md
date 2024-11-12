@@ -2,14 +2,14 @@
 ## swarm_sync_sim <img src="pictures/sss-logo.png" alt="sss-log" align="right" height="40" />
 
 ### Introduction
-Swarm_sync_sim (sss) is a synchronized (lock-stepped) simulation platform for multi-robot swarm systems based on ROS developed by Dr. Peixuan Shu from Beihang University, China. It provides a **lightweight** (low cpu consumption), **scalable** (multiple separate nodelets, 100+ tested) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for verifying motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
+**Swarm_sync_sim (sss)** is a synchronized (lock-stepped) simulation platform for multi-robot swarm systems based on ROS developed by Dr. Peixuan Shu from Beihang University, China. It provides a **lightweight** (low cpu consumption), **scalable** (multiple separate nodelets, 100+ tested) and **fast** (10x acceleration) engine for simulating various kinds of robots including quadrotors, unmannded ground vehicles (UGV), fixed-wing UAVs, and customized models. It is suitable for verifying motion planning and control algorithms of multi-robot systems based on ROS, while the code can be directly used in real experiments with only slight modifications.
 
 ![sss-framework](pictures/sss-framework.png)
 ![gif-4uav-4ugv](pictures/gif-4uav-4ugv.gif) ![px4rotor-100](pictures/px4rotor-100.gif)
 
 ### Installation
 
-We assume you have already installed `ROS noetic` on `ubuntu20`. If not, refer to [https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md](https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md) or [https://wiki.ros.org/noetic/Installation/Ubuntu](https://wiki.ros.org/noetic/Installation/Ubuntu)
+We assume you have already installed `ROS noetic` on `ubuntu20`. If not, refer to [https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md](https://gitee.com/shu-peixuan/ros-install-command/blob/master/ros-install-readme.md) or [https://wiki.ros.org/noetic/Installation/Ubuntu](https://wiki.ros.org/noetic/Installation/Ubuntu). Then follow the steps:
 
 ```bash
 # Dependencies
@@ -25,72 +25,7 @@ echo "source $PWD/devel/setup.bash" >> ~/.bashrc
 
 ### Usage
 
-#### Sim Clock
-
-To achieve the simulation acceleration, a sim clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes (clients) register to the sim_clock and request the next time updates when they sleeps and waits for the next loop step. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
-
-##### 1. Clock side
-
-```bash
-### 1. Launch sim clock
-# You can also specify max_simulation_rate and auto_start in the launch file
-roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
-```
-
-To control the simulation clock:
-
-```bash
-# @param proceed: true(go on), false(stop)
-# @param max_sim_speed: 0.0 (keep unchanged)
-rosservice call /sss_clock_control "proceed: true
-max_sim_speed: 0.0"
-```
-
-You can also tune the clock by the UI interface developed by PyQt5:
-
-<img src="pictures/sim_clock.png" alt="clock" style="zoom:50%;" />
-
-##### 2. ROS node side
-
-If a ROS node needs the clock to wait until it finishes executing a piece of code (usually a loop), then it should register to the sim_clock first and request the clock update every time it completes a loop or sleeps at one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs with those provided by this project.**
-
-For cpp ROS nodes:
-
-```cpp
-#include <sss_sim_env/sss_utils.hpp>
-
-/* substitute nh::createTimer() with sss_utils::createTimer() */
-ros::NodeHandle nh;
-sss_utils::Timer timer
-timer = sss_utils::createTimer(nh, ros::Duration(0.1), &YourClass::cb_timer, this); // create a ROS timer with 0.1s period and cb_timer callback
-
-/* substitute ros::Duration().sleep() with sss_utils::Duration(0.2).sleep() */
-sss_utils::Duration(0.2).sleep(); // sleep for 0.2s ROS time
-
-/* substitute ros::Rate with sss_utils::Rate */
-sss_utils::Rate loop_rate(10);
-loop_rate.sleep(); // sleep for 10Hz in a loop
-```
-
-For python nodes: TODO.
-
-It is noted that these sss_utils APIs are equal to the original ROS APIs if the ROS parameter `/use_sss_sim_time` and `/use_sim_time` is false. So **switching between the simulation and real experiment can be easily realized by modifying the launch file**:
-
-```xml
-<launch>
-    <param name="/use_sim_time" value="true"/> <!-- use sss sim time -->
-    <param name="/use_sss_sim_time" value="true"/> <!-- use sss sim time -->
-    
-    <param name="/use_sim_time" value="false"/>  <!-- use original ROS time -->
-    <param name="/use_sss_sim_time" value="false"/> <!-- use original ROS time -->
-   
-    <node ... />
-</launch>
-```
-
-**It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works** if these nodes use ros::Time rather than the system time as the simulation clock time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
-
-We have developd some ROS sim nodes using sss_utils to accelerate the simulation:
+We have developd some ROS sim nodes using **sss_utils** (see [Section Development](#development)) to accelerate the simulation:
 
 #### PX4 Rotor Simulation
 
@@ -261,19 +196,20 @@ roslaunch ugv_sim visualize_ugv_multi.launch
 
 #### Fixed-wing UAV Simulation
 
-We offer a  simulation library for fixed-wing UAVs with autopilots which receives onboard ROS setpoint commands (Roll, height, and airspeed). Launch fixed-wing UAV simulation nodes (ROS driver + UAV with autopilot simulation library + visualization):
+We offer a  simulation library for fixed-wing UAVs with autopilots which receives onboard ROS setpoint commands (Roll, height/pitch, and airspeed). Launch fixed-wing UAV simulation nodes (ROS driver + UAV with autopilot simulation library + visualization):
 
 ```bash
-### 1. Launch sim clock
+### 1. Launch sim clock (Recommended)
 roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
 
 ### 2. Launch multiple fixed-wing UAV simulation nodes (Specify initial positions in the launch file)
 roslaunch fw_plane_sim multi_fw_sim.launch
 ```
 
-Or you can simply use the wallclock time without acceleration, **although it is not recommended because the  time of the UAVs may not be synchronized**:
+Or you can simply use the wallclock time without acceleration, although it is **NOT recommended** because the  time of the UAVs may not be synchronized:
 
 ```bash
+# (NOT recommended)
 roslaunch fw_plane_sim multi_fw_sim.launch use_sim_time:=false
 ```
 
@@ -287,21 +223,97 @@ Some useful commands:
 ### sending position setpoints to UAV1
 rostopic pub /uav1/cmd_vel geometry_msgs/Twist "linear:
   x: 25.0 # airspeed setpoint (m/s)
-  y: 20.0 # height setpoint (m)
-  z: 30.0 # roll setpoint (m)
+  y: 20.0 # height setpoint (m) (should be 0 if pitch_setpoint is valid)
+  z: 30.0 # roll setpoint (deg)
 angular:
-  x: 0.0
+  x: 0.0 # pitch setpoint (deg) (should be 0 if height_setpoint is valid)
   y: 1.0 # target mode (1 for offboard control)
   z: 0.0" -r 10
+  
+### Read states
+rostopic echo /uav1/angle # Roll, pitch, yaw (deg) (FRD frame)
+rostopic echo /uav1/pos # x, y, z (m) (NED frame)
+rostopic echo /uav1/vel # vx, vy, vz (m/s) (NED frame)
+rostopic echo /uav1/nav # latitude, longitude (deg)
+rostopic echo /uav1/ias # airspeed (m/s)
+rostopic echo /uav1/baro # barometer height (m) (Up)
+rostopic echo /uav1/stage # stage (3:loiter; 4: offboard; 6: target path; 8: target point)
 ```
 
-It is noted that the ROS topics states follow the NED (for local states) and FRD (for body states) coordinates.
+It is noted that the ROS topic states follow the NED (for local states) and FRD (for body states) coordinates.
 
 For fixed-wing UAV visualization in real experiments:
 
 ```bash
 roslaunch fw_plane_sim fw_plane_visualizer_single.launch
 ```
+
+### Development
+
+#### Sim Clock
+
+To achieve the simulation acceleration, a sim clock is designed to govern the simulation time for all ROS nodes and publish `/clock`. Every ROS nodes (clients) register to the sim_clock and request the next time updates when they sleeps and waits for the next loop step. The sim_clock is designed to synchronize the time (lock steps) for all nodes by updating the clock time only if all clients have new time updating requests. To realize this synchronized clock mechanism, these steps must be followed:
+
+##### 1. Clock side
+
+```bash
+### 1. Launch sim clock
+# You can also specify max_simulation_rate and auto_start in the launch file
+roslaunch sss_sim_env sim_clock.launch max_speed_ratio:=1 auto_start:=true
+```
+
+To control the simulation clock:
+
+```bash
+# @param proceed: true(go on), false(stop)
+# @param max_sim_speed: 0.0 (keep unchanged)
+rosservice call /sss_clock_control "proceed: true
+max_sim_speed: 0.0"
+```
+
+You can also tune the clock by the UI interface developed by PyQt5:
+
+<img src="pictures/sim_clock.png" alt="clock" style="zoom:50%;" />
+
+##### 2. ROS node side
+
+If a ROS node needs the clock to wait until it finishes executing a piece of code (usually a loop), then it should register to the sim_clock first and request the clock update every time it completes a loop or sleeps at one thread. Fortunately, this process is encapsulated by this project. What you need to do is just **replacing the ROS time related APIs with "sss_utils" provided by this project.**
+
+For cpp ROS nodes:
+
+```cpp
+#include <sss_sim_env/sss_utils.hpp>
+
+/* substitute nh::createTimer() with sss_utils::createTimer() */
+ros::NodeHandle nh;
+sss_utils::Timer timer
+timer = sss_utils::createTimer(nh, ros::Duration(0.1), &YourClass::cb_timer, this); // create a ROS timer with 0.1s period and cb_timer callback
+
+/* substitute ros::Duration().sleep() with sss_utils::Duration(0.2).sleep() */
+sss_utils::Duration(0.2).sleep(); // sleep for 0.2s ROS time
+
+/* substitute ros::Rate with sss_utils::Rate */
+sss_utils::Rate loop_rate(10);
+loop_rate.sleep(); // sleep for 10Hz in a loop
+```
+
+For python nodes: TODO.
+
+It is noted that these **sss_utils APIs** are equal to the **original ROS APIs** if the ROS parameter `/use_sss_sim_time` and `/use_sim_time` is `false`. So **switching between the simulation and real experiment can be easily realized by modifying the launch file**:
+
+```xml
+<launch>
+    <param name="/use_sim_time" value="true"/> <!-- use sss sim time -->
+    <param name="/use_sss_sim_time" value="true"/> <!-- use sss sim time -->
+    
+    <param name="/use_sim_time" value="false"/>  <!-- use original ROS time -->
+    <param name="/use_sss_sim_time" value="false"/> <!-- use original ROS time -->
+   
+    <node ... />
+</launch>
+```
+
+**It is noted that for those ROS nodes that have not used sss_utils APIs, the simulation time still works** **if these nodes use ros::Time** rather than the system time because the simulation clock time is natively supported by ROS. But in this case, the simulation clock will not wait these nodes for completing their loops (not synchronized). This may cause some loops to be skipped especially when the simulation is accelerated.
 
 ### Acknowledgement
 

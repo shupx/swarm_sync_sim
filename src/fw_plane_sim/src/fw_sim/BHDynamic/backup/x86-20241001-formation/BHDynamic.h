@@ -9,6 +9,7 @@ extern "C" {
 /* 这种方式确保当头文件被 C++ 编译器编译时，函数按照 C 的方式导出。
 当头文件被 C 编译器编译时，extern "C" 不会起作用，因为 C 编译器不识别这个关键字。*/
 
+
 typedef struct
 {
     double posiNInit; // 北向初始位置，m
@@ -29,8 +30,8 @@ typedef struct
     double yawState;      // 偏航角输出，rad
     double rollState;     // 滚转角输出，rad
     double velState;      // 和速度输出，m/s
-    double velalphaState; // 速度倾角, deg
-    double velbeteState;  // 速度偏角, deg
+    double velalphaState; // 速度倾角，输出暂为0
+    double velbeteState;  // 速度偏角，输出暂为0
     double alphaState;    // 攻角，输出暂为0
     double beteState;     // 侧滑角，输出暂为0
 } State_Output;           // 输出状态结构体
@@ -39,16 +40,8 @@ typedef struct
 // State_Output GS_state;
 
 void InitState(State_Init baseState);
-State_Output OutLoopCtrl_1(double High_input, double Vel_input, double Roll_input); // 1.北航控制一，输入高度(m)，速度(m/s)，滚转(deg)
-State_Output OutLoopCtrl_2(double High_input, double Vel_input, double Yaw_input);  // 2.北航控制二，输入高度(m)，速度(m/s)，偏航(deg)
-State_Output OutLoopCtrl_3(double Pitch_input, double Vel_input, double Roll_input);// 3.北航控制二，输入俯仰(m)，速度(m/s)，滚转(deg)
-
-/* 输入限制： */
-// 速度：18~32 m/s
-// 滚转：-40~40 deg
-// 高度： >0 m
-// 俯仰角：-45~15 deg
-
+State_Output OutLoopCtrl_1(double High_input, double Vel_input, double Roll_input);
+State_Output OutLoopCtrl_2(double High_input, double Vel_input, double Yaw_input);
 
 #ifdef __cplusplus
 }

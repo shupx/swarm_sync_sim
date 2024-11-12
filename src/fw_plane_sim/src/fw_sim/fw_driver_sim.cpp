@@ -63,6 +63,7 @@ FwDriverSim::FwDriverSim(const ros::NodeHandle &nh, const ros::NodeHandle &nh_pr
     input_.High_input = 0.0;
     input_.Vel_input = 0.0;
     input_.Roll_input = 0.0;
+    input_.Pitch_input = 0.0;
     input_.Yaw_input = 0.0;
 }
 
@@ -82,15 +83,19 @@ void FwDriverSim::PublishState()
     double angle_x = dynamic_state_.rollState; // roll (Forward)(rad)
     double angle_y = dynamic_state_.pitchState; // pitch (Right)(rad)
     double angle_z = dynamic_state_.yawState; // yaw (Down)(rad)
-    // double vel_alpha = dynamic_state_.velalphaState; // 速度倾角，输出暂为0
-    // double vel_beta = dynamic_state_.velbeteState; // 速度偏角，输出暂为0
+    double vel_alpha = dynamic_state_.velalphaState * M_PI / 180.0; // 速度倾角(rad)
+    double vel_beta = dynamic_state_.velbeteState * M_PI / 180.0; // 速度偏角(rad)
     // double angle_alpha = dynamic_state_.alphaState; // 攻角，输出暂为0
     // double angle_beta = dynamic_state_.beteState; // 侧滑角，输出暂为0
     double vel_ground = dynamic_state_.velState;
+
     /* TODO: vel is corresponding to the vel_alpha and vel_beta, not body attitude */
-    double vel_x = vel_ground * cos(-angle_y) * cos(angle_z); // north (m)
-    double vel_y = vel_ground * cos(-angle_y) * sin(angle_z); // east (m)
-    double vel_z = vel_ground * sin(-angle_y); // down (m)
+    // double vel_x = vel_ground * cos(-angle_y) * cos(angle_z); // north (m)
+    // double vel_y = vel_ground * cos(-angle_y) * sin(angle_z); // east (m)
+    // double vel_z = vel_ground * sin(-angle_y); // down (m)
+    double vel_x = vel_ground * cos(-vel_alpha) * cos(vel_beta); // north (m)
+    double vel_y = vel_ground * cos(-vel_alpha) * sin(vel_beta); // east (m)
+    double vel_z = vel_ground * sin(-vel_alpha); // down (m)
 
     /* publish stage */
     std_msgs::Int32 stage_msg;
@@ -183,8 +188,8 @@ void FwDriverSim::cb_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
         input_.Vel_input = msg->linear.x; // m/s
         input_.High_input = msg->linear.y; // m
         input_.Roll_input = msg->linear.z; // deg
-        // Pitch_input = msg->angular.x; // deg
-        // input_.Yaw_input = 0.0; // deg
+        input_.Pitch_input = msg->angular.x; // deg
+        input_.Yaw_input = 0.0; // deg // TODO: to support yaw setpoint
     }
     else if (stage_cmd == 2) // 航线
     {
