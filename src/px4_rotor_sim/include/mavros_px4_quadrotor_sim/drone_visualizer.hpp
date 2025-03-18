@@ -25,6 +25,7 @@
 #include <nav_msgs/Path.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
+#include <mavros_msgs/CommandAck.h>
 
 #include <geo/geo.h> // for px4 gps->NED utils
 
@@ -81,6 +82,8 @@ private:
     ros::Publisher marker_name_pub_;
     ros::Publisher marker_robot_pub_;
 
+    ros::ServiceServer switch_pos_service_;
+
     tf2_ros::TransformBroadcaster tf2_broadcaster;
 
     enum class position_mode : uint32_t {
@@ -121,6 +124,8 @@ private:
     void cb_mavros_state(const mavros_msgs::State::ConstPtr& msg);
     void cb_mavros_local_pose(const geometry_msgs::PoseStamped::ConstPtr& msg);
     void cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& msg);
+
+    bool SwitchVisualizePoseSource(mavros_msgs::CommandAck::Request &req, mavros_msgs::CommandAck::Response &res);
     
 };
 

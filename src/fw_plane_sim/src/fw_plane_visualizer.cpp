@@ -68,6 +68,8 @@ Visualizer::Visualizer(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv
     path_pub_ = nh_.advertise<nav_msgs::Path>("history_path", 1, true);
     marker_name_pub_ = nh_.advertise<visualization_msgs::Marker>("marker_name", 1, true);
 
+    switch_pos_service_ = nh_.advertiseService("switch_visualize_pose_source", &Visualizer::SwitchVisualizePoseSource, this);
+
     quat_.w = 1.0;
     quat_.x = 0.0;
     quat_.y = 0.0;
@@ -286,5 +288,26 @@ void Visualizer::cb_mavros_global_pose(const sensor_msgs::NavSatFix::ConstPtr& m
     // ROS_INFO("toc: %f", toc);
 }
 
+bool Visualizer::SwitchVisualizePoseSource(mavros_msgs::CommandAck::Request &req, mavros_msgs::CommandAck::Response &res)
+{
+    if ((enum position_mode)req.command == position_mode::GPS) 
+    {
+        local_pos_source_ = position_mode::GPS;
+        ROS_INFO("Switched to GPS position mode.");
+    }
+    else if ((enum position_mode)req.command == position_mode::MOCAP) 
+    {
+        local_pos_source_ = position_mode::MOCAP;
+        ROS_INFO("Switched to MOCAP position mode.");
+    }
+    else
+    {
+        res.success = false;
+        ROS_ERROR("Invalid command for switching position mode.");
+        return true;
+    }
+    res.success = true;
+    return true;
+}
 
 }
